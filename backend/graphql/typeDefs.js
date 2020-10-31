@@ -53,6 +53,7 @@ module.exports = gql`
 			questions: [Questions!]
 		): Quiz!
 		addQuestion(quizId: String!, questions: [Questions!]): Quiz!
+		deleteQuiz(quizId: String!): String!
 	}
 	type Subscription {
 		Quiz: Quiz!

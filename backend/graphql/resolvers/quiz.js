@@ -16,9 +16,9 @@ module.exports = {
 			try {
 				const quiz = await Quiz.findById(quizId);
 				if (quiz) {
-					return post;
+					return quiz;
 				} else {
-					throw new Error('Post not found');
+					throw new Error('Quiz not found');
 				}
 			} catch (err) {
 				throw new Error(err);
@@ -51,7 +51,7 @@ module.exports = {
 				if (!quiz) {
 					throw new Error('Quiz not found');
 				}
-				if (user.username == post.username) {
+				if (user.username == quiz.username) {
 					await quiz.delete();
 					return 'Quiz deleted successfully';
 				} else {

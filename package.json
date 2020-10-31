@@ -23,7 +23,8 @@
     "emotion-theming": "^10.0.27",
     "graphql": "^15.3.0",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^5.10.10"
+    "mongoose": "^5.10.10",
+    "yarn": "^1.22.10"
   },
   "devDependencies": {
     "nodemon": "^2.0.6"
