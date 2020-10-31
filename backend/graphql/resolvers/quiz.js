@@ -1,4 +1,8 @@
-const { AuthenticationError, UserInputError } = require('apollo-server');
+const {
+	AuthenticationError,
+	UserInputError,
+	ExpandAbstractTypes,
+} = require('apollo-server');
 const Quiz = require('../../models/Quiz');
 const checkAuth = require('../../utils/checkAuth');
 
@@ -51,7 +55,7 @@ module.exports = {
 				if (!quiz) {
 					throw new Error('Quiz not found');
 				}
-				if (user.username == quiz.username) {
+				if (user.id == quiz.author) {
 					await quiz.delete();
 					return 'Quiz deleted successfully';
 				} else {
@@ -77,6 +81,33 @@ module.exports = {
 				} else {
 					throw new AuthenticationError('Action not allowed');
 				}
+			} catch (err) {
+				throw new Error(err);
+			}
+		},
+		deleteQuestion: async (parent, { quizId, questionId }, context) => {
+			const user = checkAuth(context);
+			try {
+				const quiz = await Quiz.findById(quizId);
+
+				if (!quiz) {
+					throw new Error('Quiz not found');
+				}
+
+				const question = quiz.questions.find(
+					(question) => question.id === questionId
+				);
+				if (!question) {
+					throw new Error('Question not found');
+				}
+
+				if (quiz.author.toString() !== user.id.toString()) {
+					throw new AuthenticationError('Action not allowed');
+				}
+				await question.remove();
+				await quiz.save();
+
+				return 'Question deleted successfully';
 			} catch (err) {
 				throw new Error(err);
 			}

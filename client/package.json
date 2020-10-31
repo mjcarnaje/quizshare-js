@@ -3,8 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@apollo/client": "^3.2.5",
     "@fortawesome/fontawesome-free": "^5.15.1",
+    "apollo-link-context": "^1.0.20",
     "cra-template": "1.1.0",
+    "graphql": "^15.4.0",
     "moment": "^2.29.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
