@@ -1,11 +1,13 @@
 import React from 'react';
 import { useQuery, gql } from '@apollo/client';
+import Card from '../components/Card';
 
 const GET_ALL_QUIZZES = gql`
 	query {
 		getQuizzes {
 			id
 			title
+			description
 		}
 	}
 `;
@@ -17,7 +19,7 @@ const Home = () => {
 	return (
 		<>
 			{data.getQuizzes.map((quiz) => (
-				<div>{quiz.title}</div>
+				<Card />
 			))}
 		</>
 	);

@@ -8,6 +8,10 @@ const customTheme = {
 		montserrat: 'Montserrat, sans-serif',
 		inter: 'Inter, sans-serif',
 	},
+	colors: {
+		...theme.colors,
+		indigo: '#ebf4ff',
+	},
 };
 
 export default customTheme;
