@@ -14,7 +14,7 @@ import {
 import { setContext } from 'apollo-link-context';
 
 const httpLink = createHttpLink({
-	uri: 'http://localhost:1234',
+	uri: 'http://localhost:4000',
 });
 
 const setAutherizationLink = setContext(() => {});

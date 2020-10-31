@@ -11,7 +11,12 @@ function App() {
 	return (
 		<Router>
 			<Header />
-			<Box bg='blue.50' minHeight='100vh' pt='4rem' paddingX='4rem'>
+			<Box
+				minHeight='100vh'
+				pt='4rem'
+				paddingX='4rem'
+				backgroundColor='custombg'
+			>
 				<Switch>
 					<Route exact path='/home' component={Home} />
 					<Route exact path='/login' component={Login} />

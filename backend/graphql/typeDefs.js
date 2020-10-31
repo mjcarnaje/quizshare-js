@@ -19,7 +19,7 @@ module.exports = gql`
 		likes: [Like]
 		likeCount: Int
 		isPublic: Boolean
-		createdAt: String!
+		createdAt: String
 		author: User!
 	}
 	type User {
@@ -27,6 +27,7 @@ module.exports = gql`
 		email: String!
 		token: String!
 		username: String!
+		avatar: String
 		createdAt: String!
 	}
 	input Questions {
@@ -47,6 +48,7 @@ module.exports = gql`
 	type Mutation {
 		register(registerInput: RegisterInput!): User!
 		login(username: String!, password: String!): User!
+		addAvatar(picture: String!): String!
 		createQuiz(
 			title: String
 			description: String

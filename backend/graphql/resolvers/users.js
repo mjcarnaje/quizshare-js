@@ -6,6 +6,8 @@ const {
 } = require('../../utils/validators');
 const { UserInputError } = require('apollo-server');
 const User = require('../../models/User');
+const checkAuth = require('../../utils/checkAuth');
+const { cloudinary } = require('../../utils/cloudinary');
 
 module.exports = {
 	Mutation: {
@@ -95,6 +97,22 @@ module.exports = {
 				id: res._id,
 				token,
 			};
+		},
+		addAvatar: async (parent, { picture }, context) => {
+			const user = checkAuth(context);
+			try {
+				let avatar;
+				avatar = await cloudinary.uploader.upload(picture, {
+					upload_preset: 'dev_setups',
+				});
+				await User.updateOne(
+					{ _id: user.id },
+					{ $set: { avatar: avatar.url } }
+				);
+				return 'Picture Added';
+			} catch (err) {
+				throw new Error(err);
+			}
 		},
 	},
 };
