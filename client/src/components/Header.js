@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Box, Heading, Flex, Text, Button } from '@chakra-ui/core';
 import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import UserDropDown from './UserDropDown';
 
 const MenuItems = ({ children, to }) => (
 	<Link to={to}>
@@ -11,7 +13,8 @@ const MenuItems = ({ children, to }) => (
 );
 
 const Header = (props) => {
-	const [show, setShow] = React.useState(false);
+	const isAuth = useSelector((state) => state.auth.user);
+	const [show, setShow] = useState(false);
 	const handleToggle = () => setShow(!show);
 
 	return (
@@ -32,9 +35,11 @@ const Header = (props) => {
 			shadow='sm'
 		>
 			<Flex align='center' mr={5}>
-				<Heading as='h1' size='lg' fontWeight='sm' fontFamily='berkshire'>
-					QuizShare
-				</Heading>
+				<Link to='/home'>
+					<Heading as='h1' size='lg' fontWeight='sm' fontFamily='berkshire'>
+						QuizShare
+					</Heading>
+				</Link>
 			</Flex>
 
 			<Box display={{ base: 'block', md: 'none' }} onClick={handleToggle}>
@@ -64,32 +69,38 @@ const Header = (props) => {
 				width={{ base: 'full', md: 'auto' }}
 				fontFamily='inter'
 			>
-				<Link to='/register'>
-					<Button
-						bg='transparent'
-						border='1px'
-						fontSize='15px'
-						mt={{ base: 4, md: 0 }}
-						mr={6}
-						padding='1rem'
-						size='sm'
-					>
-						Sign Up
-					</Button>
-				</Link>
-				<Link to='/login'>
-					<Button
-						bg='transparent'
-						border='1px'
-						fontSize='15px'
-						mt={{ base: 4, md: 0 }}
-						mr={6}
-						padding='1rem'
-						size='sm'
-					>
-						Log in
-					</Button>
-				</Link>
+				{isAuth ? (
+					<UserDropDown />
+				) : (
+					<>
+						<Link to='/register'>
+							<Button
+								bg='transparent'
+								border='1px'
+								fontSize='15px'
+								mt={{ base: 4, md: 0 }}
+								mr={6}
+								padding='1rem'
+								size='sm'
+							>
+								Sign Up
+							</Button>
+						</Link>
+						<Link to='/login'>
+							<Button
+								bg='transparent'
+								border='1px'
+								fontSize='15px'
+								mt={{ base: 4, md: 0 }}
+								mr={6}
+								padding='1rem'
+								size='sm'
+							>
+								Log in
+							</Button>
+						</Link>
+					</>
+				)}
 			</Box>
 		</Flex>
 	);

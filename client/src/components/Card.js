@@ -1,45 +1,54 @@
 import React from 'react';
-import {
-	Avatar,
-	Box,
-	Divider,
-	Flex,
-	Heading,
-	Icon,
-	PseudoBox,
-	Stack,
-	Text,
-} from '@chakra-ui/core';
+import { Avatar, Box, Flex, Heading, PseudoBox, Text } from '@chakra-ui/core';
+import { useSelector } from 'react-redux';
 import moment from 'moment';
 
+import LikeButton from './LikeButton';
+import CommentButton from './CommentButton';
+import { Link } from 'react-router-dom';
+import MenuButtons from './MenuButtons';
+
 const Card = ({
-	createdAt,
-	avatar,
-	username,
-	title,
-	description,
-	likeCount,
+	quizData: {
+		id,
+		title,
+		description,
+		likes,
+		likeCount,
+		comments,
+		commentCount,
+		createdAt,
+		author: { avatar, username },
+	},
 }) => {
+	const user = useSelector((state) => state.auth.user);
 	return (
-		<Box
-			w='380px'
+		<PseudoBox
+			w='320px'
+			minH='180px'
 			rounded='8px'
 			boxShadow='sm'
-			backgroundColor='white'
-			margin='10px'
+			bg='white'
 			padding='8px'
 			display='flex'
 			flexDirection='column'
+			cursor='pointer'
+			_hover={{ bg: 'gray.50' }}
 		>
-			<Flex align='center' justify='space-between'>
-				<Box padding='4px' display='flex' alignItems='center'>
+			<Flex align='center' justify='space-between' as={Link} to={`/quiz/${id}`}>
+				<Box display='flex' alignItems='center'>
 					<Avatar name='Michael James' src={avatar} />
 					<Box marginLeft='8px'>
-						<Heading as='h2' size='sm' fontFamily='inter' fontWeight='semibold'>
+						<Heading
+							as='h2'
+							fontSize='12px'
+							fontFamily='inter'
+							fontWeight='semibold'
+						>
 							{username.toUpperCase()}
 						</Heading>
 						<Text
-							fontSize='sm'
+							fontSize='xs'
 							fontFamily='inter'
 							color='gray.300'
 							lineHeight='1'
@@ -52,84 +61,37 @@ const Card = ({
 				</Box>
 				<Heading
 					as='h2'
+					maxW='50%'
 					fontFamily='inter'
 					color='gray.700'
-					fontSize='20px'
-					p='12px'
+					fontSize='17px'
+					px='4px'
+					wordBreak='break-word'
+					textAlign='right'
 				>
 					{title}
 				</Heading>
 			</Flex>
-			<Box px='12px' py='5px'>
-				<Text fontFamily='inter' fontSize='16px'>
+			<Box px='12px' py='20px' as={Link} to={`/quiz/${id}`}>
+				<Text fontFamily='inter' fontSize='15px'>
 					{description}
 				</Text>
 			</Box>
-			<Box marginTop='auto' px='16px' display='flex' alignItems='center'>
-				<PseudoBox
-					as='div'
-					display='flex'
-					alignItems='center'
-					marginX='16px'
-					color='gray.600'
-					_hover={{ color: 'red.500' }}
-				>
-					<PseudoBox
-						as='div'
-						_hover={{ bg: 'red.100' }}
-						display='flex'
-						alignItems='center'
-						justifyContent='center'
-						h={8}
-						w={8}
-						borderRadius={50}
-					>
-						<Icon
-							name='heart-outline'
-							size='18px'
-							_hover={{ color: 'inherit' }}
-						/>
-					</PseudoBox>
-					<Text
-						fontFamily='inter'
-						fontWeight='semibold'
-						color='inherit'
-						marginLeft='8px'
-					>
-						{likeCount}
-					</Text>
-				</PseudoBox>
-				<PseudoBox
-					as='div'
-					display='flex'
-					alignItems='center'
-					marginX='16px'
-					color='gray.600'
-					_hover={{ color: 'blue.500' }}
-				>
-					<PseudoBox
-						as='div'
-						_hover={{ bg: 'blue.100' }}
-						display='flex'
-						alignItems='center'
-						justifyContent='center'
-						h={8}
-						w={8}
-						borderRadius={50}
-					>
-						<Icon name='comment' size='18px' _hover={{ color: 'inherit' }} />
-					</PseudoBox>
-					<Text
-						fontFamily='inter'
-						fontWeight='semibold'
-						color='inherit'
-						marginLeft='8px'
-					>
-						0
-					</Text>
-				</PseudoBox>
+			<Box
+				display='flex'
+				mt='auto'
+				px='16px'
+				alignItems='center'
+				justifyContent='center'
+				position='relative'
+			>
+				<LikeButton user={user} quiz={{ likeCount, id, likes }} />
+				<CommentButton user={user} quiz={{ commentCount, id, comments }} />
+				<Box position='absolute' right='0'>
+					{user && user.username === username && <MenuButtons quizId={id} />}
+				</Box>
 			</Box>
-		</Box>
+		</PseudoBox>
 	);
 };
 

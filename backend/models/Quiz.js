@@ -24,6 +24,16 @@ const quizSchema = new Schema({
 			createdAt: String,
 		},
 	],
+	comments: [
+		{
+			author: {
+				type: Schema.Types.ObjectId,
+				ref: 'users',
+			},
+			body: String,
+			createdAt: String,
+		},
+	],
 	createdAt: {
 		type: Date,
 		default: Date.now,

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
 	FormControl,
 	FormLabel,
@@ -9,16 +9,73 @@ import {
 	Text,
 	Stack,
 	Button,
+	useToast,
 } from '@chakra-ui/core';
-import { Link, Redirect } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { useMutation, gql } from '@apollo/client';
+import { Link } from 'react-router-dom';
+import { loginUser } from '../store/authSlice';
 
 import signin from '../assets/svg/sign_in.svg';
 
-const Login = () => {
+const LOGIN_USER = gql`
+	mutation login($username: String!, $password: String!) {
+		login(username: $username, password: $password) {
+			id
+			email
+			token
+			username
+			avatar
+			createdAt
+		}
+	}
+`;
+
+const Login = (props) => {
+	const [values, setValues] = useState({
+		username: '',
+		password: '',
+	});
+
+	const dispatch = useDispatch();
+	const toast = useToast();
+
+	const onChange = (e) => {
+		setValues({ ...values, [e.target.name]: e.target.value });
+	};
+
+	const [login, { loading }] = useMutation(LOGIN_USER, {
+		update(_, { data: { login: userData } }) {
+			dispatch(loginUser(userData));
+
+			props.history.push('/home');
+		},
+		onError(err) {
+			const errors = Object.values(err.graphQLErrors[0].extensions.errors);
+			errors.forEach((error) =>
+				toast({
+					position: 'bottom-right',
+					description: `${error}`,
+					status: 'error',
+					isClosable: true,
+				})
+			);
+		},
+		variables: values,
+	});
+
+	const onSubmit = (e) => {
+		e.preventDefault();
+		login();
+	};
+
+	const { username, password } = values;
+
 	return (
-		<Flex
+		<Box
+			display='flex'
 			bg='white'
-			width='75%'
+			width={{ md: '50%', lg: '75%' }}
 			marginX='auto'
 			justifyContent='center'
 			alignItems='center'
@@ -28,7 +85,7 @@ const Login = () => {
 			rounded='md'
 			shadow='md'
 		>
-			<Box width={5 / 12} height='100%'>
+			<Box width={{ md: '100%', lg: 5 / 12 }} height='100%'>
 				<Stack spacing={1} paddingBottom='2rem'>
 					<Text
 						fontSize='4xl'
@@ -42,38 +99,47 @@ const Login = () => {
 						Sign in to your QuizShare account
 					</Text>
 				</Stack>
+
 				<Stack fontFamily='inter' spacing={2} paddingX={4}>
-					<FormControl>
-						<FormLabel htmlFor='username' fontSize={14} fontWeight='medium'>
-							Username
-						</FormLabel>
-						<Input
-							type='text'
-							id='username'
-							focusBorderColor='purple.500'
-							placeholder='Enter password'
-						/>
-					</FormControl>
-					<FormControl>
-						<FormLabel htmlFor='password' fontSize={14} fontWeight='medium'>
-							Password
-						</FormLabel>
-						<Input
-							type='password'
-							id='password'
-							focusBorderColor='purple.500'
-							placeholder='Enter password'
-						/>
-					</FormControl>
-					<Button
-						mt={4}
-						variantColor='purple'
-						type='submit'
-						loadingText='Logging in'
-					>
-						Login
-					</Button>
-					<Flex justifyContent='center' alignItems='center'>
+					<form onSubmit={(e) => onSubmit(e)}>
+						<FormControl>
+							<FormLabel htmlFor='username' fontSize={14} fontWeight='medium'>
+								Username
+							</FormLabel>
+							<Input
+								type='text'
+								name='username'
+								onChange={onChange}
+								value={username}
+								focusBorderColor='purple.500'
+								placeholder='Enter username'
+							/>
+						</FormControl>
+						<FormControl>
+							<FormLabel htmlFor='password' fontSize={14} fontWeight='medium'>
+								Password
+							</FormLabel>
+							<Input
+								type='password'
+								name='password'
+								onChange={onChange}
+								value={password}
+								focusBorderColor='purple.500'
+								placeholder='Enter password'
+							/>
+						</FormControl>
+						<Button
+							type='submit'
+							mt={4}
+							w='100%'
+							variantColor='purple'
+							isLoading={loading ? true : false}
+							loadingText='Logging in'
+						>
+							Login
+						</Button>
+					</form>
+					<Flex justifyContent='center' alignItems='center' mt={2}>
 						<Text fontFamily='inter' fontSize='sm'>
 							Don't have an account?
 						</Text>
@@ -89,10 +155,14 @@ const Login = () => {
 					</Flex>
 				</Stack>
 			</Box>
-			<Box width={7 / 12} paddingX='2rem'>
+			<Box
+				display={{ base: 'none', lg: 'block' }}
+				width={7 / 12}
+				paddingX='2rem'
+			>
 				<Image size='100%' objectFit='cover' src={signin} alt='Sign in Image' />
 			</Box>
-		</Flex>
+		</Box>
 	);
 };
 

@@ -10,25 +10,75 @@ import {
 	Stack,
 	Button,
 } from '@chakra-ui/core';
-import { Link, Redirect } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { gql, useMutation } from '@apollo/client';
+import { useDispatch } from 'react-redux';
+import { loginUser } from '../store/authSlice';
 
 import signup from '../assets/svg/sign_up.svg';
 
-const Register = () => {
+const REGISTER_USER = gql`
+	mutation register(
+		$username: String!
+		$email: String!
+		$password: String!
+		$confirmPassword: String!
+	) {
+		register(
+			registerInput: {
+				username: $username
+				email: $email
+				password: $password
+				confirmPassword: $confirmPassword
+			}
+		) {
+			id
+			email
+			username
+			createdAt
+			token
+		}
+	}
+`;
+
+const Register = (props) => {
+	const dispatch = useDispatch();
 	const [secondStep, setsecondStep] = useState(false);
+	const [values, setValues] = useState({
+		username: '',
+		email: '',
+		password: '',
+		confirmPassword: '',
+	});
+
+	const onChange = (e) => {
+		setValues({ ...values, [e.target.name]: e.target.value });
+	};
+
+	const [register, { loading }] = useMutation(REGISTER_USER, {
+		update(_, { data: { register: userData } }) {
+			props.history.push('/home');
+			dispatch(loginUser(userData));
+		},
+		onError(err) {
+			console.log(err.graphQLErrors[0].extensions.errors);
+		},
+		variables: values,
+	});
 
 	const buttonLoginContinue = () => {
 		if (secondStep) {
-			console.log('login');
+			register();
 		} else {
 			setsecondStep(true);
 		}
 	};
-
+	const { username, email, password, confirmPassword } = values;
 	return (
-		<Flex
+		<Box
+			display='flex'
 			bg='white'
-			width='75%'
+			width={{ md: '50%', lg: '75%' }}
 			marginX='auto'
 			justifyContent='center'
 			alignItems='center'
@@ -38,7 +88,7 @@ const Register = () => {
 			rounded='md'
 			shadow='md'
 		>
-			<Box width={5 / 12} height='100%'>
+			<Box width={{ md: '100%', lg: 5 / 12 }} height='100%'>
 				<Stack spacing={1} paddingBottom='1rem'>
 					<Text
 						fontSize='4xl'
@@ -87,7 +137,9 @@ const Register = () => {
 								</FormLabel>
 								<Input
 									type='password'
-									id='password'
+									name='password'
+									onChange={onChange}
+									value={password}
 									focusBorderColor='purple.500'
 									placeholder='Enter password'
 								/>
@@ -103,7 +155,9 @@ const Register = () => {
 								</FormLabel>
 								<Input
 									type='password'
-									id='confirmPassword'
+									name='confirmPassword'
+									onChange={onChange}
+									value={confirmPassword}
 									focusBorderColor='purple.500'
 									placeholder='Enter Confirm password'
 								/>
@@ -122,7 +176,9 @@ const Register = () => {
 								</FormLabel>
 								<Input
 									type='text'
-									id='username'
+									name='username'
+									onChange={onChange}
+									value={username}
 									focusBorderColor='purple.500'
 									placeholder='Enter username'
 								/>
@@ -138,7 +194,9 @@ const Register = () => {
 								</FormLabel>
 								<Input
 									type='text'
-									id='email'
+									name='email'
+									onChange={onChange}
+									value={email}
 									focusBorderColor='purple.500'
 									placeholder='Enter email'
 								/>
@@ -149,7 +207,8 @@ const Register = () => {
 						mt={4}
 						variantColor='purple'
 						type='submit'
-						loadingText='Logging in'
+						loadingText='Registering in'
+						isLoading={secondStep && loading ? true : false}
 						onClick={buttonLoginContinue}
 					>
 						{secondStep ? 'Register' : 'Continue'}
@@ -170,10 +229,14 @@ const Register = () => {
 					</Flex>
 				</Stack>
 			</Box>
-			<Box width={7 / 12} paddingX='2rem'>
+			<Box
+				display={{ base: 'none', lg: 'block' }}
+				width={7 / 12}
+				paddingX='2rem'
+			>
 				<Image size='100%' objectFit='cover' src={signup} alt='Sign in Image' />
 			</Box>
-		</Flex>
+		</Box>
 	);
 };
 

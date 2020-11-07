@@ -1,50 +1,41 @@
 import React from 'react';
-import { useQuery, gql } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import Card from '../components/Card';
-import { Box, Spinner } from '@chakra-ui/core';
-
-const GET_ALL_QUIZZES = gql`
-	query {
-		getQuizzes {
-			id
-			title
-			description
-			createdAt
-			likeCount
-			author {
-				avatar
-				username
-			}
-		}
-	}
-`;
+import { Box, Heading, Spinner, Divider, Grid } from '@chakra-ui/core';
+import { GET_ALL_QUIZZES } from '../utils/graphql';
+import { Link } from 'react-router-dom';
 
 const Home = () => {
-	const { loading, error, data } = useQuery(GET_ALL_QUIZZES);
+	const { loading, error, data: { getQuizzes: quizzesData } = {} } = useQuery(
+		GET_ALL_QUIZZES
+	);
 	if (loading)
 		return (
-			<Spinner
-				thickness='4px'
-				speed='0.65s'
-				emptyColor='gray.200'
-				color='blue.500'
-				size='xl'
-			/>
+			<Spinner thickness='8px' speed='.7s' color='purple.500' size='70px' />
 		);
 	if (error) return <p>Error :</p>;
 	return (
 		<>
-			<Box display='flex' flexWrap='wrap'>
-				{data.getQuizzes.map((quiz) => (
-					<Card
-						createdAt={quiz.createdAt}
-						avatar={quiz.author.avatar}
-						username={quiz.author.username}
-						title={quiz.title}
-						description={quiz.description}
-						likeCount={quiz.likeCount}
-					/>
-				))}
+			<Box h='full' px='72px'>
+				<Heading
+					as='h1'
+					py='1rem'
+					fontSize='3rem'
+					letterSpacing='3px'
+					textAlign='center'
+					fontFamily='inter'
+					fontWeight='bold'
+					color='gray.700'
+					textTransform='uppercase'
+				>
+					All Quizzes
+				</Heading>
+				<Divider borderColor='purple.400' w='25%' m='auto' />
+				<Grid h='auto' w='full' mt={5} templateColumns='repeat(3, 1fr)' gap={4}>
+					{quizzesData.map((quiz) => {
+						return <Card key={quiz.id} quizData={quiz} />;
+					})}
+				</Grid>
 			</Box>
 		</>
 	);
