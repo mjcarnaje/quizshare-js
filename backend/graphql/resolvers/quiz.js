@@ -28,9 +28,29 @@ module.exports = {
 				throw new Error(err);
 			}
 		},
+		getUserQuizzes: async (parent, { userId }, context) => {
+			const user = checkAuth(context);
+			try {
+				const quizzes = await Quiz.find();
+				if (quizzes) {
+					const userQuizzes = quizzes.filter(
+						(q) => q.author.toString() === user.id.toString()
+					);
+					return userQuizzes;
+				} else {
+					throw new Error('Quiz not found');
+				}
+			} catch (err) {
+				throw new Error();
+			}
+		},
 	},
 	Mutation: {
-		createQuiz: async (parent, { title, description, questions }, context) => {
+		createQuiz: async (
+			parent,
+			{ quizInput: { title, description, questions } },
+			context
+		) => {
 			const user = checkAuth(context);
 
 			if (description.trim() === '') {

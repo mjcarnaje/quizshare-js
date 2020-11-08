@@ -90,6 +90,7 @@ const SingleQuiz = ({ match: { params }, history }) => {
 				borderTopLeftRadius='8px'
 				borderTopRightRadius='8px'
 				borderBottomWidth='1px'
+				boxShadow='sm'
 			>
 				<PseudoBox
 					as={Link}
@@ -123,6 +124,7 @@ const SingleQuiz = ({ match: { params }, history }) => {
 				px='15px'
 				pt='15px'
 				pb='8px'
+				boxShadow='sm'
 			>
 				<Box display='flex' w='full'>
 					<Avatar name='Dan Abrahmov' src={`${avatar}`} />

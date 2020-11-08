@@ -10,10 +10,14 @@ import {
 } from '@chakra-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
 import { logoutUser } from '../store/authSlice';
+import { Link } from 'react-router-dom';
+import { useApolloClient } from '@apollo/client';
 
 const UserDropDown = () => {
 	const dispatch = useDispatch();
 	const user = useSelector((state) => state.auth.user);
+	const client = useApolloClient();
+
 	return (
 		<>
 			<Menu>
@@ -26,10 +30,21 @@ const UserDropDown = () => {
 				</MenuButton>
 				<MenuList>
 					<MenuGroup>
-						<MenuItem> Profile</MenuItem>
+						<MenuItem as={Link} to='/me/profile'>
+							Profile
+						</MenuItem>
+						<MenuItem as={Link} to='/me/quizzes'>
+							Quizzes
+						</MenuItem>
 					</MenuGroup>
 					<MenuDivider />
-					<MenuItem as='button' onClick={() => dispatch(logoutUser())}>
+					<MenuItem
+						as='button'
+						onClick={() => {
+							client.clearStore();
+							dispatch(logoutUser());
+						}}
+					>
 						Logout
 					</MenuItem>
 				</MenuList>

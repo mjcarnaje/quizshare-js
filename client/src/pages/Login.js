@@ -17,6 +17,7 @@ import { Link } from 'react-router-dom';
 import { loginUser } from '../store/authSlice';
 
 import signin from '../assets/svg/sign_in.svg';
+import { GET_USER_QUIZZES } from '../utils/graphql';
 
 const LOGIN_USER = gql`
 	mutation login($username: String!, $password: String!) {
@@ -45,21 +46,22 @@ const Login = (props) => {
 	};
 
 	const [login, { loading }] = useMutation(LOGIN_USER, {
-		update(_, { data: { login: userData } }) {
+		update(cache, { data: { login: userData } }) {
 			dispatch(loginUser(userData));
-
 			props.history.push('/home');
 		},
 		onError(err) {
-			const errors = Object.values(err.graphQLErrors[0].extensions.errors);
-			errors.forEach((error) =>
-				toast({
-					position: 'bottom-right',
-					description: `${error}`,
-					status: 'error',
-					isClosable: true,
-				})
-			);
+			if (err.graphQLErrors[0]) {
+				const errors = Object.values(err.graphQLErrors[0].extensions.errors);
+				errors.forEach((error) =>
+					toast({
+						position: 'bottom-right',
+						description: `${error}`,
+						status: 'error',
+						isClosable: true,
+					})
+				);
+			}
 		},
 		variables: values,
 	});

@@ -22,11 +22,12 @@ const CommentBox = ({
 					<Box
 						my='10px'
 						bg='white'
-						my='5px'
 						borderRadius='8px'
 						p='15px'
 						display='flex'
 						opacity={styles.opacity}
+						boxShadow='sm'
+						position='relative'
 					>
 						<Avatar name='Dan Abrahmov' src={`${avatar}`} />
 						<Box ml='10px'>
@@ -60,7 +61,7 @@ const CommentBox = ({
 							</Text>
 						</Box>
 						{user.username === username && (
-							<Box ml='auto'>
+							<Box ml='auto' position='absolute' right='4px' top='4px'>
 								<MenuButtons deleteOnly commentId={id} quizId={quizId} />
 							</Box>
 						)}

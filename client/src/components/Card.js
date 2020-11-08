@@ -24,7 +24,6 @@ const Card = ({
 	const user = useSelector((state) => state.auth.user);
 	return (
 		<PseudoBox
-			w='320px'
 			minH='180px'
 			rounded='8px'
 			boxShadow='sm'

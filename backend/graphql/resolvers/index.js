@@ -1,5 +1,6 @@
 const usersResolvers = require('./users');
 const quizResolvers = require('./quiz');
+const profileResolvers = require('./profile');
 const User = require('../../models/User');
 
 module.exports = {
@@ -9,6 +10,7 @@ module.exports = {
 	Mutation: {
 		...usersResolvers.Mutation,
 		...quizResolvers.Mutation,
+		...profileResolvers.Mutation,
 	},
 	Comment: {
 		author: async (parent) => {

@@ -3,12 +3,12 @@ import { useQuery } from '@apollo/client';
 import Card from '../components/Card';
 import { Box, Heading, Spinner, Divider, Grid } from '@chakra-ui/core';
 import { GET_ALL_QUIZZES } from '../utils/graphql';
-import { Link } from 'react-router-dom';
 
 const Home = () => {
 	const { loading, error, data: { getQuizzes: quizzesData } = {} } = useQuery(
 		GET_ALL_QUIZZES
 	);
+
 	if (loading)
 		return (
 			<Spinner thickness='8px' speed='.7s' color='purple.500' size='70px' />
@@ -16,7 +16,7 @@ const Home = () => {
 	if (error) return <p>Error :</p>;
 	return (
 		<>
-			<Box h='full' px='72px'>
+			<Box h='full' px='72px' pb='4rem'>
 				<Heading
 					as='h1'
 					py='1rem'

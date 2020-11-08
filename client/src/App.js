@@ -11,6 +11,7 @@ import SingleQuiz from './pages/SingleQuiz';
 
 import PublicRoute from './utils/PublicRoute';
 import PrivateRoute from './utils/PrivateRoute';
+import User from './pages/User';
 
 function App() {
 	return (
@@ -29,6 +30,7 @@ function App() {
 				<Switch>
 					<Route exact path='/home' component={Home} />
 					<PrivateRoute exact path='/quiz/:id' component={SingleQuiz} />
+					<PrivateRoute path='/me' component={User} />
 					<PublicRoute exact path='/login' component={Login} />
 					<PublicRoute exact path='/register' component={Register} />
 				</Switch>
