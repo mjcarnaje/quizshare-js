@@ -3,6 +3,17 @@ const Profile = require('../../models/Profile');
 const checkAuth = require('../../utils/checkAuth');
 
 module.exports = {
+	Query: {
+		getProfileUser: async (parent, args, context) => {
+			const user = checkAuth(context);
+			try {
+				const profile = await Profile.findById(user.id);
+				return profile;
+			} catch (err) {
+				throw new Error(err);
+			}
+		},
+	},
 	Mutation: {
 		createAndUpdateProfile: async (
 			parent,

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Avatar, Box, Text, Button } from '@chakra-ui/core';
 import { useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
 
 const ProfileBanner = () => {
 	const { avatar, username, email } = useSelector((state) => state.auth.user);
@@ -37,9 +38,6 @@ const ProfileBanner = () => {
 					</Text>
 				</Box>
 			</Box>
-			<Button variantColor='purple' variant='ghost'>
-				Edit Profile
-			</Button>
 		</Box>
 	);
 };

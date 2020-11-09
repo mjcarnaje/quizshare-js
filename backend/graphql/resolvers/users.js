@@ -3,13 +3,21 @@ const { generateToken } = require('../../utils/generateToken');
 const {
 	validateRegisterInput,
 	validateLoginInput,
+	checkIfTaken,
 } = require('../../utils/validators');
 const { UserInputError } = require('apollo-server');
 const User = require('../../models/User');
 const checkAuth = require('../../utils/checkAuth');
-const { cloudinary } = require('../../utils/cloudinary');
+const picUploader = require('../../utils/picUploader');
 
 module.exports = {
+	Query: {
+		currentUser: async (parent, args, context) => {
+			const user = checkAuth(context);
+			const loadedUser = await User.findById(user.id);
+			return loadedUser;
+		},
+	},
 	Mutation: {
 		login: async (parent, { username, password }) => {
 			const { valid, errors } = validateLoginInput(username, password);
@@ -44,6 +52,8 @@ module.exports = {
 			parent,
 			{ registerInput: { username, email, password, confirmPassword } }
 		) => {
+			const currentUserInfo = await User.find();
+
 			const { valid, errors } = validateRegisterInput(
 				username,
 				email,
@@ -55,29 +65,7 @@ module.exports = {
 				throw new UserInputError('Errors', { errors });
 			}
 
-			const user_username = await User.findOne({ username });
-			const user_email = await User.findOne({ email });
-
-			if (user_email && user_username) {
-				throw new UserInputError('Both username and email is taken', {
-					errors: {
-						email: 'This email is already taken',
-						username: 'This username is already taken',
-					},
-				});
-			} else if (user_username) {
-				throw new UserInputError('Username is taken', {
-					errors: {
-						username: 'This username is already taken',
-					},
-				});
-			} else if (user_email) {
-				throw new UserInputError('Email is taken', {
-					errors: {
-						email: 'This email is already taken',
-					},
-				});
-			}
+			checkIfTaken(currentUserInfo, username, email);
 
 			password = await bcrypt.hash(password, 12);
 
@@ -111,6 +99,14 @@ module.exports = {
 			context
 		) => {
 			const user = checkAuth(context);
+			const currentUserInfo = await User.findById(user.id);
+
+			if (currentUserInfo.email === email) {
+				email = null;
+			}
+			if (currentUserInfo.username === username) {
+				username = null;
+			}
 
 			const { valid, errors } = validateRegisterInput(
 				username,
@@ -127,30 +123,7 @@ module.exports = {
 
 			try {
 				if (username || email) {
-					const user_username = await User.findOne({ username });
-					const user_email = await User.findOne({ email });
-
-					if (user_email && user_username) {
-						throw new UserInputError('Both username and email is taken', {
-							errors: {
-								email: 'This email is already taken',
-								username: 'This username is already taken',
-							},
-						});
-					} else if (user_username) {
-						throw new UserInputError('Username is taken', {
-							errors: {
-								username: 'This username is already taken',
-							},
-						});
-					} else if (user_email) {
-						throw new UserInputError('Email is taken', {
-							errors: {
-								email: 'This email is already taken',
-							},
-						});
-					}
-
+					checkIfTaken(currentUserInfo, user, email);
 					if (username) userFields.username = username;
 					if (email) userFields.email = email;
 				}
@@ -162,10 +135,8 @@ module.exports = {
 				let userData = await User.findById(user.id);
 
 				if (avatar) {
-					const picture = await cloudinary.uploader.upload(avatar, {
-						upload_preset: 'dev_setups',
-					});
-					userFields.avatar = picture.url;
+					const pic = await picUploader(avatar);
+					userFields.avatar = pic;
 				}
 
 				if (userData) {
@@ -175,7 +146,7 @@ module.exports = {
 						{ new: true }
 					);
 
-					return 'User Updated';
+					return userData;
 				}
 			} catch (err) {
 				throw new Error(err);
@@ -184,13 +155,10 @@ module.exports = {
 		addAvatar: async (parent, { picture }, context) => {
 			const user = checkAuth(context);
 			try {
-				const avatar = await cloudinary.uploader.upload(picture, {
-					upload_preset: 'dev_setups',
-				});
-				await User.updateOne(
-					{ _id: user.id },
-					{ $set: { avatar: avatar.url } }
-				);
+				const pic = await picUploader(picture);
+
+				await User.updateOne({ _id: user.id }, { $set: { avatar: pic } });
+
 				return 'Picture Added';
 			} catch (err) {
 				throw new Error(err);

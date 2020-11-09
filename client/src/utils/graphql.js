@@ -61,3 +61,15 @@ export const GET_USER_QUIZZES = gql`
 		}
 	}
 `;
+
+export const RELOAD_USER_INFO = gql`
+	query {
+		currentUser {
+			id
+			email
+			username
+			avatar
+			createdAt
+		}
+	}
+`;

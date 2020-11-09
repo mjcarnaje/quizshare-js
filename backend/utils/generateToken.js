@@ -6,7 +6,6 @@ module.exports.generateToken = (user) => {
 			id: user.id,
 			email: user.email,
 			username: user.username,
-			avatar: user.avatar,
 		},
 		process.env.SECRET_KEY,
 		{ expiresIn: 60 * 60 * 60 }

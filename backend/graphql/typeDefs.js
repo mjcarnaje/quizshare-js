@@ -4,7 +4,7 @@ module.exports = gql`
 	type User {
 		id: ID!
 		email: String!
-		token: String!
+		token: String
 		username: String!
 		avatar: String
 		createdAt: String!
@@ -93,13 +93,15 @@ module.exports = gql`
 		getQuiz(quizId: ID!): Quiz!
 		getUserQuizzes: [Quiz]!
 
-		loadUser: User!
+		currentUser: User!
+
+		getProfileUser: Profile!
 	}
 	type Mutation {
 		register(registerInput: RegisterInput!): User!
 		login(username: String!, password: String!): User!
 
-		updateAccount(updateAccountInput: UpdateAccountInput!): String!
+		updateAccount(updateAccountInput: UpdateAccountInput!): User!
 		addAvatar(picture: String!): String!
 
 		createQuiz(quizInput: QuizInput!): Quiz!

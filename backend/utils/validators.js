@@ -42,8 +42,33 @@ module.exports.validateLoginInput = (username, password) => {
 		errors.password = 'Password must not be empty';
 	}
 
-	return {
-		errors,
-		valid: Object.keys(errors).length < 1,
-	};
+	return { errors, valid: Object.keys(errors).length < 1 };
+};
+
+module.exports.checkIfTaken = (currentUserInfo, username, email) => {
+	const errors = {};
+
+	const emailTaken = currentUserInfo.email === email;
+	const usernameTaken = currentUserInfo.username === username;
+
+	if (emailTaken && usernameTaken) {
+		throw new UserInputError('Both username and email is taken', {
+			errors: {
+				email: 'This email is already taken',
+				username: 'This username is already taken',
+			},
+		});
+	} else if (usernameTaken) {
+		throw new UserInputError('Username is taken', {
+			errors: {
+				username: 'This username is already taken',
+			},
+		});
+	} else if (emailTaken) {
+		throw new UserInputError('Email is taken', {
+			errors: {
+				email: 'This email is already taken',
+			},
+		});
+	}
 };

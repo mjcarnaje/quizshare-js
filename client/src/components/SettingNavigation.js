@@ -24,11 +24,21 @@ const SettingNavigation = ({ url }) => {
 						fontFamily='inter'
 						fontSize='17px'
 						color='purple.600'
-						fontWeight={isActive === item.toLowerCase() ? 'semibold' : '300'}
+						fontWeight={
+							isActive === item.toLowerCase() ||
+							isActive.includes(item.toLowerCase())
+								? 'semibold'
+								: '300'
+						}
 						to={`${url}/${item.toLowerCase()}`}
 						borderTopWidth='1px'
 						borderRadius='8px'
-						bg={isActive === item.toLowerCase() ? 'gray.50' : ''}
+						bg={
+							isActive === item.toLowerCase() ||
+							isActive.includes(item.toLowerCase())
+								? 'white'
+								: ''
+						}
 						_first={{ borderTopWidth: 0 }}
 					>
 						{item}

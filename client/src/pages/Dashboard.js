@@ -10,8 +10,9 @@ import {
 	Route,
 	useRouteMatch,
 } from 'react-router-dom';
+import EditProfile from '../components/AccountInfoEdit';
 
-const User = () => {
+const Dashboard = () => {
 	let { path, url } = useRouteMatch();
 
 	return (
@@ -32,6 +33,7 @@ const User = () => {
 					<Box>
 						<Switch>
 							<Route exact path='/me/profile' component={MyProfile} />
+							<Route exact path='/me/profile/edit' component={EditProfile} />
 							<Route exact path='/me/quizzes' component={MyQuizzes} />
 						</Switch>
 					</Box>
@@ -41,4 +43,4 @@ const User = () => {
 	);
 };
 
-export default User;
+export default Dashboard;

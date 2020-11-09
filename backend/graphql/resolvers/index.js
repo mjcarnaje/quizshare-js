@@ -6,6 +6,8 @@ const User = require('../../models/User');
 module.exports = {
 	Query: {
 		...quizResolvers.Query,
+		...usersResolvers.Query,
+		...profileResolvers.Query,
 	},
 	Mutation: {
 		...usersResolvers.Mutation,
