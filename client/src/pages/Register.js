@@ -9,6 +9,7 @@ import {
 	Text,
 	Stack,
 	Button,
+	useToast,
 } from '@chakra-ui/core';
 import { Link } from 'react-router-dom';
 import { gql, useMutation } from '@apollo/client';
@@ -42,6 +43,7 @@ const REGISTER_USER = gql`
 `;
 
 const Register = (props) => {
+	const toast = useToast();
 	const dispatch = useDispatch();
 	const [secondStep, setsecondStep] = useState(false);
 	const [values, setValues] = useState({
@@ -61,7 +63,17 @@ const Register = (props) => {
 			dispatch(loginUser(userData));
 		},
 		onError(err) {
-			console.log(err.graphQLErrors[0].extensions.errors);
+			if (err.graphQLErrors[0]) {
+				const errors = Object.values(err.graphQLErrors[0].extensions.errors);
+				errors.forEach((error) =>
+					toast({
+						position: 'bottom-right',
+						description: `${error}`,
+						status: 'error',
+						isClosable: true,
+					})
+				);
+			}
 		},
 		variables: values,
 	});

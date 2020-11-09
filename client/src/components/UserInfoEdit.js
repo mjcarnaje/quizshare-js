@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
 	Avatar,
 	Box,
@@ -13,12 +13,128 @@ import {
 	Select,
 	Stack,
 	Text,
+	useToast,
 } from '@chakra-ui/core';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { gql, useMutation } from '@apollo/client';
+import { GET_PROFILE_INFO } from '../utils/graphql';
+import { Redirect } from 'react-router-dom';
 
-const UserInfo = () => {
+const UPDATE_PROFILE_INFO = gql`
+	mutation createAndUpdateProfile(
+		$firstName: String
+		$lastName: String
+		$birthday: String
+		$country: String
+		$facebook: String
+		$twitter: String
+		$instagram: String
+		$youtube: String
+	) {
+		createAndUpdateProfile(
+			profileInput: {
+				firstName: $firstName
+				lastName: $lastName
+				birthday: $birthday
+				country: $country
+				facebook: $facebook
+				twitter: $twitter
+				instagram: $instagram
+				youtube: $youtube
+			}
+		) {
+			id
+			user
+			firstName
+			lastName
+			birthday
+			country
+			social {
+				facebook
+				twitter
+				instagram
+				youtube
+			}
+		}
+	}
+`;
+
+const UserInfoEdit = ({ profileData, setIsEditUserInfo }) => {
 	const { avatar, username, email } = useSelector((state) => state.auth.user);
+	const toast = useToast();
+	const dispatch = useDispatch();
 
+	const [values, setValues] = useState({
+		firstName: '',
+		lastName: '',
+		birthday: '',
+		country: '',
+		facebook: '',
+		twitter: '',
+		instagram: '',
+		youtube: '',
+	});
+
+	const onChange = (e) => {
+		setValues({ ...values, [e.target.name]: e.target.value });
+	};
+
+	const [updateUser, { loading }] = useMutation(UPDATE_PROFILE_INFO, {
+		update(cache, { data: { createAndUpdateProfile: profile } }) {
+			const data = cache.readQuery({
+				query: GET_PROFILE_INFO,
+			});
+			cache.writeQuery({
+				query: GET_PROFILE_INFO,
+				data: data,
+			});
+			toast({
+				title: 'Profile Updated',
+				description: 'Your profile information is now updated',
+				status: 'success',
+				duration: 5000,
+				isClosable: true,
+				position: 'bottom-left',
+			});
+			setIsEditUserInfo(false);
+		},
+		onError(err) {
+			console.log(err.graphQLErrors[0].extensions.errors);
+		},
+		variables: values,
+	});
+
+	const onSubmit = (e) => {
+		e.preventDefault();
+		updateUser();
+	};
+
+	useEffect(() => {
+		if (profileData) {
+			const profileInputs = { ...values };
+
+			for (const i in profileData) {
+				if (i in profileInputs) profileInputs[i] = profileData[i];
+			}
+
+			for (const i in profileData.social) {
+				if (i in profileInputs) profileInputs[i] = profileData.social[i];
+			}
+
+			setValues(profileInputs);
+		}
+	}, [profileData]);
+
+	const {
+		firstName,
+		lastName,
+		birthday,
+		country,
+		facebook,
+		twitter,
+		instagram,
+		youtube,
+	} = values;
 	return (
 		<>
 			<Box py='16px' px='32px'>
@@ -35,13 +151,15 @@ const UserInfo = () => {
 						</FormLabel>
 						<Input
 							type='text'
-							id='firstName'
+							name='firstName'
 							size='lg'
 							fontFamily='inter'
 							fontWeight='400'
 							bg='gray.50'
 							focusBorderColor='purple.500'
 							placeholder='Enter first name'
+							onChange={onChange}
+							value={firstName || ''}
 						/>
 					</FormControl>
 					<FormControl py='8px' ml='1'>
@@ -56,13 +174,15 @@ const UserInfo = () => {
 						</FormLabel>
 						<Input
 							type='text'
-							id='lastName'
+							name='lastName'
 							size='lg'
 							fontFamily='inter'
 							fontWeight='400'
 							bg='gray.50'
 							focusBorderColor='purple.500'
 							placeholder='Enter last Name'
+							onChange={onChange}
+							value={lastName || ''}
 						/>
 					</FormControl>
 				</Flex>
@@ -78,7 +198,7 @@ const UserInfo = () => {
 					</FormLabel>
 					<Input
 						type='date'
-						id='birthday'
+						name='birthday'
 						size='lg'
 						fontFamily='inter'
 						fontWeight='400'
@@ -86,6 +206,8 @@ const UserInfo = () => {
 						w='60%'
 						focusBorderColor='purple.500'
 						placeholder='Enter birthday'
+						onChange={onChange}
+						value={birthday || ''}
 					/>
 				</FormControl>
 				<FormControl py='8px'>
@@ -100,6 +222,7 @@ const UserInfo = () => {
 					</FormLabel>
 					<Select
 						placeholder='Select country'
+						name='country'
 						w='60%'
 						size='lg'
 						fontFamily='inter'
@@ -107,6 +230,8 @@ const UserInfo = () => {
 						bg='gray.50'
 						w='60%'
 						focusBorderColor='purple.500'
+						onChange={onChange}
+						value={country || ''}
 					>
 						<option value='Philippines'>Philippines</option>
 						<option value='South Korea'>South Korea</option>
@@ -129,24 +254,30 @@ const UserInfo = () => {
 							<Icon name='facebook' size='36px' color='#3b5999' />
 							<Input
 								type='text'
+								name='facebook'
 								size='lg'
 								fontFamily='inter'
 								fontWeight='400'
 								bg='gray.50'
 								focusBorderColor='purple.500'
 								placeholder='Enter facebook information'
+								onChange={onChange}
+								value={facebook || ''}
 							/>
 						</Stack>
 						<Stack isInline spacing={6} alignItems='center'>
 							<Icon name='twitter' size='36px' color='#55acee' />
 							<Input
 								type='text'
+								name='twitter'
 								size='lg'
 								fontFamily='inter'
 								fontWeight='400'
 								bg='gray.50'
 								focusBorderColor='purple.500'
 								placeholder='Enter twitter information'
+								onChange={onChange}
+								value={twitter || ''}
 							/>
 						</Stack>
 						<Stack isInline spacing={6} alignItems='center'>
@@ -159,24 +290,30 @@ const UserInfo = () => {
 							</Box>
 							<Input
 								type='text'
+								name='instagram'
 								size='lg'
 								fontFamily='inter'
 								fontWeight='400'
 								bg='gray.50'
 								focusBorderColor='purple.500'
 								placeholder='Enter instagram information'
+								onChange={onChange}
+								value={instagram || ''}
 							/>
 						</Stack>
 						<Stack isInline spacing={6} alignItems='center'>
 							<Icon name='youtube' size='36px' color='#cd201f' />
 							<Input
 								type='text'
+								name='youtube'
 								size='lg'
 								fontFamily='inter'
 								fontWeight='400'
 								bg='gray.50'
 								focusBorderColor='purple.500'
 								placeholder='Enter youtube information'
+								onChange={onChange}
+								value={youtube || ''}
 							/>
 						</Stack>
 					</Stack>
@@ -189,6 +326,9 @@ const UserInfo = () => {
 						my='auto'
 						w='224px'
 						h='54px'
+						onClick={onSubmit}
+						loadingText='Updating'
+						isLoading={loading ? true : false}
 					>
 						Save
 					</Button>
@@ -198,4 +338,4 @@ const UserInfo = () => {
 	);
 };
 
-export default UserInfo;
+export default UserInfoEdit;

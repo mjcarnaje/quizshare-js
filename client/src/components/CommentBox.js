@@ -29,7 +29,7 @@ const CommentBox = ({
 						boxShadow='sm'
 						position='relative'
 					>
-						<Avatar name='Dan Abrahmov' src={`${avatar}`} />
+						<Avatar name={user.username && user.username} src={`${avatar}`} />
 						<Box ml='10px'>
 							<Box display='flex' alignItems='center'>
 								<Text fontFamily='inter' fontSize='17px' fontWeight='semibold'>

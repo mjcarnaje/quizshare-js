@@ -73,3 +73,22 @@ export const RELOAD_USER_INFO = gql`
 		}
 	}
 `;
+
+export const GET_PROFILE_INFO = gql`
+	query {
+		getProfileUser {
+			id
+			user
+			firstName
+			lastName
+			birthday
+			country
+			social {
+				facebook
+				twitter
+				instagram
+				youtube
+			}
+		}
+	}
+`;

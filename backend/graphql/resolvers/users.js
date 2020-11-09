@@ -3,12 +3,13 @@ const { generateToken } = require('../../utils/generateToken');
 const {
 	validateRegisterInput,
 	validateLoginInput,
-	checkIfTaken,
 } = require('../../utils/validators');
 const { UserInputError } = require('apollo-server');
 const User = require('../../models/User');
-const checkAuth = require('../../utils/checkAuth');
+const Quiz = require('../../models/Quiz');
+const Profile = require('../../models/Profile');
 const picUploader = require('../../utils/picUploader');
+const checkAuth = require('../../utils/checkAuth');
 
 module.exports = {
 	Query: {
@@ -65,7 +66,29 @@ module.exports = {
 				throw new UserInputError('Errors', { errors });
 			}
 
-			checkIfTaken(currentUserInfo, username, email);
+			const user_username = await User.findOne({ username });
+			const user_email = await User.findOne({ email });
+
+			if (user_email && user_username) {
+				throw new UserInputError('Both username and email is taken', {
+					errors: {
+						email: 'This email is already taken',
+						username: 'This username is already taken',
+					},
+				});
+			} else if (user_username) {
+				throw new UserInputError('Username is taken', {
+					errors: {
+						username: 'This username is already taken',
+					},
+				});
+			} else if (user_email) {
+				throw new UserInputError('Email is taken', {
+					errors: {
+						email: 'This email is already taken',
+					},
+				});
+			}
 
 			password = await bcrypt.hash(password, 12);
 
@@ -123,7 +146,30 @@ module.exports = {
 
 			try {
 				if (username || email) {
-					checkIfTaken(currentUserInfo, user, email);
+					const user_username = await User.findOne({ username });
+					const user_email = await User.findOne({ email });
+
+					if (user_email && user_username) {
+						throw new UserInputError('Both username and email is taken', {
+							errors: {
+								email: 'This email is already taken',
+								username: 'This username is already taken',
+							},
+						});
+					} else if (user_username) {
+						throw new UserInputError('Username is taken', {
+							errors: {
+								username: 'This username is already taken',
+							},
+						});
+					} else if (user_email) {
+						throw new UserInputError('Email is taken', {
+							errors: {
+								email: 'This email is already taken',
+							},
+						});
+					}
+
 					if (username) userFields.username = username;
 					if (email) userFields.email = email;
 				}
@@ -160,6 +206,19 @@ module.exports = {
 				await User.updateOne({ _id: user.id }, { $set: { avatar: pic } });
 
 				return 'Picture Added';
+			} catch (err) {
+				throw new Error(err);
+			}
+		},
+		deleteUserData: async (parent, args, context) => {
+			const user = checkAuth(context);
+
+			try {
+				await Quiz.deleteMany({ author: user.id });
+				await Profile.findOneAndDelete({ user: user.id });
+				await User.findOneAndDelete({ _id: user.id });
+
+				return 'Delete Account';
 			} catch (err) {
 				throw new Error(err);
 			}

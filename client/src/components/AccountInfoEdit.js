@@ -18,6 +18,7 @@ import { gql, useMutation } from '@apollo/client';
 import { loadCurrentUser } from '../store/authSlice';
 import { useDispatch } from 'react-redux';
 import { render } from 'react-dom';
+import { GET_ALL_QUIZZES } from '../utils/graphql';
 
 const UPDATE_ACCOUNT_INFO = gql`
 	mutation updateAccount(
@@ -84,21 +85,37 @@ const AccountInfoEdit = ({
 	};
 
 	const [updateProfile, { loading }] = useMutation(UPDATE_ACCOUNT_INFO, {
-		update(_, { data: { updateAccount } = {} }) {
+		update(cache, { data: { updateAccount } = {} }) {
 			setisEditAccountInfo(false);
 			dispatch(loadCurrentUser(updateAccount));
+
 			toast({
 				title: 'Updated',
 				description: 'Your account information is now updated',
 				status: 'success',
 				duration: 5000,
 				isClosable: true,
+				position: 'bottom-left',
 			});
 		},
 		onError(err) {
-			console.log(err.graphQLErrors[0].extensions.errors);
+			toast({
+				title: 'Error',
+				description: `${err.graphQLErrors[0].message.substr(16)}`,
+				status: 'error',
+				duration: 9000,
+				isClosable: true,
+				position: 'bottom-right',
+			});
 		},
-		variables: values,
+		variables: {
+			...values,
+			avatar: values.avatar
+				? values.avatar.includes('cloudinary')
+					? ''
+					: values.avatar
+				: '',
+		},
 	});
 
 	const onSubmit = (e) => {

@@ -6,8 +6,9 @@ module.exports = {
 	Query: {
 		getProfileUser: async (parent, args, context) => {
 			const user = checkAuth(context);
+
 			try {
-				const profile = await Profile.findById(user.id);
+				const profile = await Profile.findOne({ user: user.id });
 				return profile;
 			} catch (err) {
 				throw new Error(err);
@@ -33,21 +34,14 @@ module.exports = {
 		) => {
 			const user = checkAuth(context);
 
-			if (firstName.trim() === '') {
-				new UserInputError('First name must not blank');
-			}
-			if (lastName.trim() === '') {
-				new UserInputError('Last name must not blank');
-			}
-
 			const profileFields = {};
 
 			profileFields.user = user.id;
 
-			if (firstName) profileFields.firstName = firstName;
-			if (lastName) profileFields.lastName = lastName;
-			if (country) profileFields.country = country;
-			if (birthday) profileFields.birthday = birthday;
+			profileFields.firstName = firstName;
+			profileFields.lastName = lastName;
+			profileFields.country = country;
+			profileFields.birthday = birthday;
 
 			profileFields.social = {};
 
@@ -55,7 +49,6 @@ module.exports = {
 			if (twitter) profileFields.social.twitter = twitter;
 			if (instagram) profileFields.social.instagram = instagram;
 			if (youtube) profileFields.social.youtube = youtube;
-
 			try {
 				let profile = await Profile.findOne({ user: user.id });
 

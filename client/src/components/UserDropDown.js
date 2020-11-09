@@ -25,7 +25,7 @@ const UserDropDown = () => {
 					<Avatar
 						size='sm'
 						name={user.username}
-						src={user.avatar ? user.avatar : 'https://bit.ly/broken-link'}
+						src={user.avatar ? user.avatar : ''}
 					/>
 				</MenuButton>
 				<MenuList>

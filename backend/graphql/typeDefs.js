@@ -18,7 +18,7 @@ module.exports = gql`
 		id: ID!
 		createdAt: String!
 		body: String!
-		author: User!
+		author: User
 	}
 	type Question {
 		question: String!
@@ -79,8 +79,8 @@ module.exports = gql`
 		questions: [Questions!]
 	}
 	input ProfileInput {
-		firstName: String!
-		lastName: String!
+		firstName: String
+		lastName: String
 		country: String
 		birthday: String
 		facebook: String
@@ -95,7 +95,7 @@ module.exports = gql`
 
 		currentUser: User!
 
-		getProfileUser: Profile!
+		getProfileUser: Profile
 	}
 	type Mutation {
 		register(registerInput: RegisterInput!): User!
@@ -116,6 +116,7 @@ module.exports = gql`
 		deleteComment(quizId: String!, commentId: String!): Quiz!
 
 		createAndUpdateProfile(profileInput: ProfileInput!): Profile!
+		deleteUserData: String!
 	}
 	type Subscription {
 		Quiz: Quiz!

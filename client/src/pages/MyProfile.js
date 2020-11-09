@@ -7,6 +7,7 @@ import {
 	Flex,
 	Icon,
 	IconButton,
+	Spinner,
 	Stack,
 	Text,
 } from '@chakra-ui/core';
@@ -15,11 +16,24 @@ import AccountInfo from '../components/AccountInfo';
 import UserInfo from '../components/UserInfo';
 import AccountInfoEdit from '../components/AccountInfoEdit';
 import UserInfoEdit from '../components/UserInfoEdit';
+import { useQuery } from '@apollo/client';
+import { GET_PROFILE_INFO } from '../utils/graphql';
 
 const MyProfile = () => {
 	const { avatar, username, email } = useSelector((state) => state.auth.user);
 	const [isEditAccountInfo, setisEditAccountInfo] = useState(false);
-	const [isEditUserInfo, setisEditUserInfo] = useState(false);
+	const [isEditUserInfo, setIsEditUserInfo] = useState(false);
+
+	const { loading, error, data: { getProfileUser } = {} } = useQuery(
+		GET_PROFILE_INFO
+	);
+
+	if (loading)
+		return (
+			<Spinner thickness='8px' speed='.7s' color='purple.500' size='70px' />
+		);
+	if (error) return <p>Error :</p>;
+
 	return (
 		<>
 			<Stack spacing={4}>
@@ -69,14 +83,24 @@ const MyProfile = () => {
 								rightIcon={!isEditUserInfo ? 'edit' : ''}
 								variantColor='purple'
 								variant='ghost'
-								onClick={() => setisEditUserInfo(!isEditUserInfo)}
+								onClick={() => setIsEditUserInfo(!isEditUserInfo)}
 							>
 								{isEditUserInfo ? 'Cancel' : 'Edit'}
 							</Button>
 						</Box>
 					</Flex>
 					<Divider my='0px' />
-					{isEditUserInfo ? <UserInfoEdit /> : <UserInfo />}
+					{isEditUserInfo ? (
+						<UserInfoEdit
+							setIsEditUserInfo={setIsEditUserInfo}
+							profileData={getProfileUser}
+						/>
+					) : (
+						<UserInfo
+							setIsEditUserInfo={setIsEditUserInfo}
+							profileData={getProfileUser}
+						/>
+					)}
 				</Box>
 			</Stack>
 		</>
