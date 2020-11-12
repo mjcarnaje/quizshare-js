@@ -62,7 +62,7 @@ export const GET_USER_QUIZZES = gql`
 	}
 `;
 
-export const RELOAD_USER_INFO = gql`
+export const GET_USER = gql`
 	query {
 		currentUser {
 			id
@@ -77,6 +77,82 @@ export const RELOAD_USER_INFO = gql`
 export const GET_PROFILE_INFO = gql`
 	query {
 		getProfileUser {
+			id
+			user
+			firstName
+			lastName
+			birthday
+			country
+			social {
+				facebook
+				twitter
+				instagram
+				youtube
+			}
+		}
+	}
+`;
+
+export const LOGIN = gql`
+	mutation login($username: String!, $password: String!) {
+		login(username: $username, password: $password) {
+			id
+			email
+			token
+			username
+			avatar
+			createdAt
+		}
+	}
+`;
+
+export const REGISTER = gql`
+	mutation register(
+		$username: String!
+		$email: String!
+		$password: String!
+		$confirmPassword: String!
+	) {
+		register(
+			registerInput: {
+				username: $username
+				email: $email
+				password: $password
+				confirmPassword: $confirmPassword
+			}
+		) {
+			id
+			email
+			username
+			createdAt
+			token
+		}
+	}
+`;
+
+export const UPDATE_PROFILE_INFO = gql`
+	mutation createAndUpdateProfile(
+		$firstName: String
+		$lastName: String
+		$birthday: String
+		$country: String
+		$facebook: String
+		$twitter: String
+		$instagram: String
+		$youtube: String
+	) {
+		createAndUpdateProfile(
+			profileInput: {
+				firstName: $firstName
+				lastName: $lastName
+				birthday: $birthday
+				country: $country
+				facebook: $facebook
+				twitter: $twitter
+				instagram: $instagram
+				youtube: $youtube
+			}
+		) {
 			id
 			user
 			firstName

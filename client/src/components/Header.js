@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
-import { Box, Heading, Flex, Text, Button } from '@chakra-ui/core';
+import { Box, Heading, Flex, Text, Button, Icon } from '@chakra-ui/core';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import UserDropDown from './UserDropDown';
 
-const MenuItems = ({ children, to }) => (
+const MenuItems = ({ children, to, icon }) => (
 	<Link to={to}>
-		<Text display='block' fontFamily='inter'>
-			{children}
-		</Text>
+		<Flex justify='center' align='center' ml='24px'>
+			<Icon name={icon} mr='8px' />
+			<Text display='block' fontFamily='inter'>
+				{children}
+			</Text>
+		</Flex>
 	</Link>
 );
 
@@ -59,7 +62,14 @@ const Header = (props) => {
 				alignItems='center'
 				flexGrow={1}
 			>
-				<MenuItems to='/home'>Home</MenuItems>
+				<Flex ml='auto' px='50px'>
+					<MenuItems to='/home' icon='home'>
+						Home
+					</MenuItems>
+					<MenuItems to='/create-quiz' icon='create'>
+						Create Quiz
+					</MenuItems>
+				</Flex>
 			</Box>
 
 			<Box

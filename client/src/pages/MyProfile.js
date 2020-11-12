@@ -12,27 +12,48 @@ import {
 	Text,
 } from '@chakra-ui/core';
 import { useSelector } from 'react-redux';
-import AccountInfo from '../components/AccountInfo';
 import UserInfo from '../components/UserInfo';
-import AccountInfoEdit from '../components/AccountInfoEdit';
+import ProfileInfo from '../components/ProfileInfo';
 import UserInfoEdit from '../components/UserInfoEdit';
+import ProfileInfoEdit from '../components/ProfileInfoEdit';
 import { useQuery } from '@apollo/client';
-import { GET_PROFILE_INFO } from '../utils/graphql';
+import { GET_PROFILE_INFO, GET_USER } from '../utils/graphql';
 
 const MyProfile = () => {
-	const { avatar, username, email } = useSelector((state) => state.auth.user);
-	const [isEditAccountInfo, setisEditAccountInfo] = useState(false);
-	const [isEditUserInfo, setIsEditUserInfo] = useState(false);
+	const [profileEdit, setProfileEdit] = useState(false);
+	const [userEdit, setUserEdit] = useState(false);
 
-	const { loading, error, data: { getProfileUser } = {} } = useQuery(
+	const { loading: userLoading, data: { currentUser } = {} } = useQuery(
+		GET_USER
+	);
+
+	let userInfo;
+
+	if (userLoading) {
+		userInfo = (
+			<Flex w='full' justify='center' align='center' h='300px'>
+				<Spinner thickness='8px' speed='.7s' color='purple.500' size='70px' />
+			</Flex>
+		);
+	} else {
+		userInfo = <UserInfo data={currentUser} />;
+	}
+
+	const { loading: profileLoading, data: { getProfileUser } = {} } = useQuery(
 		GET_PROFILE_INFO
 	);
 
-	if (loading)
-		return (
-			<Spinner thickness='8px' speed='.7s' color='purple.500' size='70px' />
+	let profileInfo;
+
+	if (profileLoading) {
+		profileInfo = (
+			<Flex w='full' justify='center' align='center' h='300px'>
+				<Spinner thickness='8px' speed='.7s' color='purple.500' size='70px' />
+			</Flex>
 		);
-	if (error) return <p>Error :</p>;
+	} else {
+		profileInfo = <ProfileInfo isEdit={setProfileEdit} data={getProfileUser} />;
+	}
 
 	return (
 		<>
@@ -49,23 +70,20 @@ const MyProfile = () => {
 						</Text>
 						<Box ml='auto'>
 							<Button
-								rightIcon={!isEditAccountInfo ? 'edit' : ''}
+								rightIcon={!userEdit ? 'edit' : ''}
 								variantColor='purple'
 								variant='ghost'
-								onClick={() => setisEditAccountInfo(!isEditAccountInfo)}
+								onClick={() => setUserEdit(!userEdit)}
 							>
-								{isEditAccountInfo ? 'Cancel' : 'Edit'}
+								{userEdit ? 'Cancel' : 'Edit'}
 							</Button>
 						</Box>
 					</Flex>
 					<Divider my='0px' />
-					{isEditAccountInfo ? (
-						<AccountInfoEdit
-							setisEditAccountInfo={setisEditAccountInfo}
-							userInfo={{ avatar, username, email }}
-						/>
+					{userEdit ? (
+						<UserInfoEdit isEdit={setUserEdit} userInfo={currentUser} />
 					) : (
-						<AccountInfo userInfo={{ avatar, username, email }} />
+						userInfo
 					)}
 				</Box>
 				<Box bg='white' borderRadius='8px' boxShadow='sm'>
@@ -80,26 +98,23 @@ const MyProfile = () => {
 						</Text>
 						<Box ml='auto'>
 							<Button
-								rightIcon={!isEditUserInfo ? 'edit' : ''}
+								rightIcon={!profileEdit ? 'edit' : ''}
 								variantColor='purple'
 								variant='ghost'
-								onClick={() => setIsEditUserInfo(!isEditUserInfo)}
+								onClick={() => setProfileEdit(!profileEdit)}
 							>
-								{isEditUserInfo ? 'Cancel' : 'Edit'}
+								{profileEdit ? 'Cancel' : 'Edit'}
 							</Button>
 						</Box>
 					</Flex>
 					<Divider my='0px' />
-					{isEditUserInfo ? (
-						<UserInfoEdit
-							setIsEditUserInfo={setIsEditUserInfo}
+					{profileEdit ? (
+						<ProfileInfoEdit
 							profileData={getProfileUser}
+							isEdit={setProfileEdit}
 						/>
 					) : (
-						<UserInfo
-							setIsEditUserInfo={setIsEditUserInfo}
-							profileData={getProfileUser}
-						/>
+						profileInfo
 					)}
 				</Box>
 			</Stack>

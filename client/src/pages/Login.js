@@ -9,139 +9,133 @@ import {
 	Text,
 	Stack,
 	Button,
-	useToast,
+	AlertIcon,
+	Alert,
+	FormErrorMessage,
+	Grid,
 } from '@chakra-ui/core';
 import { useDispatch } from 'react-redux';
-import { useMutation, gql } from '@apollo/client';
+import { useMutation } from '@apollo/client';
 import { Link } from 'react-router-dom';
+import signin from '../assets/svg/signin.svg';
+import { GET_USER_QUIZZES, LOGIN } from '../utils/graphql';
 import { loginUser } from '../store/authSlice';
+import { Field, Form, Formik, useField } from 'formik';
+import * as yup from 'yup';
 
-import signin from '../assets/svg/sign_in.svg';
-import { GET_USER_QUIZZES } from '../utils/graphql';
+const LoginTextField = ({ customError, ...props }) => {
+	const [field, meta] = useField(props);
+	const errorText = meta.error && meta.touched ? meta.error : '';
+	return (
+		<FormControl isInvalid={!!errorText || typeof customError === 'string'}>
+			<FormLabel htmlFor={field.name} fontSize={14} fontWeight='medium'>
+				{`${field.name.charAt(0).toUpperCase()}${field.name.substr(1)}`}
+			</FormLabel>
+			<Input {...field} {...props} focusBorderColor='purple.500' />
+			{!customError && <FormErrorMessage>{errorText}</FormErrorMessage>}
+		</FormControl>
+	);
+};
 
-const LOGIN_USER = gql`
-	mutation login($username: String!, $password: String!) {
-		login(username: $username, password: $password) {
-			id
-			email
-			token
-			username
-			avatar
-			createdAt
-		}
-	}
-`;
+const loginValidation = yup.object({
+	username: yup.string().required(),
+	password: yup.string().required(),
+});
 
 const Login = (props) => {
-	const [values, setValues] = useState({
-		username: '',
-		password: '',
-	});
-
+	const [error, setError] = useState(null);
 	const dispatch = useDispatch();
-	const toast = useToast();
-
-	const onChange = (e) => {
-		setValues({ ...values, [e.target.name]: e.target.value });
-	};
-
-	const [login, { loading }] = useMutation(LOGIN_USER, {
-		update(cache, { data: { login: userData } }) {
-			dispatch(loginUser(userData));
-			props.history.push('/home');
-		},
-		onError(err) {
-			if (err.graphQLErrors[0]) {
-				const errors = Object.values(err.graphQLErrors[0].extensions.errors);
-				errors.forEach((error) =>
-					toast({
-						position: 'bottom-right',
-						description: `${error}`,
-						status: 'error',
-						isClosable: true,
-					})
-				);
-			}
-		},
-		variables: values,
-	});
-
-	const onSubmit = (e) => {
-		e.preventDefault();
-		login();
-	};
-
-	const { username, password } = values;
+	const [loginMutation] = useMutation(LOGIN);
 
 	return (
-		<Box
-			display='flex'
-			bg='white'
+		<Grid
+			templateColumns={{ md: '1fr', lg: 'repeat(2, 1fr)' }}
+			gap={4}
+			bg='green.300'
+			p='20px'
 			width={{ md: '50%', lg: '75%' }}
-			marginX='auto'
-			justifyContent='center'
-			alignItems='center'
-			paddingX={12}
-			paddingY='3rem'
-			marginY='1rem'
-			rounded='md'
+			minH='75%'
+			bg='white'
 			shadow='md'
+			rounded='md'
+			justifyItems='center'
+			alignItems='center'
 		>
-			<Box width={{ md: '100%', lg: 5 / 12 }} height='100%'>
-				<Stack spacing={1} paddingBottom='2rem'>
-					<Text
-						fontSize='4xl'
-						fontFamily='inter'
-						fontWeight='bold'
-						textAlign='center'
+			<Box w='full' px='64px'>
+				<Text
+					fontSize='4xl'
+					fontFamily='inter'
+					fontWeight='bold'
+					textAlign='center'
+				>
+					Welcome Back!
+				</Text>
+				<Text fontSize={18} fontFamily='inter' textAlign='center' mb='20px'>
+					Sign in to your QuizShare account
+				</Text>
+				{error && (
+					<Box>
+						<Alert status='error' rounded='sm'>
+							<AlertIcon />
+							{`${error}`}
+						</Alert>
+					</Box>
+				)}
+				<Stack fontFamily='inter' spacing={2} pt='16px'>
+					<Formik
+						initialValues={{
+							username: '',
+							password: '',
+						}}
+						validationSchema={loginValidation}
+						onSubmit={async (values, { setErrors }) => {
+							try {
+								const { data } = await loginMutation({ variables: values });
+								dispatch(loginUser(data.login));
+								props.history.push('/home');
+							} catch (err) {
+								const errors = setErrors(err.graphQLErrors[0].message);
+							}
+						}}
 					>
-						Welcome Back!
-					</Text>
-					<Text fontSize={18} fontFamily='inter' textAlign='center'>
-						Sign in to your QuizShare account
-					</Text>
-				</Stack>
+						{({ errors, isSubmitting }) => {
+							if (typeof errors === 'string') {
+								setError(errors);
+							} else {
+								setError(null);
+							}
 
-				<Stack fontFamily='inter' spacing={2} paddingX={4}>
-					<form onSubmit={(e) => onSubmit(e)}>
-						<FormControl>
-							<FormLabel htmlFor='username' fontSize={14} fontWeight='medium'>
-								Username
-							</FormLabel>
-							<Input
-								type='text'
-								name='username'
-								onChange={onChange}
-								value={username}
-								focusBorderColor='purple.500'
-								placeholder='Enter username'
-							/>
-						</FormControl>
-						<FormControl>
-							<FormLabel htmlFor='password' fontSize={14} fontWeight='medium'>
-								Password
-							</FormLabel>
-							<Input
-								type='password'
-								name='password'
-								onChange={onChange}
-								value={password}
-								focusBorderColor='purple.500'
-								placeholder='Enter password'
-							/>
-						</FormControl>
-						<Button
-							type='submit'
-							mt={4}
-							w='100%'
-							variantColor='purple'
-							isLoading={loading ? true : false}
-							loadingText='Logging in'
-						>
-							Login
-						</Button>
-					</form>
-					<Flex justifyContent='center' alignItems='center' mt={2}>
+							return (
+								<>
+									<Form>
+										<LoginTextField
+											name='username'
+											placeholder='Enter username'
+											customError={error}
+										/>
+										<LoginTextField
+											type='password'
+											name='password'
+											placeholder='Enter password'
+											customError={error}
+										/>
+
+										<Button
+											type='submit'
+											isLoading={isSubmitting}
+											mt='16px'
+											w='100%'
+											variantColor='purple'
+											loadingText='Logging in'
+										>
+											Login
+										</Button>
+									</Form>
+								</>
+							);
+						}}
+					</Formik>
+					<Flex justifyContent='center' alignItems='center'>
 						<Text fontFamily='inter' fontSize='sm'>
 							Don't have an account?
 						</Text>
@@ -157,14 +151,10 @@ const Login = (props) => {
 					</Flex>
 				</Stack>
 			</Box>
-			<Box
-				display={{ base: 'none', lg: 'block' }}
-				width={7 / 12}
-				paddingX='2rem'
-			>
-				<Image size='100%' objectFit='cover' src={signin} alt='Sign in Image' />
+			<Box w='100%' display={{ md: 'none', lg: 'block' }}>
+				<Image objectFit='cover' src={signin} alt='Sign in Image' />
 			</Box>
-		</Box>
+		</Grid>
 	);
 };
 

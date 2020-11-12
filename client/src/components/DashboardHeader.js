@@ -16,9 +16,11 @@ import {
 	Scale,
 	AlertDialogCloseButton,
 	useToast,
+	Spinner,
 } from '@chakra-ui/core';
-import { gql, useMutation, useApolloClient } from '@apollo/client';
+import { gql, useMutation, useApolloClient, useQuery } from '@apollo/client';
 import { logoutUser } from '../store/authSlice';
+import { GET_USER } from '../utils/graphql';
 
 const DELETE_USER = gql`
 	mutation deleteUserData {
@@ -26,18 +28,26 @@ const DELETE_USER = gql`
 	}
 `;
 
-const ProfileBanner = () => {
+const DashboardHeader = () => {
 	const cache = useApolloClient();
 	const toast = useToast();
 	const dispatch = useDispatch();
-	const { avatar, username, email } = useSelector((state) => state.auth.user);
+
 	const [isOpen, setIsOpen] = useState();
 	const onClose = () => setIsOpen(false);
 	const cancelRef = useRef();
 	const btnRef = useRef();
 
+	const { loading: currentUserLoading, data: { currentUser } = {} } = useQuery(
+		GET_USER
+	);
+
 	const [deleteUser, { loading }] = useMutation(DELETE_USER, {
 		update() {
+			cache.clearStore();
+			dispatch(logoutUser());
+			setIsOpen(false);
+
 			toast({
 				title: 'Account deleted.',
 				description:
@@ -46,24 +56,26 @@ const ProfileBanner = () => {
 				duration: 5000,
 				isClosable: true,
 			});
-			cache.clearStore();
-			dispatch(logoutUser());
-			<Redirect to='/login' />;
 		},
 		onError(err) {
 			console.log(err.graphQLErrors[0]);
 		},
 	});
 
+	if (currentUserLoading) {
+		return (
+			<Box w='full' textAlign='center'>
+				<Spinner thickness='2px' speed='.7s' color='purple.500' size='30px' />
+			</Box>
+		);
+	}
+	const { username, avatar, email } = currentUser;
 	return (
 		<Box
-			w='95%'
 			m='auto'
 			display='flex'
 			alignItems='center'
 			justifyContent='space-between'
-			py='24px'
-			px='10px'
 		>
 			<Box display='flex' alignItems='center' w='full'>
 				<Avatar name={username && username} src={avatar && avatar} />
@@ -149,4 +161,4 @@ const ProfileBanner = () => {
 	);
 };
 
-export default ProfileBanner;
+export default DashboardHeader;

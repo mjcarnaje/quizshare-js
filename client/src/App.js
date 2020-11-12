@@ -15,19 +15,21 @@ import PublicRoute from './utils/PublicRoute';
 import PrivateRoute from './utils/PrivateRoute';
 import Dashboard from './pages/Dashboard';
 
-import { gql, useQuery } from '@apollo/client';
-import { RELOAD_USER_INFO } from './utils/graphql';
+import { useQuery } from '@apollo/client';
+import { GET_USER } from './utils/graphql';
 import { loadCurrentUser } from './store/authSlice';
 import { useDispatch } from 'react-redux';
+import CreateQuiz from './pages/CreateQuiz';
+import Testing from './pages/Testing';
 
 function App() {
 	const dispatch = useDispatch();
 
-	const { data: { currentUser } = {} } = useQuery(RELOAD_USER_INFO);
+	const { data: { currentUser } = {} } = useQuery(GET_USER);
 
 	useEffect(() => {
 		dispatch(loadCurrentUser(currentUser));
-	}, [currentUser]);
+	}, [currentUser, dispatch]);
 
 	return (
 		<Router>
@@ -44,8 +46,10 @@ function App() {
 			>
 				<Switch>
 					<Route exact path='/home' component={Home} />
-					<PrivateRoute exact path='/quiz/:id' component={SingleQuiz} />
-					<PrivateRoute path='/me' component={Dashboard} />
+					<Route exact path='/quiz/:id' component={SingleQuiz} />
+					<Route exact path='/create-quiz' component={CreateQuiz} />
+					<Route exact path='/testing' component={Testing} />
+					<PrivateRoute path='/dashboard' component={Dashboard} />
 					<PublicRoute exact path='/login' component={Login} />
 					<PublicRoute exact path='/register' component={Register} />
 				</Switch>

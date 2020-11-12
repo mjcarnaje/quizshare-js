@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Box, PseudoBox, Stack } from '@chakra-ui/core';
 
-const SettingNavigation = ({ url }) => {
+const DashboardNavigation = ({ url }) => {
 	const pathname = window.location.pathname;
 	const path = pathname.substr(4);
 
@@ -49,4 +49,4 @@ const SettingNavigation = ({ url }) => {
 	);
 };
 
-export default SettingNavigation;
+export default DashboardNavigation;

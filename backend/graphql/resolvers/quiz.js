@@ -56,7 +56,6 @@ module.exports = {
 			if (description.trim() === '') {
 				description = 'There is no description about in this quiz';
 			}
-
 			const newQuiz = new Quiz({
 				title,
 				description,

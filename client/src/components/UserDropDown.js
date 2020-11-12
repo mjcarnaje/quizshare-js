@@ -30,10 +30,10 @@ const UserDropDown = () => {
 				</MenuButton>
 				<MenuList>
 					<MenuGroup>
-						<MenuItem as={Link} to='/me/profile'>
+						<MenuItem as={Link} to='/dashboard/profile'>
 							Profile
 						</MenuItem>
-						<MenuItem as={Link} to='/me/quizzes'>
+						<MenuItem as={Link} to='/dashboard/quizzes'>
 							Quizzes
 						</MenuItem>
 					</MenuGroup>

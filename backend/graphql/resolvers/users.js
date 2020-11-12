@@ -100,7 +100,8 @@ module.exports = {
 			});
 
 			const res = await newUser.save();
-
+			const profile = new Profile({ user: res._id });
+			await profile.save();
 			const token = generateToken(res);
 			return {
 				...res._doc,
@@ -215,7 +216,7 @@ module.exports = {
 
 			try {
 				await Quiz.deleteMany({ author: user.id });
-				await Profile.findOneAndDelete({ user: user.id });
+				await Profile.findOneAndRemove({ user: user.id });
 				await User.findOneAndDelete({ _id: user.id });
 
 				return 'Delete Account';

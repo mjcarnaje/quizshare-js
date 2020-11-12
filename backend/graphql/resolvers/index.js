@@ -2,6 +2,7 @@ const usersResolvers = require('./users');
 const quizResolvers = require('./quiz');
 const profileResolvers = require('./profile');
 const User = require('../../models/User');
+const Quiz = require('../../models/Quiz');
 
 module.exports = {
 	Query: {
@@ -17,6 +18,7 @@ module.exports = {
 	Comment: {
 		author: async (parent) => {
 			const user = await User.findById(parent.author);
+
 			return user;
 		},
 	},
@@ -26,6 +28,7 @@ module.exports = {
 		questionCount: (parent) => parent.questions.length,
 		author: async (parent) => {
 			const user = await User.findById(parent.author);
+
 			return user;
 		},
 	},

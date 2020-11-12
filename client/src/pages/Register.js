@@ -1,233 +1,218 @@
 import React, { useState } from 'react';
 import {
-	FormControl,
-	FormLabel,
-	Flex,
-	Input,
+	Grid,
 	Box,
+	Tabs,
+	TabList,
+	TabPanels,
+	Tab,
+	TabPanel,
 	Image,
 	Text,
+	FormControl,
+	FormLabel,
+	Input,
 	Stack,
+	FormErrorMessage,
 	Button,
-	useToast,
+	FormHelperText,
+	AlertIcon,
+	Alert,
+	Flex,
 } from '@chakra-ui/core';
 import { Link } from 'react-router-dom';
-import { gql, useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client';
 import { useDispatch } from 'react-redux';
 import { loginUser } from '../store/authSlice';
+import { Field, Form, Formik, useField } from 'formik';
+import * as yup from 'yup';
 
-import signup from '../assets/svg/sign_up.svg';
+import signup from '../assets/svg/signup.svg';
+import { REGISTER } from '../utils/graphql';
 
-const REGISTER_USER = gql`
-	mutation register(
-		$username: String!
-		$email: String!
-		$password: String!
-		$confirmPassword: String!
-	) {
-		register(
-			registerInput: {
-				username: $username
-				email: $email
-				password: $password
-				confirmPassword: $confirmPassword
-			}
-		) {
-			id
-			email
-			username
-			createdAt
-			token
-		}
-	}
-`;
+const RegisterTextField = ({ label, ...props }) => {
+	const [field, meta] = useField(props);
+
+	return (
+		<FormControl isInvalid={meta.error && meta.touched ? true : false} my='4px'>
+			<FormLabel
+				htmlFor={field.name}
+				fontSize={14}
+				fontWeight='medium'
+				fontFamily='inter'
+			>
+				{label ||
+					`${field.name.charAt(0).toUpperCase()}${field.name.substr(1)}`}
+			</FormLabel>
+			<Input {...field} {...props} focusBorderColor='purple.500' />
+			<FormErrorMessage>
+				{meta.error && meta.touched ? meta.error : ''}
+			</FormErrorMessage>
+		</FormControl>
+	);
+};
+
+const signUpValidation = yup.object({
+	username: yup.string().required().min(6).max(12),
+	email: yup.string().required().email(),
+	password: yup.string().required().min(6),
+	confirmPassword: yup.string().required(),
+});
 
 const Register = (props) => {
-	const toast = useToast();
+	const [tabIndex, setTabIndex] = useState(0);
+	const [error, setError] = useState(null);
 	const dispatch = useDispatch();
-	const [secondStep, setsecondStep] = useState(false);
-	const [values, setValues] = useState({
-		username: '',
-		email: '',
-		password: '',
-		confirmPassword: '',
-	});
-
-	const onChange = (e) => {
-		setValues({ ...values, [e.target.name]: e.target.value });
-	};
-
-	const [register, { loading }] = useMutation(REGISTER_USER, {
-		update(_, { data: { register: userData } }) {
-			props.history.push('/home');
-			dispatch(loginUser(userData));
-		},
-		onError(err) {
-			if (err.graphQLErrors[0]) {
-				const errors = Object.values(err.graphQLErrors[0].extensions.errors);
-				errors.forEach((error) =>
-					toast({
-						position: 'bottom-right',
-						description: `${error}`,
-						status: 'error',
-						isClosable: true,
-					})
-				);
-			}
-		},
-		variables: values,
-	});
-
-	const buttonLoginContinue = () => {
-		if (secondStep) {
-			register();
-		} else {
-			setsecondStep(true);
-		}
-	};
-	const { username, email, password, confirmPassword } = values;
+	const [registerMutation] = useMutation(REGISTER);
 	return (
-		<Box
-			display='flex'
-			bg='white'
+		<Grid
+			templateColumns={{ md: '1fr', lg: 'repeat(2, 1fr)' }}
+			gap={4}
+			bg='green.300'
+			p='20px'
 			width={{ md: '50%', lg: '75%' }}
-			marginX='auto'
-			justifyContent='center'
-			alignItems='center'
-			paddingX={12}
-			paddingY='3rem'
-			marginY='1rem'
-			rounded='md'
+			minH='75%'
+			bg='white'
 			shadow='md'
+			rounded='md'
+			justifyItems='center'
+			alignItems='center'
 		>
-			<Box width={{ md: '100%', lg: 5 / 12 }} height='100%'>
-				<Stack spacing={1} paddingBottom='1rem'>
-					<Text
-						fontSize='4xl'
-						fontFamily='inter'
-						fontWeight='bold'
-						textAlign='center'
+			<Box w='full' px='64px'>
+				<Text
+					fontSize='4xl'
+					fontFamily='inter'
+					fontWeight='bold'
+					textAlign='center'
+				>
+					Create Account
+				</Text>
+				<Text fontSize={18} fontFamily='inter' textAlign='center'>
+					Create your QuizShare account
+				</Text>
+				<Stack fontFamily='inter' spacing={2} pt='16px'>
+					<Tabs
+						isFitted
+						variant='soft-rounded'
+						index={tabIndex}
+						onChange={(index) => setTabIndex(index)}
 					>
-						Create Account
-					</Text>
-					<Text fontSize={18} fontFamily='inter' textAlign='center'>
-						Create your QuizShare account
-					</Text>
-					<div className='container-nextbutton'>
-						<span
-							className={`${secondStep ? 'bg-left' : 'bg-right'} bg-container`}
-						></span>
-						<button
-							className={`${
-								secondStep ? 'text-purple' : 'text-white'
-							} button-gradient`}
-							onClick={() => setsecondStep(false)}
+						<TabList h='30px' boxShadow='sm' rounded='20px' mb='20px'>
+							<Tab
+								fontFamily='inter'
+								_selected={{
+									color: 'white',
+									background: 'linear-gradient(to right, #f687b3, #9f7aea)',
+								}}
+								_focus={{ outline: 'none' }}
+							>
+								First Step
+							</Tab>
+							<Tab
+								fontFamily='inter'
+								_selected={{
+									color: 'white',
+									background: 'linear-gradient(to left, #f687b3, #9f7aea)',
+								}}
+								_focus={{ outline: 'none' }}
+							>
+								Second Step
+							</Tab>
+						</TabList>
+						{error && (
+							<Box>
+								<Alert status='error' rounded='sm'>
+									<AlertIcon />
+									{error}
+								</Alert>
+							</Box>
+						)}
+						<Formik
+							initialValues={{
+								username: '',
+								email: '',
+								password: '',
+								confirmPassword: '',
+							}}
+							validationSchema={signUpValidation}
+							onSubmit={async (values, { setErrors }) => {
+								try {
+									const { data } = await registerMutation({
+										variables: values,
+									});
+									props.history.push('/home');
+									dispatch(loginUser(data.register));
+								} catch (err) {
+									if (
+										err.graphQLErrors[0].message &&
+										err.graphQLErrors[0].message !== 'Errors'
+									) {
+										setError(err.graphQLErrors[0].message);
+									}
+									if (err.graphQLErrors[0].extensions.errors) {
+										setErrors(err.graphQLErrors[0].extensions.errors);
+									}
+								}
+							}}
 						>
-							First Step
-						</button>
-						<button
-							className={`${
-								secondStep ? 'text-white' : 'text-purple'
-							} button-gradient `}
-							onClick={() => setsecondStep(true)}
-						>
-							Second Step
-						</button>
-					</div>
-				</Stack>
-				<Stack spacing={2} paddingX={4}>
-					{secondStep ? (
-						<Stack spacing={2}>
-							<FormControl>
-								<FormLabel
-									htmlFor='password'
-									fontSize={14}
-									fontWeight='medium'
-									fontFamily='inter'
-								>
-									Password
-								</FormLabel>
-								<Input
-									type='password'
-									name='password'
-									onChange={onChange}
-									value={password}
-									focusBorderColor='purple.500'
-									placeholder='Enter password'
-								/>
-							</FormControl>
-							<FormControl>
-								<FormLabel
-									htmlFor='confirmPassword'
-									fontSize={14}
-									fontWeight='medium'
-									fontFamily='inter'
-								>
-									Confirm Password
-								</FormLabel>
-								<Input
-									type='password'
-									name='confirmPassword'
-									onChange={onChange}
-									value={confirmPassword}
-									focusBorderColor='purple.500'
-									placeholder='Enter Confirm password'
-								/>
-							</FormControl>
-						</Stack>
-					) : (
-						<Stack spacing={2}>
-							<FormControl>
-								<FormLabel
-									htmlFor='username'
-									fontSize={14}
-									fontWeight='medium'
-									fontFamily='inter'
-								>
-									Username
-								</FormLabel>
-								<Input
-									type='text'
-									name='username'
-									onChange={onChange}
-									value={username}
-									focusBorderColor='purple.500'
-									placeholder='Enter username'
-								/>
-							</FormControl>
-							<FormControl>
-								<FormLabel
-									htmlFor='email'
-									fontSize={14}
-									fontWeight='medium'
-									fontFamily='inter'
-								>
-									Email
-								</FormLabel>
-								<Input
-									type='text'
-									name='email'
-									onChange={onChange}
-									value={email}
-									focusBorderColor='purple.500'
-									placeholder='Enter email'
-								/>
-							</FormControl>
-						</Stack>
-					)}
-					<Button
-						mt={4}
-						variantColor='purple'
-						type='submit'
-						loadingText='Registering in'
-						isLoading={secondStep && loading ? true : false}
-						onClick={buttonLoginContinue}
-					>
-						{secondStep ? 'Register' : 'Continue'}
-					</Button>
+							{({ errors, isSubmitting }) => {
+								if (errors.email || errors.username) {
+									setTabIndex(0);
+								}
+								return (
+									<Form>
+										<TabPanels>
+											<TabPanel>
+												<RegisterTextField
+													name='username'
+													placeholder='Enter username'
+												/>
+												<RegisterTextField
+													type='email'
+													name='email'
+													placeholder='Enter email'
+												/>
+												<Button
+													w='full'
+													mt='16px'
+													variantColor='purple'
+													onClick={() => setTabIndex(1)}
+												>
+													Next
+												</Button>
+											</TabPanel>
+											<TabPanel>
+												<RegisterTextField
+													type='password'
+													name='password'
+													placeholder='Enter password'
+												/>
+												<RegisterTextField
+													type='password'
+													name='confirmPassword'
+													placeholder='Enter confirm password'
+													label='Confirm Password'
+												/>
+												<Button
+													w='full'
+													mt='16px'
+													variantColor='purple'
+													type='sumbit'
+													isLoading={isSubmitting}
+													loadingText='Registering in'
+												>
+													Register
+												</Button>
+											</TabPanel>
+										</TabPanels>
+									</Form>
+								);
+							}}
+						</Formik>
+					</Tabs>
 					<Flex justifyContent='center' alignItems='center'>
 						<Text fontFamily='inter' fontSize='sm'>
-							Don't have an account?
+							Already have an account?
 						</Text>
 						<Text
 							fontFamily='inter'
@@ -236,19 +221,15 @@ const Register = (props) => {
 							fontWeight='bold'
 							paddingX={2}
 						>
-							<Link to='/login'>Log In!</Link>
+							<Link to='/login'>Sign In!</Link>
 						</Text>
 					</Flex>
 				</Stack>
 			</Box>
-			<Box
-				display={{ base: 'none', lg: 'block' }}
-				width={7 / 12}
-				paddingX='2rem'
-			>
-				<Image size='100%' objectFit='cover' src={signup} alt='Sign in Image' />
+			<Box w='100%' display={{ md: 'none', lg: 'block' }}>
+				<Image objectFit='cover' src={signup} alt='Sign up Image' />
 			</Box>
-		</Box>
+		</Grid>
 	);
 };
 

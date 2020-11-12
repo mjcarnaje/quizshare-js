@@ -1,44 +1,34 @@
 import React from 'react';
 import MyProfile from './MyProfile';
 import MyQuizzes from './MyQuizzes';
-import { Box } from '@chakra-ui/core';
-import SettingNavigation from '../components/SettingNavigation';
-import ProfileBanner from '../components/ProfileBanner';
+import { Box, Grid } from '@chakra-ui/core';
+import DashboardNavigation from '../components/DashboardNavigation';
+import DashboardHeader from '../components/DashboardHeader';
 import {
 	BrowserRouter as Router,
 	Switch,
 	Route,
 	useRouteMatch,
+	Redirect,
 } from 'react-router-dom';
-import EditProfile from '../components/AccountInfoEdit';
+import EditProfile from '../components/UserInfoEdit';
+import { useSelector } from 'react-redux';
 
 const Dashboard = () => {
-	let { path, url } = useRouteMatch();
+	let { url } = useRouteMatch();
 
 	return (
 		<Box w='full' h='full'>
-			<Box w='full' bg='white'>
-				<ProfileBanner />
+			<Box w='full' bg='white' py='24px' px='10px'>
+				<DashboardHeader />
 			</Box>
-			<Box w='full'>
-				<Box
-					w='95%'
-					m='auto'
-					py='24px'
-					px='10px'
-					display='grid'
-					gridTemplateColumns='1fr 3fr'
-				>
-					<SettingNavigation url={url} />
-					<Box>
-						<Switch>
-							<Route exact path='/me/profile' component={MyProfile} />
-							<Route exact path='/me/profile/edit' component={EditProfile} />
-							<Route exact path='/me/quizzes' component={MyQuizzes} />
-						</Switch>
-					</Box>
-				</Box>
-			</Box>
+			<Grid w='full' py='24px' px='32px' templateColumns='1fr 3fr'>
+				<DashboardNavigation url={url} />
+				<Switch>
+					<Route exact path='/dashboard/profile' component={MyProfile} />
+					<Route exact path='/dashboard/quizzes' component={MyQuizzes} />
+				</Switch>
+			</Grid>
 		</Box>
 	);
 };

@@ -13,7 +13,10 @@ const Home = () => {
 		return (
 			<Spinner thickness='8px' speed='.7s' color='purple.500' size='70px' />
 		);
-	if (error) return <p>Error :</p>;
+	if (error) {
+		console.log(error.graphQLErrors[0]);
+		return <p>Error </p>;
+	}
 	return (
 		<>
 			<Box h='full' px='72px' pb='4rem'>

@@ -3,7 +3,6 @@ import jwtDecode from 'jwt-decode';
 
 const authInitialState = {
 	user: null,
-	isLoading: true,
 };
 
 const token = localStorage.getItem('token');
@@ -30,7 +29,6 @@ const authSlice = createSlice({
 		},
 		loadCurrentUser: (state, { payload }) => {
 			state.user = payload;
-			state.isLoading = false;
 		},
 	},
 });
