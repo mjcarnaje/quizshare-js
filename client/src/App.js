@@ -20,7 +20,6 @@ import { GET_USER } from './utils/graphql';
 import { loadCurrentUser } from './store/authSlice';
 import { useDispatch } from 'react-redux';
 import CreateQuiz from './pages/CreateQuiz';
-import Testing from './pages/Testing';
 
 function App() {
 	const dispatch = useDispatch();
@@ -48,7 +47,6 @@ function App() {
 					<Route exact path='/home' component={Home} />
 					<Route exact path='/quiz/:id' component={SingleQuiz} />
 					<Route exact path='/create-quiz' component={CreateQuiz} />
-					<Route exact path='/testing' component={Testing} />
 					<PrivateRoute path='/dashboard' component={Dashboard} />
 					<PublicRoute exact path='/login' component={Login} />
 					<PublicRoute exact path='/register' component={Register} />
