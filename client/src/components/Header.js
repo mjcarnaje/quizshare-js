@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
-import { Box, Heading, Flex, Text, Button, Icon } from '@chakra-ui/core';
+import { Box, Heading, Flex, Text, Button, Icon } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import UserDropDown from './UserDropDown';
+import { GoHome } from 'react-icons/go';
+import { MdCreateNewFolder } from 'react-icons/md';
 
 const MenuItems = ({ children, to, icon }) => (
 	<Link to={to}>
 		<Flex justify='center' align='center' ml='24px'>
-			<Icon name={icon} mr='8px' />
+			<Box mr='8px'>{icon}</Box>
 			<Text display='block' fontFamily='inter'>
 				{children}
 			</Text>
@@ -63,10 +65,10 @@ const Header = (props) => {
 				flexGrow={1}
 			>
 				<Flex ml='auto' px='50px'>
-					<MenuItems to='/home' icon='home'>
+					<MenuItems to='/home' icon={<GoHome />}>
 						Home
 					</MenuItems>
-					<MenuItems to='/create-quiz' icon='create'>
+					<MenuItems to='/create-quiz' icon={<MdCreateNewFolder />}>
 						Create Quiz
 					</MenuItems>
 				</Flex>

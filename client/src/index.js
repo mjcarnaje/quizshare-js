@@ -1,8 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
-import { ThemeProvider, CSSReset } from '@chakra-ui/core';
-import customTheme from './theme';
+import { ChakraProvider } from '@chakra-ui/react';
 import { Provider } from 'react-redux';
 import store from './store/store';
 import {
@@ -12,6 +11,7 @@ import {
 	ApolloProvider,
 } from '@apollo/client';
 import { setContext } from 'apollo-link-context';
+import theme from './theme';
 
 const httpLink = createHttpLink({
 	uri: 'http://localhost:4000',
@@ -34,14 +34,13 @@ const client = new ApolloClient({
 
 ReactDOM.render(
 	<React.StrictMode>
-		<ThemeProvider theme={customTheme}>
-			<CSSReset />
+		<ChakraProvider theme={theme}>
 			<ApolloProvider client={client}>
 				<Provider store={store}>
 					<App />
 				</Provider>
 			</ApolloProvider>
-		</ThemeProvider>
+		</ChakraProvider>
 	</React.StrictMode>,
 	document.getElementById('root')
 );

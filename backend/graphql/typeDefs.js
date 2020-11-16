@@ -20,9 +20,14 @@ module.exports = gql`
 		body: String!
 		author: User
 	}
+	type Choices {
+		id: String!
+		value: String!
+	}
 	type Question {
+		id: String!
 		question: String!
-		choices: [String]!
+		choices: [Choices]!
 		answer: String!
 	}
 
@@ -55,10 +60,20 @@ module.exports = gql`
 		country: String
 		social: Social
 	}
+	input ChoicesInput {
+		id: String!
+		value: String!
+	}
 	input Questions {
+		id: String!
 		question: String!
-		choices: [String]!
+		choices: [ChoicesInput]!
 		answer: String!
+	}
+	input QuizInput {
+		title: String!
+		description: String!
+		questions: [Questions!]!
 	}
 	input RegisterInput {
 		username: String!
@@ -72,11 +87,6 @@ module.exports = gql`
 		username: String
 		password: String
 		confirmPassword: String
-	}
-	input QuizInput {
-		title: String!
-		description: String!
-		questions: [Questions!]
 	}
 	input ProfileInput {
 		firstName: String

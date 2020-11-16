@@ -13,6 +13,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@chakra-ui/icons": "^1.0.0",
     "apollo-server": "^2.18.2",
     "bcryptjs": "^2.4.3",
     "cloudinary": "^1.23.0",
@@ -21,6 +22,7 @@
     "graphql": "^15.3.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.10.10",
+    "react-icons": "^3.11.0",
     "react-textarea-autosize": "^8.3.0",
     "uuidv4": "^6.2.5"
   },

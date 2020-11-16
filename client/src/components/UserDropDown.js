@@ -7,7 +7,7 @@ import {
 	MenuItem,
 	MenuGroup,
 	MenuDivider,
-} from '@chakra-ui/core';
+} from '@chakra-ui/react';
 import { useSelector, useDispatch } from 'react-redux';
 import { logoutUser } from '../store/authSlice';
 import { Link } from 'react-router-dom';

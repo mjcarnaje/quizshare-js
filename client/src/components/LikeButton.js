@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { PseudoBox, Icon, Text } from '@chakra-ui/core';
+import { Box, Icon, IconButton, Text } from '@chakra-ui/react';
 import { useMutation, gql } from '@apollo/client';
+import { IoMdHeartEmpty, IoIosHeart } from 'react-icons/io';
 
 const LIKE_QUIZ_MUTATION = gql`
 	mutation toggleLikeQuiz($quizId: String!) {
@@ -35,7 +36,7 @@ const LikeButton = ({ quiz: { likes, id, likeCount }, user }) => {
 
 	return (
 		<>
-			<PseudoBox
+			<Box
 				as='button'
 				role='group'
 				display='flex'
@@ -46,28 +47,23 @@ const LikeButton = ({ quiz: { likes, id, likeCount }, user }) => {
 				_hover={{ color: 'red.500' }}
 				_focus={{ outline: 'none' }}
 			>
-				<PseudoBox
-					as='div'
-					_groupHover={{ bg: 'red.100' }}
-					display='flex'
-					alignItems='center'
-					justifyContent='center'
-					h={8}
-					w={8}
-					borderRadius={50}
-				>
-					<Icon
-						name={isLiked ? 'heart-solid' : 'heart-outline'}
-						size='18px'
-						_groupHover={{ color: 'inherit' }}
-					/>
-				</PseudoBox>
+				<IconButton
+					variant='outline'
+					colorScheme='gray'
+					aria-label='Like post'
+					isRound
+					_focus={{ outline: 'none' }}
+					border='none'
+					_groupHover={{ bg: 'red.100', color: 'red.500' }}
+					fontSize='24px'
+					icon={isLiked ? <IoIosHeart /> : <IoMdHeartEmpty />}
+				/>
 				{likeCount && (
 					<Text fontFamily='inter' color='inherit' marginLeft='8px'>
 						{likeCount}
 					</Text>
 				)}
-			</PseudoBox>
+			</Box>
 		</>
 	);
 };

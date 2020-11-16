@@ -1,7 +1,7 @@
 import React from 'react';
 import { useQuery } from '@apollo/client';
 import Card from '../components/Card';
-import { Box, Heading, Spinner, Divider, Grid } from '@chakra-ui/core';
+import { Box, Heading, Spinner, Divider, Grid } from '@chakra-ui/react';
 import { GET_ALL_QUIZZES } from '../utils/graphql';
 
 const Home = () => {
@@ -11,7 +11,13 @@ const Home = () => {
 
 	if (loading)
 		return (
-			<Spinner thickness='8px' speed='.7s' color='purple.500' size='70px' />
+			<Spinner
+				thickness='4px'
+				speed='0.65s'
+				emptyColor='gray.200'
+				color='purple.500'
+				size='xl'
+			/>
 		);
 	if (error) {
 		console.log(error.graphQLErrors[0]);

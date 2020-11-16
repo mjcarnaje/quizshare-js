@@ -93,6 +93,37 @@ export const GET_PROFILE_INFO = gql`
 	}
 `;
 
+export const CREATE_QUIZ = gql`
+	mutation createQuiz(
+		$title: String!
+		$description: String!
+		$questions: [Questions!]!
+	) {
+		createQuiz(
+			quizInput: {
+				title: $title
+				description: $description
+				questions: $questions
+			}
+		) {
+			id
+			title
+			description
+			questions {
+				id
+				question
+				choices {
+					id
+					value
+				}
+				answer
+			}
+			author {
+				username
+			}
+		}
+	}
+`;
 export const LOGIN = gql`
 	mutation login($username: String!, $password: String!) {
 		login(username: $username, password: $password) {

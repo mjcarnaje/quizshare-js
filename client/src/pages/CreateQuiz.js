@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
 	Box,
 	FormLabel,
@@ -9,17 +9,24 @@ import {
 	Text,
 	Textarea,
 	Button,
-	Grid,
 	Flex,
 	Radio,
-	Divider,
 	FormErrorMessage,
 	IconButton,
 	Icon,
-} from '@chakra-ui/core';
+	Spacer,
+} from '@chakra-ui/react';
+
+import { uuid } from 'uuidv4';
+
 import { Field, FieldArray, Form, Formik, useField } from 'formik';
 import TextareaAutosize from 'react-textarea-autosize';
 import * as yup from 'yup';
+import { MdDelete } from 'react-icons/md';
+import CreateChoices from '../components/CreateChoices';
+import { Link } from 'react-router-dom';
+import { CREATE_QUIZ, GET_ALL_QUIZZES } from '../utils/graphql';
+import { useMutation } from '@apollo/client';
 
 const MyTextField = ({ input, textarea, nolabel, ...props }) => {
 	const [field, meta] = useField(props);
@@ -70,53 +77,25 @@ const MyTextField = ({ input, textarea, nolabel, ...props }) => {
 	);
 };
 
-const MyChoiceField = ({ nameForRadio, remove, ...props }) => {
+const MyChoiceField = ({ remove, ...props }) => {
 	const [field, meta] = useField(props);
-
 	return (
 		<FormControl>
-			<Flex bg='#f7fafc' rounded='md' h='full' direction='column'>
-				<Textarea
-					{...field}
-					{...props}
-					type='text'
-					variant='filled'
-					bg='#f7fafc'
-					_focus={{ outline: 'none', bg: 'gray.50' }}
-					_hover={{ bg: 'gray.50' }}
-					fontFamily='inter'
-					as={TextareaAutosize}
-					placeholder='Type your answer here...'
-					resize='none'
-					minH='27px'
-					overflow='hidden'
-				/>
-				<Flex
-					bg='gray.100'
-					rounded='md'
-					justifyContent='space-between'
-					mt='auto'
-				>
-					<Radio
-						{...field}
-						name={nameForRadio}
-						size='sm'
-						variantColor='green'
-						p='3px'
-						ml='3px'
-						fontFamily='inter'
-					>
-						correct answer
-					</Radio>
-					<IconButton
-						icon='delete'
-						size='sm'
-						color='red.300'
-						_focus={{ outline: 'none' }}
-						onClick={remove}
-					/>
-				</Flex>
-			</Flex>
+			<Textarea
+				{...field}
+				{...props}
+				type='text'
+				variant='filled'
+				bg='#f7fafc'
+				_focus={{ outline: 'none', bg: 'gray.50' }}
+				_hover={{ bg: 'gray.50' }}
+				fontFamily='inter'
+				as={TextareaAutosize}
+				placeholder='Type your answer here...'
+				resize='none'
+				minH='27px'
+				overflow='hidden'
+			/>
 		</FormControl>
 	);
 };
@@ -126,14 +105,18 @@ const quizValidationSchema = yup.object({
 	description: yup.string().required(),
 	questions: yup.array().of(
 		yup.object({
+			id: yup.string(),
 			question: yup.string().required(),
-			choices: yup.array().of(yup.string()),
+			choices: yup
+				.array()
+				.of(yup.object({ id: yup.string(), value: yup.string().required() })),
 			answer: yup.string().required(),
 		})
 	),
 });
 
-const CreateQuiz = () => {
+const CreateQuiz = (props) => {
+	const [createQuizMutation] = useMutation(CREATE_QUIZ);
 	return (
 		<Box w='full' minH='full'>
 			<Heading
@@ -153,25 +136,48 @@ const CreateQuiz = () => {
 					description: '',
 					questions: [
 						{
+							id: uuid(),
 							question: '',
-							choices: ['', ''],
+							choices: [
+								{ id: uuid(), value: '' },
+								{ id: uuid(), value: '' },
+							],
 							answer: null,
 						},
 					],
 				}}
-				onSubmit={(values) => {
-					alert(JSON.stringify(values, null, 2));
+				onSubmit={async (values, { setErrors }) => {
+					try {
+						const { data } = await createQuizMutation({
+							variables: values,
+							update(cache) {
+								const data = cache.readQuery({
+									query: GET_ALL_QUIZZES,
+								});
+								cache.writeQuery({
+									query: GET_ALL_QUIZZES,
+									data: {
+										getQuizzes: [values, ...data.getQuizzes],
+									},
+								});
+							},
+						});
+
+						props.history.push('/home');
+					} catch (err) {
+						console.log(err);
+					}
 				}}
 				validationSchema={quizValidationSchema}
 				validateOnBlur={false}
 				validateOnChange={false}
 			>
-				{({ values }) => {
+				{({ values, isSubmitting }) => {
 					return (
 						<>
 							<Form>
 								<Stack
-									bg='gray.50'
+									bg='white'
 									m='auto'
 									w='60%'
 									boxShadow='sm'
@@ -216,7 +222,7 @@ const CreateQuiz = () => {
 													<>
 														{values.questions.map((q, i) => {
 															return (
-																<Field name={`${arrayHelpers.name}.${i}`}>
+																<Field name={`questions.${i}`}>
 																	{(fieldProps) => (
 																		<Box
 																			p='10px'
@@ -224,6 +230,8 @@ const CreateQuiz = () => {
 																			boxShadow='sm'
 																			my='16px'
 																			bg='white'
+																			border='1px'
+																			borderColor='gray.200'
 																		>
 																			<Flex
 																				pb='10px'
@@ -241,15 +249,17 @@ const CreateQuiz = () => {
 
 																				<IconButton
 																					variant='ghost'
-																					variantColor='purple'
+																					colorScheme='purple'
 																					fontSize='18px'
-																					icon='delete'
-																					onClick={() => arrayHelpers.remove(i)}
+																					icon={<MdDelete />}
+																					onClick={() =>
+																						arrayHelpers.remove(q.id)
+																					}
 																				/>
 																			</Flex>
 																			<Box>
 																				<MyTextField
-																					name={`${arrayHelpers.name}.${i}.question`}
+																					name={`questions.${i}.question`}
 																					placeholder='Type your Question here...'
 																					fontSize='18px'
 																					resize='none'
@@ -260,58 +270,28 @@ const CreateQuiz = () => {
 																				/>
 																			</Box>
 
-																			<Grid
-																				templateColumns='repeat(2, 1fr)'
-																				gap={4}
-																				mt={8}
-																			>
-																				<FieldArray
-																					name={`${arrayHelpers.name}.${i}.choices`}
-																					validateOnChange={false}
-																				>
-																					{({ push, remove }) => {
-																						return (
-																							<>
-																								{fieldProps.field.value.choices.map(
-																									(c, i) => (
-																										<MyChoiceField
-																											name={`${fieldProps.field.name}.choices.${i}`}
-																											nameForRadio={`${fieldProps.field.name}.answer`}
-																											remove={() => remove(i)}
-																										/>
-																									)
-																								)}
-																								<Box
-																									w='full'
-																									textAlign='center'
-																								>
-																									<Button
-																										variantColor='purple'
-																										variant='ghost'
-																										fontFamily='inter'
-																										onClick={() => push('')}
-																									>
-																										Add choice
-																									</Button>
-																								</Box>
-																							</>
-																						);
-																					}}
-																				</FieldArray>
-																			</Grid>
+																			<CreateChoices
+																				name={`questions.${i}`}
+																				option={fieldProps.field.value.choices}
+																				ans={fieldProps.field.value.answer}
+																			/>
 																		</Box>
 																	)}
 																</Field>
 															);
 														})}
 														<Button
-															variantColor='purple'
+															colorScheme='purple'
 															size='lg'
 															w='full'
 															onClick={() =>
 																arrayHelpers.push({
+																	id: uuid(),
 																	question: '',
-																	choices: ['', ''],
+																	choices: [
+																		{ id: uuid(), value: '' },
+																		{ id: uuid(), value: '' },
+																	],
 																	answer: null,
 																})
 															}
@@ -323,24 +303,27 @@ const CreateQuiz = () => {
 											}}
 										</FieldArray>
 									</Box>
-									<Box ml='auto'>
+									<Flex>
+										<Spacer />
 										<Button
+											as={Link}
+											to='/home'
 											variant='outline'
-											variantColor='purple'
-											type='submit'
+											colorScheme='purple'
 											px='20px'
 										>
 											Cancel
 										</Button>
 										<Button
-											variantColor='purple'
+											colorScheme='purple'
 											type='submit'
 											px='20px'
+											isLoading={isSubmitting}
 											ml='10px'
 										>
 											Save
 										</Button>
-									</Box>
+									</Flex>
 								</Stack>
 							</Form>
 						</>

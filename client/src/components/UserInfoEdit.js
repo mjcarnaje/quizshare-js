@@ -13,7 +13,7 @@ import {
 	Stack,
 	Text,
 	useToast,
-} from '@chakra-ui/core';
+} from '@chakra-ui/react';
 import { gql, useMutation } from '@apollo/client';
 import { loadCurrentUser } from '../store/authSlice';
 import { useDispatch } from 'react-redux';
@@ -165,7 +165,7 @@ const UserInfoEdit = ({
 						<Button
 							as='label'
 							htmlFor='image-button'
-							variantColor='gray'
+							colorScheme='gray'
 							color='gray.600'
 							variant='ghost'
 							ml='15px'
@@ -281,7 +281,7 @@ const UserInfoEdit = ({
 				<Flex w='full' justifyContent='center' pt='20px'>
 					<Button
 						variant='outline'
-						variantColor='purple'
+						colorScheme='purple'
 						textAlign='center'
 						my='auto'
 						w='224px'

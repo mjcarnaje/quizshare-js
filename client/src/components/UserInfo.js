@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Flex, Text, Avatar } from '@chakra-ui/core';
+import { Box, Flex, Text, Avatar } from '@chakra-ui/react';
 
 const UserInfo = ({ data: { username, email, avatar } }) => {
 	return (

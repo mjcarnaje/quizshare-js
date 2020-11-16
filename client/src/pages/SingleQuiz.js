@@ -8,14 +8,16 @@ import {
 	Box,
 	Spinner,
 	Icon,
-	PseudoBox,
-} from '@chakra-ui/core';
+	IconButton,
+} from '@chakra-ui/react';
 import { useSelector } from 'react-redux';
 import LikeButton from '../components/LikeButton';
 import CommentButton from '../components/CommentButton';
 import CommentBox from '../components/CommentBox';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
+import { IoMdArrowRoundBack } from 'react-icons/io';
+import { GiGiftOfKnowledge } from 'react-icons/gi';
 
 export const GET_QUIZ = gql`
 	query($quizId: ID!) {
@@ -64,7 +66,13 @@ const SingleQuiz = ({ match: { params }, history }) => {
 	);
 	if (loading)
 		return (
-			<Spinner thickness='8px' speed='.7s' color='purple.500' size='70px' />
+			<Spinner
+				thickness='4px'
+				speed='0.65s'
+				emptyColor='gray.200'
+				color='purple.500'
+				size='xl'
+			/>
 		);
 	if (error) return <p>Error :</p>;
 	const {
@@ -92,20 +100,16 @@ const SingleQuiz = ({ match: { params }, history }) => {
 				borderBottomWidth='1px'
 				boxShadow='sm'
 			>
-				<PseudoBox
+				<IconButton
 					as={Link}
 					to='/home'
-					h='40px'
-					w='40px'
-					display='flex'
-					alignItems='center'
-					justifyContent='center'
-					borderRadius='100px'
-					_hover={{ bg: 'purple.100' }}
-					cursor='pointer'
-				>
-					<Icon name='back-arrow' size='1.2em' color='purple.600' />
-				</PseudoBox>
+					variant='ghost'
+					colorScheme='purple'
+					aria-label='Back'
+					isRound
+					fontSize='24px'
+					icon={<IoMdArrowRoundBack />}
+				/>
 				<Text
 					ml='20px'
 					fontFamily='montserrat'
@@ -155,13 +159,13 @@ const SingleQuiz = ({ match: { params }, history }) => {
 				<Text fontFamily='inter' py='10px' fontSize='23px' fontWeight='400'>
 					{description}
 				</Text>
-				<Text fontFamily='inter' fontSize='14px' color='gray.600'>
+				<Text fontFamily='inter' fontSize='14px' color='gray.600' pb='10px'>
 					{moment(new Date(parseInt(createdAt)).toISOString()).format(
 						' h:mm A · MMM D, YYYY'
 					)}
 				</Text>
 				<Divider />
-				<Box display='flex' justifyContent='space-around'>
+				<Box display='flex' justifyContent='space-around' py='10px'>
 					<Box display='flex'>
 						<Text fontFamily='inter' fontWeight='bold' mr='4px'>
 							{likeCount}
@@ -188,13 +192,18 @@ const SingleQuiz = ({ match: { params }, history }) => {
 					</Box>
 				</Box>
 				<Divider />
-				<Box display='flex' justifyContent='space-around'>
+				<Box
+					display='grid'
+					gridTemplateColumns='repeat(3, auto)'
+					justifyItems='center'
+					pt='10px'
+				>
 					<LikeButton user={user} quiz={{ id, likes }} />
 					<CommentButton user={user} quiz={{ id, comments }} />
 					<Link to={`take/${id}`}>
 						<Button
-							variantColor='purple'
-							rightIcon='arrow-forward'
+							colorScheme='purple'
+							rightIcon={<GiGiftOfKnowledge />}
 							variant='ghost'
 						>
 							Take Quiz

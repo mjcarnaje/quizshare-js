@@ -1,7 +1,7 @@
 import React from 'react';
 import MyProfile from './MyProfile';
 import MyQuizzes from './MyQuizzes';
-import { Box, Grid } from '@chakra-ui/core';
+import { Box, Grid } from '@chakra-ui/react';
 import DashboardNavigation from '../components/DashboardNavigation';
 import DashboardHeader from '../components/DashboardHeader';
 import {

@@ -13,7 +13,7 @@ import {
 	Alert,
 	FormErrorMessage,
 	Grid,
-} from '@chakra-ui/core';
+} from '@chakra-ui/react';
 import { useDispatch } from 'react-redux';
 import { useMutation } from '@apollo/client';
 import { Link } from 'react-router-dom';
@@ -125,7 +125,7 @@ const Login = (props) => {
 											isLoading={isSubmitting}
 											mt='16px'
 											w='100%'
-											variantColor='purple'
+											colorScheme='purple'
 											loadingText='Logging in'
 										>
 											Login

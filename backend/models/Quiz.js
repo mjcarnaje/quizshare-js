@@ -9,8 +9,9 @@ const quizSchema = new Schema({
 	description: String,
 	questions: [
 		{
+			id: String,
 			question: String,
-			choices: [String],
+			choices: [{ id: String, value: String }],
 			answer: String,
 		},
 	],

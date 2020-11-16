@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import './App.css';
 
-import { Box } from '@chakra-ui/core';
+import { Box } from '@chakra-ui/react';
 
 import Header from './components/Header';
 import Home from './pages/Home';

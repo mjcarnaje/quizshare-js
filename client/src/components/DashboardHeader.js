@@ -17,10 +17,11 @@ import {
 	AlertDialogCloseButton,
 	useToast,
 	Spinner,
-} from '@chakra-ui/core';
+} from '@chakra-ui/react';
 import { gql, useMutation, useApolloClient, useQuery } from '@apollo/client';
 import { logoutUser } from '../store/authSlice';
 import { GET_USER } from '../utils/graphql';
+import { MdDeleteForever } from 'react-icons/md';
 
 const DELETE_USER = gql`
 	mutation deleteUserData {
@@ -100,61 +101,52 @@ const DashboardHeader = () => {
 				</Box>
 				<Box ml='auto'>
 					<Button
-						leftIcon='delete'
-						variantColor='red'
+						leftIcon={<MdDeleteForever />}
+						colorScheme='red'
 						onClick={() => setIsOpen(true)}
 						size='sm'
 					>
 						Delete Account
 					</Button>
 
-					<Scale in={isOpen}>
-						{(styles) => (
-							<AlertDialog
-								leastDestructiveRef={cancelRef}
-								finalFocusRef={btnRef}
-								onClose={onClose}
-								isOpen={true}
-								isCentered
+					<AlertDialog
+						leastDestructiveRef={cancelRef}
+						finalFocusRef={btnRef}
+						onClose={onClose}
+						isCentered
+					>
+						<AlertDialogOverlay />
+						<AlertDialogContent borderRadius='8px'>
+							<AlertDialogHeader
+								fontSize='lg'
+								fontWeight='bold'
+								fontFamily='inter'
 							>
-								<AlertDialogOverlay opacity={styles.opacity} />
-								<AlertDialogContent {...styles} borderRadius='8px'>
-									<AlertDialogHeader
-										fontSize='lg'
-										fontWeight='bold'
-										fontFamily='inter'
-									>
-										Delete Account
-									</AlertDialogHeader>
+								Delete Account
+							</AlertDialogHeader>
 
-									<AlertDialogBody fontFamily='inter'>
-										All your data will be deleted. Are you sure? You can't undo
-										this action afterwards.
-									</AlertDialogBody>
+							<AlertDialogBody fontFamily='inter'>
+								All your data will be deleted. Are you sure? You can't undo this
+								action afterwards.
+							</AlertDialogBody>
 
-									<AlertDialogFooter>
-										<Button
-											ref={cancelRef}
-											onClick={onClose}
-											fontFamily='inter'
-										>
-											Cancel
-										</Button>
-										<Button
-											variantColor='red'
-											onClick={deleteUser}
-											ml={3}
-											fontFamily='inter'
-											loadingText='Deleting data...'
-											isLoading={loading ? true : false}
-										>
-											Delete
-										</Button>
-									</AlertDialogFooter>
-								</AlertDialogContent>
-							</AlertDialog>
-						)}
-					</Scale>
+							<AlertDialogFooter>
+								<Button ref={cancelRef} onClick={onClose} fontFamily='inter'>
+									Cancel
+								</Button>
+								<Button
+									colorScheme='red'
+									onClick={deleteUser}
+									ml={3}
+									fontFamily='inter'
+									loadingText='Deleting data...'
+									isLoading={loading ? true : false}
+								>
+									Delete
+								</Button>
+							</AlertDialogFooter>
+						</AlertDialogContent>
+					</AlertDialog>
 				</Box>
 			</Box>
 		</Box>

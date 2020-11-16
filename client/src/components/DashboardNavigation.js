@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Box, PseudoBox, Stack } from '@chakra-ui/core';
+import { Box, Stack } from '@chakra-ui/react';
 
 const DashboardNavigation = ({ url }) => {
 	const pathname = window.location.pathname;
@@ -16,7 +16,7 @@ const DashboardNavigation = ({ url }) => {
 		<Box px='10px'>
 			<Stack spacing={0} rounded='md'>
 				{['Profile', 'Quizzes'].map((item) => (
-					<PseudoBox
+					<Box
 						key={item}
 						as={Link}
 						px='10px'
@@ -42,7 +42,7 @@ const DashboardNavigation = ({ url }) => {
 						_first={{ borderTopWidth: 0 }}
 					>
 						{item}
-					</PseudoBox>
+					</Box>
 				))}
 			</Stack>
 		</Box>

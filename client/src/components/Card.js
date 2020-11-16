@@ -1,5 +1,5 @@
 import React from 'react';
-import { Avatar, Box, Flex, Heading, PseudoBox, Text } from '@chakra-ui/core';
+import { Avatar, Box, Flex, Heading, Text } from '@chakra-ui/react';
 import { useSelector } from 'react-redux';
 import moment from 'moment';
 
@@ -23,7 +23,7 @@ const Card = ({
 }) => {
 	const user = useSelector((state) => state.auth.user);
 	return (
-		<PseudoBox
+		<Box
 			minH='180px'
 			rounded='8px'
 			boxShadow='sm'
@@ -90,7 +90,7 @@ const Card = ({
 					{user && user.username === username && <MenuButtons quizId={id} />}
 				</Box>
 			</Box>
-		</PseudoBox>
+		</Box>
 	);
 };
 

@@ -19,7 +19,7 @@ import {
 	AlertIcon,
 	Alert,
 	Flex,
-} from '@chakra-ui/core';
+} from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
 import { useMutation } from '@apollo/client';
 import { useDispatch } from 'react-redux';
@@ -175,7 +175,7 @@ const Register = (props) => {
 												<Button
 													w='full'
 													mt='16px'
-													variantColor='purple'
+													colorScheme='purple'
 													onClick={() => setTabIndex(1)}
 												>
 													Next
@@ -196,7 +196,7 @@ const Register = (props) => {
 												<Button
 													w='full'
 													mt='16px'
-													variantColor='purple'
+													colorScheme='purple'
 													type='sumbit'
 													isLoading={isSubmitting}
 													loadingText='Registering in'

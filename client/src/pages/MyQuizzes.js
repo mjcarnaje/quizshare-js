@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Grid, Spinner } from '@chakra-ui/core';
+import { Box, Grid, Spinner } from '@chakra-ui/react';
 import { useQuery } from '@apollo/client';
 import { GET_USER_QUIZZES } from '../utils/graphql';
 import Card from '../components/Card';
