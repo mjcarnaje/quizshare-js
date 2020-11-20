@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import './App.css';
 
-import { Box } from '@chakra-ui/react';
+import { Container } from '@chakra-ui/react';
 
 import Header from './components/Header';
 import Home from './pages/Home';
@@ -20,6 +20,8 @@ import { GET_USER } from './utils/graphql';
 import { loadCurrentUser } from './store/authSlice';
 import { useDispatch } from 'react-redux';
 import CreateQuiz from './pages/CreateQuiz';
+import EditQuiz from './pages/EditQuiz';
+import Testing from './pages/Testing';
 
 function App() {
 	const dispatch = useDispatch();
@@ -33,25 +35,18 @@ function App() {
 	return (
 		<Router>
 			<Header />
-			<Box
-				gridAutoColumns
-				gridAutoRows
-				display='grid'
-				justifyItems='center'
-				alignItems='center'
-				minH='100vh'
-				pt='4rem'
-				bg='custombg'
-			>
+			<Container centerContent maxW='xl' minH='100vh' py='4rem' bg='custombg'>
 				<Switch>
 					<Route exact path='/home' component={Home} />
-					<Route exact path='/quiz/:id' component={SingleQuiz} />
+					<Route exact path='/testing' component={Testing} />
 					<Route exact path='/create-quiz' component={CreateQuiz} />
+					<Route exact path='/quiz/:id' component={SingleQuiz} />
+					<Route exact path='/quiz/edit/:id' component={EditQuiz} />
 					<PrivateRoute path='/dashboard' component={Dashboard} />
 					<PublicRoute exact path='/login' component={Login} />
 					<PublicRoute exact path='/register' component={Register} />
 				</Switch>
-			</Box>
+			</Container>
 		</Router>
 	);
 }

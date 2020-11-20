@@ -33,6 +33,7 @@ module.exports = gql`
 
 	type Quiz {
 		id: ID!
+		image: String
 		title: String!
 		description: String!
 		questions: [Question!]!
@@ -73,6 +74,7 @@ module.exports = gql`
 	input QuizInput {
 		title: String!
 		description: String!
+		image: String
 		questions: [Questions!]!
 	}
 	input RegisterInput {
@@ -115,6 +117,7 @@ module.exports = gql`
 		addAvatar(picture: String!): String!
 
 		createQuiz(quizInput: QuizInput!): Quiz!
+		updateQuiz(quizId: String!, quizInput: QuizInput!): Quiz!
 		deleteQuiz(quizId: String!): String!
 
 		addQuestion(quizId: String!, questions: [Questions!]): Quiz!

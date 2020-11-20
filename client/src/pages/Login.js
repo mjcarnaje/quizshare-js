@@ -18,9 +18,9 @@ import { useDispatch } from 'react-redux';
 import { useMutation } from '@apollo/client';
 import { Link } from 'react-router-dom';
 import signin from '../assets/svg/signin.svg';
-import { GET_USER_QUIZZES, LOGIN } from '../utils/graphql';
+import { LOGIN } from '../utils/graphql';
 import { loginUser } from '../store/authSlice';
-import { Field, Form, Formik, useField } from 'formik';
+import { Form, Formik, useField } from 'formik';
 import * as yup from 'yup';
 
 const LoginTextField = ({ customError, ...props }) => {
@@ -51,7 +51,6 @@ const Login = (props) => {
 		<Grid
 			templateColumns={{ md: '1fr', lg: 'repeat(2, 1fr)' }}
 			gap={4}
-			bg='green.300'
 			p='20px'
 			width={{ md: '50%', lg: '75%' }}
 			minH='75%'
@@ -94,7 +93,7 @@ const Login = (props) => {
 								dispatch(loginUser(data.login));
 								props.history.push('/home');
 							} catch (err) {
-								const errors = setErrors(err.graphQLErrors[0].message);
+								console.log(err);
 							}
 						}}
 					>

@@ -2,7 +2,6 @@ import React, { useRef, useState } from 'react';
 import {
 	Icon,
 	Text,
-	SlideIn,
 	Modal,
 	ModalOverlay,
 	ModalContent,
@@ -10,18 +9,13 @@ import {
 	ModalCloseButton,
 	ModalBody,
 	useDisclosure,
-	Divider,
 	Avatar,
 	Textarea,
 	Button,
 	Box,
 	IconButton,
 	ModalFooter,
-	Lorem,
-	createIcon,
 	FormControl,
-	Input,
-	FormLabel,
 } from '@chakra-ui/react';
 import { useSelector } from 'react-redux';
 import { gql, useMutation } from '@apollo/client';
@@ -114,10 +108,7 @@ const CommentButton = ({ user, quiz: { commentCount, comments, id } }) => {
 					<ModalHeader></ModalHeader>
 					<ModalCloseButton />
 					<ModalBody display='flex'>
-						<Avatar
-							name={userInfo.name && userInfo.name}
-							src={userInfo.avatar && userInfo.avatar}
-						/>
+						<Avatar name={userInfo?.name} src={userInfo?.avatar} />
 						<FormControl>
 							<Textarea
 								ref={initialRef}

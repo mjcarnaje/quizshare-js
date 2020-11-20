@@ -9,7 +9,6 @@ import {
 	Switch,
 	Route,
 	useRouteMatch,
-	Redirect,
 } from 'react-router-dom';
 import EditProfile from '../components/UserInfoEdit';
 import { useSelector } from 'react-redux';

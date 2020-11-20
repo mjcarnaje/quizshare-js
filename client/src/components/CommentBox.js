@@ -43,7 +43,7 @@ const CommentBox = ({
 						</Text>
 					</Box>
 
-					<Text fontFamily='inter' fontSize='18px'>
+					<Text fontFamily='inter' fontSize='18px' wordBreak='break-all'>
 						{body}
 					</Text>
 				</Box>

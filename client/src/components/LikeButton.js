@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Icon, IconButton, Text } from '@chakra-ui/react';
+import { Box, IconButton, Text } from '@chakra-ui/react';
 import { useMutation, gql } from '@apollo/client';
 import { IoMdHeartEmpty, IoIosHeart } from 'react-icons/io';
 

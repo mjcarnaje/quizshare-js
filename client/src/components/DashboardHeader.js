@@ -1,6 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { Link, Redirect } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 
 import {
 	AlertDialog,
@@ -13,8 +12,6 @@ import {
 	Box,
 	Text,
 	Button,
-	Scale,
-	AlertDialogCloseButton,
 	useToast,
 	Spinner,
 } from '@chakra-ui/react';

@@ -23,6 +23,7 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.10.10",
     "react-icons": "^3.11.0",
+    "react-image-crop": "^8.6.6",
     "react-textarea-autosize": "^8.3.0",
     "uuidv4": "^6.2.5"
   },

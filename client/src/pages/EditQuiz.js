@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import {
 	Box,
 	Heading,
@@ -21,17 +21,24 @@ import {
 	ModalCloseButton,
 	Button,
 	HStack,
+	Spinner,
 	Alert,
 	AlertIcon,
 } from '@chakra-ui/react';
 import { uuid } from 'uuidv4';
 import { Field, FieldArray, Form, Formik } from 'formik';
+import * as yup from 'yup';
 import { MdDelete } from 'react-icons/md';
 import { Link } from 'react-router-dom';
-import { CREATE_QUIZ, GET_ALL_QUIZZES } from '../utils/graphql';
-import { useMutation } from '@apollo/client';
+import {
+	GET_ALL_QUIZZES,
+	QUIZ_DATA_FOR_UPDATE,
+	UPDATE_QUIZ,
+} from '../utils/graphql';
+import { useMutation, useQuery } from '@apollo/client';
 import { MyTextAreaField, MyTextField } from '../components/CustomField';
 import CreateChoices from '../components/CreateChoices';
+
 import { validateImg, quizValidationSchema } from '../utils/validators';
 import { BiImageAdd } from 'react-icons/bi';
 import ReactCrop from 'react-image-crop';
@@ -47,24 +54,27 @@ const INITIAL_QUESTION = {
 	answer: null,
 };
 
-const INITIAL_VALUES = {
-	title: '',
-	description: '',
-	image: '',
-	questions: [INITIAL_QUESTION],
-};
-
-const CreateQuiz = (props) => {
-	const toast = useToast();
-	const [createQuizMutation] = useMutation(CREATE_QUIZ);
+const EditQuiz = (props) => {
 	const { isOpen, onOpen, onClose } = useDisclosure();
 
 	const [originalPic, setUpOriginalPic] = useState(null);
 	const [previewSource, setPreviewSource] = useState();
 	const [finalImage, setFinalImage] = useState(null);
 	const imgRef = useRef(null);
-	const [crop, setCrop] = useState({ unit: '%', width: 30, aspect: 16 / 9 });
+	const [crop, setCrop] = useState({ unit: '%', width: 100, aspect: 16 / 9 });
 	const [completedCrop, setCompletedCrop] = useState(null);
+
+	const toast = useToast();
+	const [updateQuizMutation] = useMutation(UPDATE_QUIZ);
+	const quizId = props.match.params.id;
+	const { loading, error, data: { getQuiz: INITIAL_VALUES } = {} } = useQuery(
+		QUIZ_DATA_FOR_UPDATE,
+		{
+			variables: {
+				quizId,
+			},
+		}
+	);
 
 	const onLoad = useCallback((img) => {
 		imgRef.current = img;
@@ -100,6 +110,34 @@ const CreateQuiz = (props) => {
 		setFinalImage(base64Image);
 	}, [completedCrop, previewSource]);
 
+	if (loading)
+		return (
+			<Spinner
+				thickness='4px'
+				speed='0.65s'
+				emptyColor='gray.200'
+				color='purple.500'
+				size='xl'
+			/>
+		);
+	if (error) return <p>Error :</p>;
+	const removeTypename = (value) => {
+		if (value === null || value === undefined) {
+			return value;
+		} else if (Array.isArray(value)) {
+			return value.map((v) => removeTypename(v));
+		} else if (typeof value === 'object') {
+			const newObj = {};
+			Object.entries(value).forEach(([key, v]) => {
+				if (key !== '__typename') {
+					newObj[key] = removeTypename(v);
+				}
+			});
+			return newObj;
+		}
+		return value;
+	};
+
 	return (
 		<Box w='full' minH='full'>
 			<Heading
@@ -117,8 +155,14 @@ const CreateQuiz = (props) => {
 				initialValues={INITIAL_VALUES}
 				onSubmit={async (values, { setErrors }) => {
 					try {
-						const { data } = await createQuizMutation({
-							variables: { ...values, image: finalImage },
+						const newValues = removeTypename(values);
+						const pic = finalImage ? finalImage : newValues?.image;
+						const finalValues = { ...newValues, image: pic };
+						await updateQuizMutation({
+							variables: {
+								quizId,
+								quizInput: finalValues,
+							},
 							update(cache) {
 								const data = cache.readQuery({
 									query: GET_ALL_QUIZZES,
@@ -126,12 +170,12 @@ const CreateQuiz = (props) => {
 								cache.writeQuery({
 									query: GET_ALL_QUIZZES,
 									data: {
-										getQuizzes: [values, ...data.getQuizzes],
+										getQuizzes: [finalValues, ...data.getQuizzes],
 									},
 								});
 								toast({
-									title: 'Quiz created.',
-									description: "You've created a quiz.",
+									title: 'Quiz updated.',
+									description: 'The quiz is now updated.',
 									status: 'success',
 									duration: 3000,
 									isClosable: true,
@@ -141,7 +185,7 @@ const CreateQuiz = (props) => {
 
 						props.history.push('/home');
 					} catch (err) {
-						console.log(err.graphQLErrors[0].message);
+						console.log(err);
 					}
 				}}
 				validationSchema={quizValidationSchema}
@@ -164,17 +208,19 @@ const CreateQuiz = (props) => {
 									<Flex direction='column' justify='center' align='center'>
 										<Container
 											bg='white'
-											border={finalImage ? '' : '2px'}
+											border={finalImage || INITIAL_VALUES?.image ? '' : '2px'}
 											borderColor='gray.200'
-											borderStyle={finalImage ? '' : 'dashed'}
+											borderStyle={
+												finalImage || INITIAL_VALUES?.image ? '' : 'dashed'
+											}
 											minW='full'
 											centerContent
 											px='0'
 											rounded='8px'
 										>
-											{finalImage ? (
+											{finalImage || INITIAL_VALUES?.image ? (
 												<Image
-													src={finalImage}
+													src={finalImage || INITIAL_VALUES?.image}
 													objectFit='cover'
 													w='full'
 													borderRadius='8px'
@@ -400,7 +446,7 @@ const CreateQuiz = (props) => {
 											isLoading={isSubmitting}
 											ml='10px'
 										>
-											Save
+											Update
 										</Button>
 									</Flex>
 								</Stack>
@@ -413,4 +459,4 @@ const CreateQuiz = (props) => {
 	);
 };
 
-export default CreateQuiz;
+export default EditQuiz;

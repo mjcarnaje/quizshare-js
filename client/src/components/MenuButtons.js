@@ -5,15 +5,14 @@ import {
 	MenuList,
 	MenuItem,
 	Button,
-	Icon,
 	Text,
-	Box,
 } from '@chakra-ui/react';
 import { gql, useMutation } from '@apollo/client';
 import { GET_ALL_QUIZZES } from '../utils/graphql';
 import { BsThreeDots } from 'react-icons/bs';
 import { MdDelete } from 'react-icons/md';
 import { FiEdit } from 'react-icons/fi';
+import { Link } from 'react-router-dom';
 
 const DELETE_COMMENT = gql`
 	mutation deleteComment($quizId: String!, $commentId: String!) {
@@ -81,7 +80,7 @@ const MenuButtons = ({ deleteOnly, quizId, commentId }) => {
 					</MenuButton>
 					<MenuList minWidth='140px'>
 						{!deleteOnly && (
-							<MenuItem>
+							<MenuItem as={Link} to={`/quiz/edit/${quizId}`}>
 								<FiEdit color='#805AD5' />
 								<Text ml='5px' fontFamily='inter'>
 									Edit

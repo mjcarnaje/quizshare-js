@@ -7,6 +7,7 @@ const quizSchema = new Schema({
 	},
 	title: String,
 	description: String,
+	image: String,
 	questions: [
 		{
 			id: String,

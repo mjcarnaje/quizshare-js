@@ -1,5 +1,5 @@
 import React from 'react';
-import { gql, useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import {
 	Avatar,
 	Text,
@@ -7,8 +7,8 @@ import {
 	Button,
 	Box,
 	Spinner,
-	Icon,
 	IconButton,
+	Image,
 } from '@chakra-ui/react';
 import { useSelector } from 'react-redux';
 import LikeButton from '../components/LikeButton';
@@ -17,40 +17,8 @@ import CommentBox from '../components/CommentBox';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
 import { IoMdArrowRoundBack } from 'react-icons/io';
-import { GiGiftOfKnowledge } from 'react-icons/gi';
-
-export const GET_QUIZ = gql`
-	query($quizId: ID!) {
-		getQuiz(quizId: $quizId) {
-			id
-			title
-			likeCount
-			likes {
-				id
-				username
-			}
-			description
-			commentCount
-			comments {
-				id
-				createdAt
-				body
-				author {
-					username
-					avatar
-					email
-				}
-			}
-			questionCount
-			createdAt
-			author {
-				avatar
-				username
-				email
-			}
-		}
-	}
-`;
+import { MdLibraryBooks } from 'react-icons/md';
+import { GET_QUIZ } from '../utils/graphql';
 
 const SingleQuiz = ({ match: { params }, history }) => {
 	const user = useSelector((state) => state.auth.user);
@@ -156,7 +124,13 @@ const SingleQuiz = ({ match: { params }, history }) => {
 						{title}
 					</Text>
 				</Box>
-				<Text fontFamily='inter' py='10px' fontSize='23px' fontWeight='400'>
+				<Text
+					fontFamily='inter'
+					py='10px'
+					fontSize='23px'
+					fontWeight='400'
+					wordBreak='break-all'
+				>
 					{description}
 				</Text>
 				<Text fontFamily='inter' fontSize='14px' color='gray.600' pb='10px'>
@@ -203,7 +177,7 @@ const SingleQuiz = ({ match: { params }, history }) => {
 					<Link to={`take/${id}`}>
 						<Button
 							colorScheme='purple'
-							rightIcon={<GiGiftOfKnowledge />}
+							rightIcon={<MdLibraryBooks />}
 							variant='ghost'
 						>
 							Take Quiz

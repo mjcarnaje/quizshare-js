@@ -3,14 +3,11 @@ import {
 	Avatar,
 	Box,
 	Button,
-	Divider,
 	Flex,
 	FormControl,
 	FormHelperText,
 	FormLabel,
-	Icon,
 	Input,
-	Stack,
 	Text,
 	useToast,
 } from '@chakra-ui/react';
@@ -18,7 +15,6 @@ import { gql, useMutation } from '@apollo/client';
 import { loadCurrentUser } from '../store/authSlice';
 import { useDispatch } from 'react-redux';
 import { render } from 'react-dom';
-import { GET_ALL_QUIZZES } from '../utils/graphql';
 
 const UPDATE_ACCOUNT_INFO = gql`
 	mutation updateAccount(
@@ -77,6 +73,7 @@ const UserInfoEdit = ({
 
 	const previewFile = (file) => {
 		const reader = new FileReader();
+		console.log(file);
 		reader.readAsDataURL(file);
 		reader.onloadend = () => {
 			setPreviewSource(reader.result);
@@ -130,10 +127,10 @@ const UserInfoEdit = ({
 			username: authUsername,
 			email: authEmail,
 		});
-	}, [authAvatar, authUsername, authEmail]);
+	}, [authAvatar, authUsername, authEmail, values]);
 
 	const { username, email, password, confirmPassword } = values;
-
+	console.log(previewSource);
 	return (
 		<>
 			<Box py='16px' px='32px'>

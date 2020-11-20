@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Heading, Flex, Text, Button, Icon } from '@chakra-ui/react';
+import { Box, Heading, Flex, Text, Button } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import UserDropDown from './UserDropDown';

@@ -8,7 +8,7 @@ const { UserInputError } = require('apollo-server');
 const User = require('../../models/User');
 const Quiz = require('../../models/Quiz');
 const Profile = require('../../models/Profile');
-const picUploader = require('../../utils/picUploader');
+const { uploadPic } = require('../../utils/cloudinaryFunctions');
 const checkAuth = require('../../utils/checkAuth');
 
 module.exports = {
@@ -66,23 +66,23 @@ module.exports = {
 				throw new UserInputError('Errors', { errors });
 			}
 
-			const user_username = await User.findOne({ username });
-			const user_email = await User.findOne({ email });
+			const userTaken = await User.findOne({ username });
+			const emailTaken = await User.findOne({ email });
 
-			if (user_email && user_username) {
+			if (userTaken && emailTaken) {
 				throw new UserInputError('Both username and email is taken', {
 					errors: {
 						email: 'This email is already taken',
 						username: 'This username is already taken',
 					},
 				});
-			} else if (user_username) {
+			} else if (userTaken) {
 				throw new UserInputError('Username is taken', {
 					errors: {
 						username: 'This username is already taken',
 					},
 				});
-			} else if (user_email) {
+			} else if (emailTaken) {
 				throw new UserInputError('Email is taken', {
 					errors: {
 						email: 'This email is already taken',
@@ -147,34 +147,33 @@ module.exports = {
 
 			try {
 				if (username || email) {
-					const user_username = await User.findOne({ username });
-					const user_email = await User.findOne({ email });
+					const userTaken = await User.findOne({ username });
+					const emailTaken = await User.findOne({ email });
 
-					if (user_email && user_username) {
+					if (userTaken && emailTaken) {
 						throw new UserInputError('Both username and email is taken', {
 							errors: {
 								email: 'This email is already taken',
 								username: 'This username is already taken',
 							},
 						});
-					} else if (user_username) {
+					} else if (userTaken) {
 						throw new UserInputError('Username is taken', {
 							errors: {
 								username: 'This username is already taken',
 							},
 						});
-					} else if (user_email) {
+					} else if (emailTaken) {
 						throw new UserInputError('Email is taken', {
 							errors: {
 								email: 'This email is already taken',
 							},
 						});
 					}
-
-					if (username) userFields.username = username;
-					if (email) userFields.email = email;
 				}
 
+				if (username) userFields.username = username;
+				if (email) userFields.email = email;
 				if (password && confirmPassword) {
 					userFields.password = await bcrypt.hash(password, 12);
 				}
@@ -182,7 +181,7 @@ module.exports = {
 				let userData = await User.findById(user.id);
 
 				if (avatar) {
-					const pic = await picUploader(avatar);
+					const pic = await uploadPic(avatar);
 					userFields.avatar = pic;
 				}
 
@@ -202,7 +201,7 @@ module.exports = {
 		addAvatar: async (parent, { picture }, context) => {
 			const user = checkAuth(context);
 			try {
-				const pic = await picUploader(picture);
+				const pic = await uploadPic(picture);
 
 				await User.updateOne({ _id: user.id }, { $set: { avatar: pic } });
 

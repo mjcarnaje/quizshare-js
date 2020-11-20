@@ -1,12 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import {
-	Avatar,
 	Box,
 	Button,
-	Divider,
 	Flex,
 	FormControl,
-	FormHelperText,
 	FormLabel,
 	Icon,
 	Input,
@@ -16,15 +13,11 @@ import {
 	useToast,
 } from '@chakra-ui/react';
 import { useSelector, useDispatch } from 'react-redux';
-import { gql, useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client';
 import { GET_PROFILE_INFO, UPDATE_PROFILE_INFO } from '../utils/graphql';
-import { Redirect } from 'react-router-dom';
-import { ImFacebook2 } from 'react-icons/im';
 
 const ProfileInforEdit = ({ profileData, isEdit }) => {
-	const { avatar, username, email } = useSelector((state) => state.auth.user);
 	const toast = useToast();
-	const dispatch = useDispatch();
 
 	const [values, setValues] = useState({
 		firstName: '',

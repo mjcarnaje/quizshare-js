@@ -5,6 +5,7 @@ const {
 } = require('apollo-server');
 const Quiz = require('../../models/Quiz');
 const checkAuth = require('../../utils/checkAuth');
+const { uploadPic, deletePic } = require('../../utils/cloudinaryFunctions');
 
 module.exports = {
 	Query: {
@@ -48,7 +49,7 @@ module.exports = {
 	Mutation: {
 		createQuiz: async (
 			parent,
-			{ quizInput: { title, description, questions } },
+			{ quizInput: { title, description, questions, image } },
 			context
 		) => {
 			const user = checkAuth(context);
@@ -56,9 +57,17 @@ module.exports = {
 			if (description.trim() === '') {
 				description = 'There is no description about in this quiz';
 			}
+
+			let img;
+
+			if (image) {
+				img = await uploadPic(image);
+			}
+
 			const newQuiz = new Quiz({
 				title,
 				description,
+				image: img,
 				author: user.id,
 				questions: [...questions],
 				createdAt: new Date().toISOString(),
@@ -66,6 +75,18 @@ module.exports = {
 			await newQuiz.save();
 
 			return newQuiz;
+		},
+		updateQuiz: async (
+			parent,
+			{ quizId, quizInput: { title, description, questions, image } },
+			context
+		) => {
+			const user = checkAuth(context);
+			const quiz = await Quiz.findByIdAndUpdate(
+				{ _id: quizId },
+				{ $set: { title, description, image, questions } }
+			);
+			return quiz;
 		},
 		toggleLikeQuiz: async (parent, { quizId }, context) => {
 			const { username } = checkAuth(context);
@@ -98,10 +119,14 @@ module.exports = {
 			const user = checkAuth(context);
 			try {
 				const quiz = await Quiz.findById(quizId);
+
 				if (!quiz) {
 					throw new Error('Quiz not found');
 				}
 				if (user.id == quiz.author) {
+					if (quiz.image) {
+						deletePic(quiz.image);
+					}
 					await quiz.delete();
 					return 'Quiz successfully deleted';
 				} else {

@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Box, Stack } from '@chakra-ui/react';
+import { Box, Flex, Stack, Text } from '@chakra-ui/react';
+import { BsFillPersonLinesFill } from 'react-icons/bs';
+import { CgFileDocument } from 'react-icons/cg';
 
 const DashboardNavigation = ({ url }) => {
 	const pathname = window.location.pathname;
@@ -15,9 +17,13 @@ const DashboardNavigation = ({ url }) => {
 	return (
 		<Box px='10px'>
 			<Stack spacing={0} rounded='md'>
-				{['Profile', 'Quizzes'].map((item) => (
-					<Box
-						key={item}
+				{[
+					['Profile', <BsFillPersonLinesFill />],
+					['Quizzes', <CgFileDocument />],
+				].map((item) => (
+					<Flex
+						align='center'
+						key={item[0]}
 						as={Link}
 						px='10px'
 						py='20px'
@@ -25,24 +31,24 @@ const DashboardNavigation = ({ url }) => {
 						fontSize='17px'
 						color='purple.600'
 						fontWeight={
-							isActive === item.toLowerCase() ||
-							isActive.includes(item.toLowerCase())
+							isActive === item[0].toLowerCase() ||
+							isActive.includes(item[0].toLowerCase())
 								? 'semibold'
 								: '300'
 						}
-						to={`${url}/${item.toLowerCase()}`}
+						to={`${url}/${item[0].toLowerCase()}`}
 						borderTopWidth='1px'
 						borderRadius='8px'
 						bg={
-							isActive === item.toLowerCase() ||
-							isActive.includes(item.toLowerCase())
+							isActive === item[0].toLowerCase() ||
+							isActive.includes(item[0].toLowerCase())
 								? 'white'
 								: ''
 						}
 						_first={{ borderTopWidth: 0 }}
 					>
-						{item}
-					</Box>
+						{item[1]} <Text ml='10px'>{item[0]}</Text>
+					</Flex>
 				))}
 			</Stack>
 		</Box>

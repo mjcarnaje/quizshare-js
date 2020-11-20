@@ -1,5 +1,15 @@
 import React from 'react';
-import { Avatar, Box, Flex, Heading, Text } from '@chakra-ui/react';
+import {
+	Avatar,
+	Box,
+	Flex,
+	Heading,
+	Text,
+	Spacer,
+	AspectRatio,
+	Image,
+	Skeleton,
+} from '@chakra-ui/react';
 import { useSelector } from 'react-redux';
 import moment from 'moment';
 
@@ -13,6 +23,7 @@ const Card = ({
 		id,
 		title,
 		description,
+		image,
 		likes,
 		likeCount,
 		comments,
@@ -23,73 +34,93 @@ const Card = ({
 }) => {
 	const user = useSelector((state) => state.auth.user);
 	return (
-		<Box
-			minH='180px'
-			rounded='8px'
-			boxShadow='sm'
-			bg='white'
-			padding='8px'
-			display='flex'
-			flexDirection='column'
-			cursor='pointer'
-			_hover={{ bg: 'gray.50' }}
-		>
-			<Flex align='center' justify='space-between' as={Link} to={`/quiz/${id}`}>
-				<Box display='flex' alignItems='center'>
-					<Avatar name='Michael James' src={avatar} />
-					<Box marginLeft='8px'>
-						<Heading
-							as='h2'
-							fontSize='12px'
-							fontFamily='inter'
-							fontWeight='semibold'
-						>
-							{username.toUpperCase()}
-						</Heading>
-						<Text
-							fontSize='xs'
-							fontFamily='inter'
-							color='gray.300'
-							lineHeight='1'
-						>
-							{moment(new Date(parseInt(createdAt)).toISOString()).fromNow(
-								true
-							)}
-						</Text>
+		<Box minH='180px'>
+			<Flex
+				direction='column'
+				rounded='8px'
+				boxShadow='sm'
+				bg='white'
+				p='8px'
+				cursor='pointer'
+				_hover={{ bg: 'gray.50' }}
+			>
+				{image && (
+					<AspectRatio maxW='420px' ratio={16 / 9}>
+						<Image
+							src={image}
+							objectFit='cover'
+							loading='lazy'
+							pb='12px'
+							borderRadius='8px'
+						/>
+					</AspectRatio>
+				)}
+				<Flex
+					align='center'
+					justify='space-between'
+					as={Link}
+					to={`/quiz/${id}`}
+				>
+					<Box display='flex' alignItems='center'>
+						<Avatar name='Michael James' src={avatar} />
+						<Box marginLeft='8px'>
+							<Heading
+								as='h2'
+								fontSize='12px'
+								fontFamily='inter'
+								lineHeight='1.6'
+								fontWeight='semibold'
+							>
+								{username.toUpperCase()}
+							</Heading>
+							<Text
+								fontSize='xs'
+								fontFamily='inter'
+								color='gray.300'
+								lineHeight='1'
+							>
+								{moment(new Date(parseInt(createdAt)).toISOString()).fromNow(
+									true
+								)}
+							</Text>
+						</Box>
+					</Box>
+					<Heading
+						as='h2'
+						fontFamily='inter'
+						color='gray.700'
+						fontSize='17px'
+						px='4px'
+						wordBreak='break-word'
+						textAlign='right'
+						lineHeight={1.2}
+						ml='10px'
+					>
+						{title.length > 40 ? `${title.slice(0, 40)}...` : title}
+					</Heading>
+				</Flex>
+				<Box px='12px' pt='20px' as={Link} to={`/quiz/${id}`}>
+					<Text fontFamily='inter' fontSize='15px' wordBreak='break-all'>
+						{description.length > 70
+							? `${description.slice(0, 75)}...`
+							: description}
+					</Text>
+				</Box>
+				<Spacer />
+				<Box
+					display='flex'
+					px='16px'
+					alignItems='center'
+					justifyContent='center'
+					position='relative'
+				>
+					<LikeButton user={user} quiz={{ likeCount, id, likes }} />
+					<CommentButton user={user} quiz={{ commentCount, id, comments }} />
+					<Box position='absolute' right='0'>
+						{user?.username === username && <MenuButtons quizId={id} />}
 					</Box>
 				</Box>
-				<Heading
-					as='h2'
-					maxW='50%'
-					fontFamily='inter'
-					color='gray.700'
-					fontSize='17px'
-					px='4px'
-					wordBreak='break-word'
-					textAlign='right'
-				>
-					{title}
-				</Heading>
 			</Flex>
-			<Box px='12px' py='20px' as={Link} to={`/quiz/${id}`}>
-				<Text fontFamily='inter' fontSize='15px'>
-					{description}
-				</Text>
-			</Box>
-			<Box
-				display='flex'
-				mt='auto'
-				px='16px'
-				alignItems='center'
-				justifyContent='center'
-				position='relative'
-			>
-				<LikeButton user={user} quiz={{ likeCount, id, likes }} />
-				<CommentButton user={user} quiz={{ commentCount, id, comments }} />
-				<Box position='absolute' right='0'>
-					{user && user.username === username && <MenuButtons quizId={id} />}
-				</Box>
-			</Box>
 		</Box>
 	);
 };

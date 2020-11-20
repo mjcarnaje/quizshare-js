@@ -1,11 +1,74 @@
 import { gql } from '@apollo/client';
 
+export const GET_QUIZ = gql`
+	query($quizId: ID!) {
+		getQuiz(quizId: $quizId) {
+			id
+			title
+			description
+			image
+			likeCount
+			likes {
+				id
+				username
+			}
+			commentCount
+			questions {
+				id
+				question
+				choices {
+					id
+					value
+				}
+				answer
+			}
+			comments {
+				id
+				createdAt
+				body
+				author {
+					username
+					avatar
+					email
+				}
+			}
+			questionCount
+			createdAt
+			author {
+				avatar
+				username
+				email
+			}
+		}
+	}
+`;
+
+export const QUIZ_DATA_FOR_UPDATE = gql`
+	query($quizId: ID!) {
+		getQuiz(quizId: $quizId) {
+			title
+			description
+			image
+			questions {
+				id
+				question
+				choices {
+					id
+					value
+				}
+				answer
+			}
+		}
+	}
+`;
+
 export const GET_ALL_QUIZZES = gql`
 	query {
 		getQuizzes {
 			id
 			title
 			description
+			image
 			createdAt
 			likeCount
 			likes {
@@ -37,6 +100,7 @@ export const GET_USER_QUIZZES = gql`
 			id
 			title
 			description
+			image
 			createdAt
 			likeCount
 			likes {
@@ -97,18 +161,21 @@ export const CREATE_QUIZ = gql`
 	mutation createQuiz(
 		$title: String!
 		$description: String!
+		$image: String!
 		$questions: [Questions!]!
 	) {
 		createQuiz(
 			quizInput: {
 				title: $title
 				description: $description
+				image: $image
 				questions: $questions
 			}
 		) {
 			id
 			title
 			description
+			image
 			questions {
 				id
 				question
@@ -124,6 +191,28 @@ export const CREATE_QUIZ = gql`
 		}
 	}
 `;
+
+export const UPDATE_QUIZ = gql`
+	mutation updateQuiz($quizId: String!, $quizInput: QuizInput!) {
+		updateQuiz(quizId: $quizId, quizInput: $quizInput) {
+			id
+			title
+			description
+			image
+			questions {
+				id
+				question
+				choices {
+					id
+					value
+				}
+				answer
+			}
+			questionCount
+		}
+	}
+`;
+
 export const LOGIN = gql`
 	mutation login($username: String!, $password: String!) {
 		login(username: $username, password: $password) {

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useQuery } from '@apollo/client';
 import Card from '../components/Card';
-import { Box, Heading, Spinner, Divider, Grid } from '@chakra-ui/react';
+import { Heading, Spinner, Divider, Grid, Container } from '@chakra-ui/react';
 import { GET_ALL_QUIZZES } from '../utils/graphql';
 
 const Home = () => {
@@ -25,7 +25,7 @@ const Home = () => {
 	}
 	return (
 		<>
-			<Box h='full' px='72px' pb='4rem'>
+			<Container maxW='lg'>
 				<Heading
 					as='h1'
 					py='1rem'
@@ -45,7 +45,7 @@ const Home = () => {
 						return <Card key={quiz.id} quizData={quiz} />;
 					})}
 				</Grid>
-			</Box>
+			</Container>
 		</>
 	);
 };

@@ -1,69 +1,35 @@
+import React from 'react';
+import { Button, Center, Flex, Grid, IconButton, Text } from '@chakra-ui/react';
+import { Field, FieldArray } from 'formik';
 import { CheckIcon } from '@chakra-ui/icons';
 import { MdDelete } from 'react-icons/md';
-import {
-	Box,
-	Button,
-	Center,
-	Flex,
-	FormControl,
-	Grid,
-	IconButton,
-	Textarea,
-	Text,
-	Checkbox,
-	Radio,
-	FormErrorMessage,
-} from '@chakra-ui/react';
-import { Field, FieldArray, useField } from 'formik';
-import React from 'react';
-import TextareaAutosize from 'react-textarea-autosize';
 import { uuid } from 'uuidv4';
+import { MyChoiceField } from './CustomField';
 
-const MyChoiceField = ({ ...props }) => {
-	const [field, meta] = useField(props);
-	return (
-		<FormControl isInvalid={meta.error && meta.touched}>
-			<Textarea
-				{...field}
-				{...props}
-				type='text'
-				variant='filled'
-				bg='#f7fafc'
-				_focus={{ outline: 'none', bg: 'gray.50' }}
-				_hover={{ bg: 'gray.50' }}
-				fontFamily='inter'
-				as={TextareaAutosize}
-				placeholder='Type your answer here...'
-				resize='none'
-				minH='27px'
-				overflow='hidden'
-				x
-			/>
-			<FormErrorMessage fontFamily='inter'>{meta.error}</FormErrorMessage>
-		</FormControl>
-	);
-};
-
-const Choices = ({ name, option, ans }) => {
+const Choices = ({
+	nameOfQuestion,
+	choicesOfQuestionValue,
+	answerOfQuestionValue,
+}) => {
 	return (
 		<>
 			<Grid templateColumns='repeat(2, 1fr)' gap={4} mt={8}>
-				<FieldArray name={`${name}.choices`} validateOnChange={false}>
+				<FieldArray name={`${nameOfQuestion}.choices`} validateOnChange={false}>
 					{({ push, remove }) => {
 						return (
 							<>
-								{option.map((val, index) => {
+								{choicesOfQuestionValue.map((choice, i) => {
 									return (
 										<>
 											<Flex
-												key={val.id}
+												key={choice.id}
 												bg='#f7fafc'
 												rounded='md'
 												h='full'
 												direction='column'
 											>
 												<MyChoiceField
-													name={`${name}.choices.${index}.value`}
+													name={`${nameOfQuestion}.choices.${i}.value`}
 												/>
 												<Flex
 													bg='gray.100'
@@ -76,18 +42,31 @@ const Choices = ({ name, option, ans }) => {
 													<Flex align='center'>
 														<Field
 															type='radio'
-															name={`${name}.answer`}
-															value={val.id}
-															id={val.id}
+															name={`${nameOfQuestion}.answer`}
+															value={choice.id}
+															id={choice.id}
 															style={{ display: 'none' }}
 														/>
-														<Flex align='center' as='label' htmlFor={val.id}>
+														<Flex
+															align='center'
+															as='label'
+															htmlFor={choice.id}
+															cursor='pointer'
+														>
 															<Center
 																cursor='pointer'
 																borderWidth='1px'
 																borderRadius='sm'
-																bg={ans === val.id ? 'green.600' : ''}
-																color={ans === val.id ? 'white' : 'gray.300'}
+																bg={
+																	answerOfQuestionValue === choice.id
+																		? 'green.600'
+																		: ''
+																}
+																color={
+																	answerOfQuestionValue === choice.id
+																		? 'white'
+																		: 'gray.300'
+																}
 																boxSize='18px'
 															>
 																<CheckIcon fontSize='12px' />
@@ -96,8 +75,16 @@ const Choices = ({ name, option, ans }) => {
 																fontFamily='inter'
 																fontSize='14px'
 																ml='5px'
-																color={ans === val.id ? 'green.600' : ''}
-																fontWeight={ans === val.id ? '600' : '400'}
+																color={
+																	answerOfQuestionValue === choice.id
+																		? 'green.600'
+																		: ''
+																}
+																fontWeight={
+																	answerOfQuestionValue === choice.id
+																		? '600'
+																		: '400'
+																}
 															>
 																correct answer
 															</Text>
