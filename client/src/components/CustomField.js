@@ -1,6 +1,3 @@
-import React from 'react';
-import { useField } from 'formik';
-import TextareaAutosize from 'react-textarea-autosize';
 import {
 	FormControl,
 	FormErrorMessage,
@@ -8,6 +5,9 @@ import {
 	Input,
 	Textarea,
 } from '@chakra-ui/react';
+import { useField } from 'formik';
+import React from 'react';
+import TextareaAutosize from 'react-textarea-autosize';
 
 export const MyTextField = ({ nolabel, ...props }) => {
 	const [field, meta] = useField(props);
@@ -32,8 +32,8 @@ export const MyTextField = ({ nolabel, ...props }) => {
 				variant='flushed'
 				fontFamily='inter'
 				px='5px'
-				autoFocus
 				focusBorderColor='purple.400'
+				autoFocus
 			/>
 			<FormErrorMessage fontFamily='inter'>{meta.error}</FormErrorMessage>
 		</FormControl>

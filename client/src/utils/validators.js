@@ -6,7 +6,6 @@ const imageType = /\.(gif|jpe?g|tiff?|png|webp|bmp)$/i;
 const toast = createStandaloneToast();
 
 export const validateImg = (imageFile) => {
-	console.log(imageFile);
 	const notAnImage = !imageType.test(imageFile.name);
 	if (notAnImage) {
 		toast({

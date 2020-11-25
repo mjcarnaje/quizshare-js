@@ -1,18 +1,18 @@
-import React from 'react';
+import { gql, useMutation } from '@apollo/client';
 import {
+	Button,
 	Menu,
 	MenuButton,
-	MenuList,
 	MenuItem,
-	Button,
+	MenuList,
 	Text,
 } from '@chakra-ui/react';
-import { gql, useMutation } from '@apollo/client';
-import { GET_ALL_QUIZZES } from '../utils/graphql';
+import React from 'react';
 import { BsThreeDots } from 'react-icons/bs';
-import { MdDelete } from 'react-icons/md';
 import { FiEdit } from 'react-icons/fi';
+import { MdDelete } from 'react-icons/md';
 import { Link } from 'react-router-dom';
+import { GET_ALL_QUIZZES } from '../utils/graphql';
 
 const DELETE_COMMENT = gql`
 	mutation deleteComment($quizId: String!, $commentId: String!) {

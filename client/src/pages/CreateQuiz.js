@@ -1,41 +1,38 @@
-import React, { useState, useCallback, useRef, useEffect } from 'react';
+import { useMutation } from '@apollo/client';
 import {
-	Box,
-	Heading,
-	Stack,
-	Text,
-	Flex,
-	IconButton,
-	Spacer,
-	useToast,
-	AspectRatio,
-	Image,
-	Container,
-	useDisclosure,
-	Modal,
-	ModalOverlay,
-	ModalContent,
-	ModalHeader,
-	ModalFooter,
-	ModalBody,
-	ModalCloseButton,
-	Button,
-	HStack,
 	Alert,
 	AlertIcon,
+	Box,
+	Button,
+	Container,
+	Flex,
+	Heading,
+	HStack,
+	IconButton,
+	Image,
+	Modal,
+	ModalBody,
+	ModalContent,
+	ModalFooter,
+	ModalOverlay,
+	Spacer,
+	Stack,
+	Text,
+	useDisclosure,
+	useToast,
 } from '@chakra-ui/react';
-import { uuid } from 'uuidv4';
 import { Field, FieldArray, Form, Formik } from 'formik';
-import { MdDelete } from 'react-icons/md';
-import { Link } from 'react-router-dom';
-import { CREATE_QUIZ, GET_ALL_QUIZZES } from '../utils/graphql';
-import { useMutation } from '@apollo/client';
-import { MyTextAreaField, MyTextField } from '../components/CustomField';
-import CreateChoices from '../components/CreateChoices';
-import { validateImg, quizValidationSchema } from '../utils/validators';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { BiImageAdd } from 'react-icons/bi';
+import { MdDelete } from 'react-icons/md';
 import ReactCrop from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
+import { Link } from 'react-router-dom';
+import { uuid } from 'uuidv4';
+import CreateChoices from '../components/CreateChoices';
+import { MyTextAreaField, MyTextField } from '../components/CustomField';
+import { CREATE_QUIZ, GET_ALL_QUIZZES } from '../utils/graphql';
+import { quizValidationSchema, validateImg } from '../utils/validators';
 
 const INITIAL_QUESTION = {
 	id: uuid(),
@@ -45,6 +42,7 @@ const INITIAL_QUESTION = {
 		{ id: uuid(), value: '' },
 	],
 	answer: null,
+	explanation: null,
 };
 
 const INITIAL_VALUES = {
@@ -63,7 +61,7 @@ const CreateQuiz = (props) => {
 	const [previewSource, setPreviewSource] = useState();
 	const [finalImage, setFinalImage] = useState(null);
 	const imgRef = useRef(null);
-	const [crop, setCrop] = useState({ unit: '%', width: 30, aspect: 16 / 9 });
+	const [crop, setCrop] = useState({ unit: '%', width: 100, aspect: 16 / 9 });
 	const [completedCrop, setCompletedCrop] = useState(null);
 
 	const onLoad = useCallback((img) => {
@@ -98,10 +96,11 @@ const CreateQuiz = (props) => {
 
 		const base64Image = canvas.toDataURL('image/jpeg');
 		setFinalImage(base64Image);
+		console.log(base64Image);
 	}, [completedCrop, previewSource]);
 
 	return (
-		<Box w='full' minH='full'>
+		<Box w='full' minH='full' mb='30px'>
 			<Heading
 				as='h1'
 				fontFamily='montserrat'
@@ -117,7 +116,7 @@ const CreateQuiz = (props) => {
 				initialValues={INITIAL_VALUES}
 				onSubmit={async (values, { setErrors }) => {
 					try {
-						const { data } = await createQuizMutation({
+						await createQuizMutation({
 							variables: { ...values, image: finalImage },
 							update(cache) {
 								const data = cache.readQuery({
@@ -309,7 +308,7 @@ const CreateQuiz = (props) => {
 													<>
 														{values.questions.map((q, i) => {
 															return (
-																<Field name={`questions.${i}`}>
+																<Field name={`questions.${i}`} key={q.id}>
 																	{({ field: { name, value }, form, meta }) => (
 																		<Box
 																			p='10px'
@@ -345,8 +344,8 @@ const CreateQuiz = (props) => {
 																			<Box>
 																				<MyTextAreaField
 																					name={`questions.${i}.question`}
-																					placeholder='Type your Question here...'
-																					fontSize='18px'
+																					placeholder='Type the Question here...'
+																					fontSize='16px'
 																					resize='none'
 																					minH='40px'
 																					overflow='hidden'
@@ -358,6 +357,18 @@ const CreateQuiz = (props) => {
 																				choicesOfQuestionValue={value.choices}
 																				answerOfQuestionValue={value.answer}
 																			/>
+																			<Box w='70%' m='auto'>
+																				<MyTextAreaField
+																					name={`questions.${i}.explanation`}
+																					placeholder='Type the explanation (optional)'
+																					fontSize='14px'
+																					resize='none'
+																					minH='40px'
+																					overflow='hidden'
+																					mt='20px'
+																					nolabel
+																				/>
+																			</Box>
 																		</Box>
 																	)}
 																</Field>
@@ -367,7 +378,18 @@ const CreateQuiz = (props) => {
 															colorScheme='purple'
 															size='lg'
 															w='full'
-															onClick={() => push(INITIAL_QUESTION)}
+															onClick={() =>
+																push({
+																	id: uuid(),
+																	question: '',
+																	choices: [
+																		{ id: uuid(), value: '' },
+																		{ id: uuid(), value: '' },
+																	],
+																	answer: null,
+																	explanation: null,
+																})
+															}
 														>
 															Add Question
 														</Button>

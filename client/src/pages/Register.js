@@ -1,33 +1,31 @@
-import React, { useState } from 'react';
+import { useMutation } from '@apollo/client';
 import {
-	Grid,
+	Alert,
+	AlertIcon,
 	Box,
-	Tabs,
-	TabList,
-	TabPanels,
-	Tab,
-	TabPanel,
-	Image,
-	Text,
+	Button,
+	Flex,
 	FormControl,
+	FormErrorMessage,
 	FormLabel,
+	Grid,
+	Image,
 	Input,
 	Stack,
-	FormErrorMessage,
-	Button,
-	FormHelperText,
-	AlertIcon,
-	Alert,
-	Flex,
+	Tab,
+	TabList,
+	TabPanel,
+	TabPanels,
+	Tabs,
+	Text,
 } from '@chakra-ui/react';
-import { Link } from 'react-router-dom';
-import { useMutation } from '@apollo/client';
+import { Form, Formik, useField } from 'formik';
+import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { loginUser } from '../store/authSlice';
-import { Field, Form, Formik, useField } from 'formik';
+import { Link } from 'react-router-dom';
 import * as yup from 'yup';
-
 import signup from '../assets/svg/signup.svg';
+import { loginUser } from '../store/authSlice';
 import { REGISTER } from '../utils/graphql';
 
 const RegisterTextField = ({ label, ...props }) => {
@@ -68,7 +66,6 @@ const Register = (props) => {
 		<Grid
 			templateColumns={{ md: '1fr', lg: 'repeat(2, 1fr)' }}
 			gap={4}
-			bg='green.300'
 			p='20px'
 			width={{ md: '50%', lg: '75%' }}
 			minH='75%'

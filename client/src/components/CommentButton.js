@@ -1,24 +1,24 @@
-import React, { useRef, useState } from 'react';
-import {
-	Icon,
-	Text,
-	Modal,
-	ModalOverlay,
-	ModalContent,
-	ModalHeader,
-	ModalCloseButton,
-	ModalBody,
-	useDisclosure,
-	Avatar,
-	Textarea,
-	Button,
-	Box,
-	IconButton,
-	ModalFooter,
-	FormControl,
-} from '@chakra-ui/react';
-import { useSelector } from 'react-redux';
 import { gql, useMutation } from '@apollo/client';
+import {
+	Avatar,
+	Box,
+	Button,
+	FormControl,
+	Icon,
+	IconButton,
+	Modal,
+	ModalBody,
+	ModalCloseButton,
+	ModalContent,
+	ModalFooter,
+	ModalHeader,
+	ModalOverlay,
+	Text,
+	Textarea,
+	useDisclosure,
+} from '@chakra-ui/react';
+import React, { useRef, useState } from 'react';
+import { useSelector } from 'react-redux';
 import TextareaAutosize from 'react-textarea-autosize';
 
 const COMMENT_MUTATION = gql`

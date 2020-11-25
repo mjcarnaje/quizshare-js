@@ -1,7 +1,16 @@
-import React from 'react';
-import { Button, Center, Flex, Grid, IconButton, Text } from '@chakra-ui/react';
-import { Field, FieldArray } from 'formik';
 import { CheckIcon } from '@chakra-ui/icons';
+import {
+	Button,
+	Center,
+	Flex,
+	Grid,
+	IconButton,
+	Spacer,
+	Text,
+} from '@chakra-ui/react';
+import { Field, FieldArray } from 'formik';
+import React from 'react';
+import { BsPlusSquare } from 'react-icons/bs';
 import { MdDelete } from 'react-icons/md';
 import { uuid } from 'uuidv4';
 import { MyChoiceField } from './CustomField';
@@ -13,11 +22,27 @@ const Choices = ({
 }) => {
 	return (
 		<>
-			<Grid templateColumns='repeat(2, 1fr)' gap={4} mt={8}>
-				<FieldArray name={`${nameOfQuestion}.choices`} validateOnChange={false}>
-					{({ push, remove }) => {
-						return (
-							<>
+			<FieldArray
+				name={`${nameOfQuestion}.choices`}
+				validateOnChange={false}
+				validateOnBlur={false}
+			>
+				{({ push, remove }) => {
+					return (
+						<>
+							<Flex py='10px'>
+								<Spacer />
+								<Button
+									leftIcon={<BsPlusSquare />}
+									colorScheme='purple'
+									variant='ghost'
+									size='xs'
+									onClick={() => push({ id: uuid(), value: '' })}
+								>
+									Add choice
+								</Button>
+							</Flex>
+							<Grid templateColumns='repeat(2, 1fr)' gap={4}>
 								{choicesOfQuestionValue.map((choice, i) => {
 									return (
 										<>
@@ -97,28 +122,18 @@ const Choices = ({
 														_focus={{
 															outline: 'none',
 														}}
-														onClick={remove}
+														onClick={() => remove(i)}
 													/>
 												</Flex>
 											</Flex>
 										</>
 									);
 								})}
-								<Center w='full'>
-									<Button
-										colorScheme='purple'
-										variant='ghost'
-										fontFamily='inter'
-										onClick={() => push({ id: uuid(), value: '' })}
-									>
-										Add choice
-									</Button>
-								</Center>
-							</>
-						);
-					}}
-				</FieldArray>
-			</Grid>
+							</Grid>
+						</>
+					);
+				}}
+			</FieldArray>
 		</>
 	);
 };

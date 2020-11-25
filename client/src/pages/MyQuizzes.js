@@ -1,8 +1,8 @@
-import React from 'react';
-import { Box, Grid, Spinner } from '@chakra-ui/react';
 import { useQuery } from '@apollo/client';
-import { GET_USER_QUIZZES } from '../utils/graphql';
+import { Box, Grid, Spinner } from '@chakra-ui/react';
+import React from 'react';
 import Card from '../components/Card';
+import { GET_USER_QUIZZES } from '../utils/graphql';
 
 const MyQuizzes = () => {
 	const {
@@ -18,7 +18,7 @@ const MyQuizzes = () => {
 
 	return (
 		<Box>
-			<Grid h='auto' w='full' templateColumns='repeat(2, 1fr)' gap={4}>
+			<Grid h='auto' w='full' templateColumns='repeat(2, 1fr)' gap={6}>
 				{quizzesData.map((quiz) => {
 					return <Card key={quiz.id} quizData={quiz} />;
 				})}

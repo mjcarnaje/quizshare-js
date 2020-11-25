@@ -1,23 +1,23 @@
-import React from 'react';
 import { useQuery } from '@apollo/client';
 import {
 	Avatar,
-	Text,
-	Divider,
-	Button,
 	Box,
-	Spinner,
+	Button,
+	Container,
+	Divider,
 	IconButton,
-	Image,
+	Spinner,
+	Text,
 } from '@chakra-ui/react';
-import { useSelector } from 'react-redux';
-import LikeButton from '../components/LikeButton';
-import CommentButton from '../components/CommentButton';
-import CommentBox from '../components/CommentBox';
 import moment from 'moment';
-import { Link } from 'react-router-dom';
+import React from 'react';
 import { IoMdArrowRoundBack } from 'react-icons/io';
 import { MdLibraryBooks } from 'react-icons/md';
+import { useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
+import CommentBox from '../components/CommentBox';
+import CommentButton from '../components/CommentButton';
+import LikeButton from '../components/LikeButton';
 import { GET_QUIZ } from '../utils/graphql';
 
 const SingleQuiz = ({ match: { params }, history }) => {
@@ -32,6 +32,7 @@ const SingleQuiz = ({ match: { params }, history }) => {
 			},
 		}
 	);
+
 	if (loading)
 		return (
 			<Spinner
@@ -42,7 +43,9 @@ const SingleQuiz = ({ match: { params }, history }) => {
 				size='xl'
 			/>
 		);
-	if (error) return <p>Error :</p>;
+
+	if (error) return <p>Error</p>;
+
 	const {
 		id,
 		title,
@@ -56,7 +59,7 @@ const SingleQuiz = ({ match: { params }, history }) => {
 		author: { avatar, username, email },
 	} = quizData;
 	return (
-		<Box h='full' w={{ base: 'full', md: '70%' }} py='10px' px='50px'>
+		<Container maxW='md' py='30px' minH='90vh'>
 			<Box
 				bg='white'
 				m='auto'
@@ -127,9 +130,10 @@ const SingleQuiz = ({ match: { params }, history }) => {
 				<Text
 					fontFamily='inter'
 					py='10px'
-					fontSize='23px'
+					fontSize='20px'
 					fontWeight='400'
 					wordBreak='break-all'
+					whiteSpace='pre-line'
 				>
 					{description}
 				</Text>
@@ -188,7 +192,7 @@ const SingleQuiz = ({ match: { params }, history }) => {
 			{comments.map((comment) => (
 				<CommentBox key={comment.id} commentData={comment} quizId={id} />
 			))}
-		</Box>
+		</Container>
 	);
 };
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { gql, useMutation } from '@apollo/client';
 import {
 	Avatar,
 	Box,
@@ -8,13 +8,21 @@ import {
 	FormHelperText,
 	FormLabel,
 	Input,
+	Modal,
+	ModalBody,
+	ModalContent,
+	ModalFooter,
+	ModalOverlay,
 	Text,
+	useDisclosure,
 	useToast,
 } from '@chakra-ui/react';
-import { gql, useMutation } from '@apollo/client';
-import { loadCurrentUser } from '../store/authSlice';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import ReactCrop from 'react-image-crop';
+import 'react-image-crop/dist/ReactCrop.css';
 import { useDispatch } from 'react-redux';
-import { render } from 'react-dom';
+import { loadCurrentUser } from '../store/authSlice';
+import { validateImg } from '../utils/validators';
 
 const UPDATE_ACCOUNT_INFO = gql`
 	mutation updateAccount(
@@ -56,32 +64,30 @@ const UserInfoEdit = ({
 	});
 
 	const toast = useToast();
+	const { isOpen, onOpen, onClose } = useDisclosure();
 
-	const [image, setImage] = useState('');
-	const [previewSource, setPreviewSource] = useState('');
+	const [originalPic, setUpOriginalPic] = useState(null);
+	const [previewSource, setPreviewSource] = useState();
+	const [finalImage, setFinalImage] = useState(null);
+	const imgRef = useRef(null);
+	const [crop, setCrop] = useState({ unit: '%', width: 100, aspect: 1 / 1 });
+	const [completedCrop, setCompletedCrop] = useState(null);
 
 	const onChange = (e) => {
 		setValues({ ...values, [e.target.name]: e.target.value });
 	};
 
-	const imageInputChange = (e) => {
-		if (e.target.files) {
-			const file = e.target.files[0];
-			previewFile(file);
-		}
-	};
-
-	const previewFile = (file) => {
-		const reader = new FileReader();
-		console.log(file);
-		reader.readAsDataURL(file);
-		reader.onloadend = () => {
-			setPreviewSource(reader.result);
-			setValues({ ...values, avatar: reader.result });
-		};
-	};
-
 	const [updateProfile, { loading }] = useMutation(UPDATE_ACCOUNT_INFO, {
+		variables: {
+			...values,
+			avatar: values.avatar
+				? finalImage
+					? finalImage
+					: ''
+				: values.avatar.includes('cloudinary')
+				? ''
+				: '',
+		},
 		update(cache, { data: { updateAccount } = {} }) {
 			isEdit(false);
 			dispatch(loadCurrentUser(updateAccount));
@@ -105,20 +111,46 @@ const UserInfoEdit = ({
 				position: 'bottom-right',
 			});
 		},
-		variables: {
-			...values,
-			avatar: values.avatar
-				? values.avatar.includes('cloudinary')
-					? ''
-					: values.avatar
-				: '',
-		},
 	});
 
 	const onSubmit = (e) => {
 		e.preventDefault();
 		updateProfile();
 	};
+
+	const onLoad = useCallback((img) => {
+		imgRef.current = img;
+	}, []);
+
+	useEffect(() => {
+		if (!completedCrop || !imgRef.current) {
+			return;
+		}
+		const image = imgRef.current;
+		const crop = completedCrop;
+		const canvas = document.createElement('canvas');
+
+		const scaleX = image.naturalWidth / image.width;
+		const scaleY = image.naturalHeight / image.height;
+		canvas.width = crop.width;
+		canvas.height = crop.height;
+		const ctx = canvas.getContext('2d');
+
+		ctx.drawImage(
+			image,
+			crop.x * scaleX,
+			crop.y * scaleY,
+			crop.width * scaleX,
+			crop.height * scaleY,
+			0,
+			0,
+			crop.width,
+			crop.height
+		);
+
+		const base64Image = canvas.toDataURL('image/jpeg');
+		setFinalImage(base64Image);
+	}, [completedCrop, previewSource]);
 
 	useEffect(() => {
 		setValues({
@@ -127,10 +159,10 @@ const UserInfoEdit = ({
 			username: authUsername,
 			email: authEmail,
 		});
-	}, [authAvatar, authUsername, authEmail, values]);
+	}, [values, authAvatar, authUsername, authEmail]);
 
 	const { username, email, password, confirmPassword } = values;
-	console.log(previewSource);
+
 	return (
 		<>
 			<Box py='16px' px='32px'>
@@ -148,15 +180,30 @@ const UserInfoEdit = ({
 					<Flex alignItems='center'>
 						<Avatar
 							name={authUsername && authUsername}
-							src={previewSource ? previewSource : authAvatar ? authAvatar : ''}
+							src={finalImage ? finalImage : authAvatar ? authAvatar : ''}
 							size='xl'
 						/>
 						<input
 							id='image-button'
 							type='file'
 							name='image'
-							onChange={imageInputChange}
-							value={image}
+							onChange={(e) => {
+								const oneIsSelected =
+									e.target.files && e.target.files.length > 0;
+								if (oneIsSelected) {
+									const file = e.target.files[0];
+									const imageFile = validateImg(file);
+									if (!imageFile) return;
+
+									const reader = new FileReader();
+									reader.readAsDataURL(imageFile);
+									reader.onloadend = () => {
+										setUpOriginalPic(reader.result);
+										setPreviewSource(reader.result);
+										onOpen();
+									};
+								}
+							}}
 							hidden
 						/>
 						<Button
@@ -169,6 +216,47 @@ const UserInfoEdit = ({
 						>
 							Upload an image
 						</Button>
+						<Modal
+							isCentered
+							onClose={onClose}
+							isOpen={isOpen}
+							motionPreset='slideInBottom'
+							size='xl'
+						>
+							<ModalOverlay />
+							<ModalContent>
+								<ModalBody p='12px'>
+									<ReactCrop
+										src={previewSource}
+										onImageLoaded={onLoad}
+										crop={crop}
+										onChange={(c) => setCrop(c)}
+										onComplete={(c) => setCompletedCrop(c)}
+									/>
+								</ModalBody>
+								<ModalFooter>
+									<Button
+										colorScheme='purple'
+										mr={3}
+										onClick={() => {
+											setFinalImage(null);
+											onClose();
+										}}
+									>
+										Cancel
+									</Button>
+									<Button
+										variant='ghost'
+										onClick={() => {
+											onClose();
+											setPreviewSource(null);
+										}}
+									>
+										Save
+									</Button>
+								</ModalFooter>
+							</ModalContent>
+						</Modal>
 					</Flex>
 				</Box>
 				<FormControl py='8px'>

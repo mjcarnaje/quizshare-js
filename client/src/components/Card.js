@@ -1,21 +1,19 @@
-import React from 'react';
 import {
+	AspectRatio,
 	Avatar,
 	Box,
 	Flex,
 	Heading,
-	Text,
-	Spacer,
-	AspectRatio,
 	Image,
-	Skeleton,
+	Spacer,
+	Text,
 } from '@chakra-ui/react';
-import { useSelector } from 'react-redux';
 import moment from 'moment';
-
-import LikeButton from './LikeButton';
-import CommentButton from './CommentButton';
+import React from 'react';
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import CommentButton from './CommentButton';
+import LikeButton from './LikeButton';
 import MenuButtons from './MenuButtons';
 
 const Card = ({

@@ -1,10 +1,10 @@
+import { Box, Button, Flex, Heading, Text } from '@chakra-ui/react';
 import React, { useState } from 'react';
-import { Box, Heading, Flex, Text, Button } from '@chakra-ui/react';
-import { Link } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import UserDropDown from './UserDropDown';
 import { GoHome } from 'react-icons/go';
 import { MdCreateNewFolder } from 'react-icons/md';
+import { useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
+import UserDropDown from './UserDropDown';
 
 const MenuItems = ({ children, to, icon }) => (
 	<Link to={to}>
@@ -70,6 +70,12 @@ const Header = (props) => {
 					</MenuItems>
 					<MenuItems to='/create-quiz' icon={<MdCreateNewFolder />}>
 						Create Quiz
+					</MenuItems>
+					<MenuItems to='/create-quiz2' icon={<MdCreateNewFolder />}>
+						Create Quiz V2
+					</MenuItems>
+					<MenuItems to='/create' icon={<MdCreateNewFolder />}>
+						Create Legit
 					</MenuItems>
 				</Flex>
 			</Box>

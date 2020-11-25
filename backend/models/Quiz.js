@@ -14,6 +14,7 @@ const quizSchema = new Schema({
 			question: String,
 			choices: [{ id: String, value: String }],
 			answer: String,
+			explanation: String,
 		},
 	],
 	isPublic: {

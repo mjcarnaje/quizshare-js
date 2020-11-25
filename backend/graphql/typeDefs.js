@@ -29,6 +29,8 @@ module.exports = gql`
 		question: String!
 		choices: [Choices]!
 		answer: String!
+		explanation: String
+		withExplanation: Boolean
 	}
 
 	type Quiz {
@@ -70,6 +72,8 @@ module.exports = gql`
 		question: String!
 		choices: [ChoicesInput]!
 		answer: String!
+		explanation: String
+		withExplanation: Boolean
 	}
 	input QuizInput {
 		title: String!

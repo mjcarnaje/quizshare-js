@@ -1,0 +1,14 @@
+.customForScrolling {
+	display: flex;
+	margin-top: 10px;
+}
+
+.customForScrolling ::-webkit-scrollbar {
+	width: 0;
+	height: 5px;
+}
+
+.customForScrolling ::-webkit-scrollbar-thumb {
+	border-radius: 10px;
+	background: rgb(228, 228, 228);
+}

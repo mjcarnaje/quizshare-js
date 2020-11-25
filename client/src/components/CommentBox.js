@@ -1,8 +1,8 @@
-import React from 'react';
-import { Box, Avatar, Text } from '@chakra-ui/react';
+import { Avatar, Box, Text } from '@chakra-ui/react';
 import moment from 'moment';
-import MenuButtons from './MenuButtons';
+import React from 'react';
 import { useSelector } from 'react-redux';
+import MenuButtons from './MenuButtons';
 
 const CommentBox = ({
 	commentData: {

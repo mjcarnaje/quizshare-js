@@ -1,24 +1,23 @@
-import React, { useRef, useState } from 'react';
-import { useDispatch } from 'react-redux';
-
+import { gql, useApolloClient, useMutation, useQuery } from '@apollo/client';
 import {
 	AlertDialog,
 	AlertDialogBody,
+	AlertDialogContent,
 	AlertDialogFooter,
 	AlertDialogHeader,
-	AlertDialogContent,
 	AlertDialogOverlay,
 	Avatar,
 	Box,
-	Text,
 	Button,
-	useToast,
 	Spinner,
+	Text,
+	useToast,
 } from '@chakra-ui/react';
-import { gql, useMutation, useApolloClient, useQuery } from '@apollo/client';
+import React, { useRef, useState } from 'react';
+import { MdDeleteForever } from 'react-icons/md';
+import { useDispatch } from 'react-redux';
 import { logoutUser } from '../store/authSlice';
 import { GET_USER } from '../utils/graphql';
-import { MdDeleteForever } from 'react-icons/md';
 
 const DELETE_USER = gql`
 	mutation deleteUserData {

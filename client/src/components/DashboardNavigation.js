@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { Box, Flex, Stack, Text } from '@chakra-ui/react';
+import React, { useEffect, useState } from 'react';
 import { BsFillPersonLinesFill } from 'react-icons/bs';
 import { CgFileDocument } from 'react-icons/cg';
+import { Link } from 'react-router-dom';
 
 const DashboardNavigation = ({ url }) => {
 	const pathname = window.location.pathname;

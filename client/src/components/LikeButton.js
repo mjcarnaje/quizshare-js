@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { gql, useMutation } from '@apollo/client';
 import { Box, IconButton, Text } from '@chakra-ui/react';
-import { useMutation, gql } from '@apollo/client';
-import { IoMdHeartEmpty, IoIosHeart } from 'react-icons/io';
+import React, { useEffect, useState } from 'react';
+import { IoIosHeart, IoMdHeartEmpty } from 'react-icons/io';
 
 const LIKE_QUIZ_MUTATION = gql`
 	mutation toggleLikeQuiz($quizId: String!) {

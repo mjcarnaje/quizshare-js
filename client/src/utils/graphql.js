@@ -21,6 +21,7 @@ export const GET_QUIZ = gql`
 					value
 				}
 				answer
+				explanation
 			}
 			comments {
 				id
@@ -43,6 +44,23 @@ export const GET_QUIZ = gql`
 	}
 `;
 
+export const QUIZ_TAKE_DATA = gql`
+	query($quizId: ID!) {
+		getQuiz(quizId: $quizId) {
+			questions {
+				id
+				question
+				choices {
+					id
+					value
+				}
+				answer
+				explanation
+			}
+		}
+	}
+`;
+
 export const QUIZ_DATA_FOR_UPDATE = gql`
 	query($quizId: ID!) {
 		getQuiz(quizId: $quizId) {
@@ -57,6 +75,7 @@ export const QUIZ_DATA_FOR_UPDATE = gql`
 					value
 				}
 				answer
+				explanation
 			}
 		}
 	}
@@ -161,7 +180,7 @@ export const CREATE_QUIZ = gql`
 	mutation createQuiz(
 		$title: String!
 		$description: String!
-		$image: String!
+		$image: String
 		$questions: [Questions!]!
 	) {
 		createQuiz(
@@ -184,6 +203,7 @@ export const CREATE_QUIZ = gql`
 					value
 				}
 				answer
+				explanation
 			}
 			author {
 				username
@@ -207,6 +227,7 @@ export const UPDATE_QUIZ = gql`
 					value
 				}
 				answer
+				explanation
 			}
 			questionCount
 		}

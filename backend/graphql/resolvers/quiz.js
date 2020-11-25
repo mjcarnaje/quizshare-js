@@ -198,7 +198,7 @@ module.exports = {
 					createdAt: new Date().toISOString(),
 				};
 
-				quiz.comments.unshift(newComment);
+				quiz.comments.push(newComment);
 				await quiz.save();
 				return quiz;
 			} catch (err) {

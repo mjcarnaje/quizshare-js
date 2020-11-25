@@ -1,17 +1,10 @@
+import { Box, Grid } from '@chakra-ui/react';
 import React from 'react';
+import { Route, Switch, useRouteMatch } from 'react-router-dom';
+import DashboardHeader from '../components/DashboardHeader';
+import DashboardNavigation from '../components/DashboardNavigation';
 import MyProfile from './MyProfile';
 import MyQuizzes from './MyQuizzes';
-import { Box, Grid } from '@chakra-ui/react';
-import DashboardNavigation from '../components/DashboardNavigation';
-import DashboardHeader from '../components/DashboardHeader';
-import {
-	BrowserRouter as Router,
-	Switch,
-	Route,
-	useRouteMatch,
-} from 'react-router-dom';
-import EditProfile from '../components/UserInfoEdit';
-import { useSelector } from 'react-redux';
 
 const Dashboard = () => {
 	let { url } = useRouteMatch();

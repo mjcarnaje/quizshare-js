@@ -1,58 +1,43 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { useMutation, useQuery } from '@apollo/client';
 import {
-	Box,
-	Heading,
-	Stack,
-	Text,
-	Flex,
-	IconButton,
-	Spacer,
-	useToast,
-	AspectRatio,
-	Image,
-	Container,
-	useDisclosure,
-	Modal,
-	ModalOverlay,
-	ModalContent,
-	ModalHeader,
-	ModalFooter,
-	ModalBody,
-	ModalCloseButton,
-	Button,
-	HStack,
-	Spinner,
 	Alert,
 	AlertIcon,
+	Box,
+	Button,
+	Container,
+	Flex,
+	Heading,
+	HStack,
+	IconButton,
+	Image,
+	Modal,
+	ModalBody,
+	ModalContent,
+	ModalFooter,
+	ModalOverlay,
+	Spacer,
+	Spinner,
+	Stack,
+	Text,
+	useDisclosure,
+	useToast,
 } from '@chakra-ui/react';
-import { uuid } from 'uuidv4';
 import { Field, FieldArray, Form, Formik } from 'formik';
-import * as yup from 'yup';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { BiImageAdd } from 'react-icons/bi';
 import { MdDelete } from 'react-icons/md';
+import ReactCrop from 'react-image-crop';
+import 'react-image-crop/dist/ReactCrop.css';
 import { Link } from 'react-router-dom';
+import { uuid } from 'uuidv4';
+import CreateChoices from '../components/CreateChoices';
+import { MyTextAreaField, MyTextField } from '../components/CustomField';
 import {
 	GET_ALL_QUIZZES,
 	QUIZ_DATA_FOR_UPDATE,
 	UPDATE_QUIZ,
 } from '../utils/graphql';
-import { useMutation, useQuery } from '@apollo/client';
-import { MyTextAreaField, MyTextField } from '../components/CustomField';
-import CreateChoices from '../components/CreateChoices';
-
-import { validateImg, quizValidationSchema } from '../utils/validators';
-import { BiImageAdd } from 'react-icons/bi';
-import ReactCrop from 'react-image-crop';
-import 'react-image-crop/dist/ReactCrop.css';
-
-const INITIAL_QUESTION = {
-	id: uuid(),
-	question: '',
-	choices: [
-		{ id: uuid(), value: '' },
-		{ id: uuid(), value: '' },
-	],
-	answer: null,
-};
+import { quizValidationSchema, validateImg } from '../utils/validators';
 
 const EditQuiz = (props) => {
 	const { isOpen, onOpen, onClose } = useDisclosure();
@@ -120,7 +105,8 @@ const EditQuiz = (props) => {
 				size='xl'
 			/>
 		);
-	if (error) return <p>Error :</p>;
+	if (error) return <p>Error</p>;
+
 	const removeTypename = (value) => {
 		if (value === null || value === undefined) {
 			return value;
@@ -139,7 +125,7 @@ const EditQuiz = (props) => {
 	};
 
 	return (
-		<Box w='full' minH='full'>
+		<Box w='full' minH='full' mb='30px'>
 			<Heading
 				as='h1'
 				fontFamily='montserrat'
@@ -153,6 +139,8 @@ const EditQuiz = (props) => {
 			</Heading>
 			<Formik
 				initialValues={INITIAL_VALUES}
+				validateOnBlur={false}
+				validateOnChange={false}
 				onSubmit={async (values, { setErrors }) => {
 					try {
 						const newValues = removeTypename(values);
@@ -173,6 +161,7 @@ const EditQuiz = (props) => {
 										getQuizzes: [finalValues, ...data.getQuizzes],
 									},
 								});
+								props.history.push('/home');
 								toast({
 									title: 'Quiz updated.',
 									description: 'The quiz is now updated.',
@@ -182,20 +171,16 @@ const EditQuiz = (props) => {
 								});
 							},
 						});
-
-						props.history.push('/home');
 					} catch (err) {
 						console.log(err);
 					}
 				}}
 				validationSchema={quizValidationSchema}
-				validateOnBlur={false}
-				validateOnChange={false}
 			>
 				{({ values, isSubmitting, errors }) => {
 					return (
 						<>
-							<Form>
+							<Form validateOnChange={false} validateOnBlur={false}>
 								<Stack
 									bg='white'
 									m='auto'
@@ -349,13 +334,17 @@ const EditQuiz = (props) => {
 										>
 											QUESTIONS
 										</Text>
-										<FieldArray name='questions' validateOnChange={false}>
+										<FieldArray
+											name='questions'
+											validateOnChange={false}
+											validateOnBlur={false}
+										>
 											{({ push, remove }) => {
 												return (
 													<>
 														{values.questions.map((q, i) => {
 															return (
-																<Field name={`questions.${i}`}>
+																<Field name={`questions.${i}`} key={q.id}>
 																	{({ field: { name, value }, form, meta }) => (
 																		<Box
 																			p='10px'
@@ -404,6 +393,18 @@ const EditQuiz = (props) => {
 																				choicesOfQuestionValue={value.choices}
 																				answerOfQuestionValue={value.answer}
 																			/>
+																			<Box w='70%' m='auto'>
+																				<MyTextAreaField
+																					name={`questions.${i}.explanation`}
+																					placeholder='Type the explanation (optional)'
+																					fontSize='14px'
+																					resize='none'
+																					minH='40px'
+																					overflow='hidden'
+																					mt='20px'
+																					nolabel
+																				/>
+																			</Box>
 																		</Box>
 																	)}
 																</Field>
@@ -413,7 +414,18 @@ const EditQuiz = (props) => {
 															colorScheme='purple'
 															size='lg'
 															w='full'
-															onClick={() => push(INITIAL_QUESTION)}
+															onClick={() =>
+																push({
+																	id: uuid(),
+																	question: '',
+																	choices: [
+																		{ id: uuid(), value: '' },
+																		{ id: uuid(), value: '' },
+																	],
+																	answer: null,
+																	explanation: null,
+																})
+															}
 														>
 															Add Question
 														</Button>

@@ -1,17 +1,17 @@
-import React from 'react';
+import { useApolloClient } from '@apollo/client';
 import {
 	Avatar,
 	Menu,
 	MenuButton,
-	MenuList,
-	MenuItem,
-	MenuGroup,
 	MenuDivider,
+	MenuGroup,
+	MenuItem,
+	MenuList,
 } from '@chakra-ui/react';
-import { useSelector, useDispatch } from 'react-redux';
-import { logoutUser } from '../store/authSlice';
+import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { useApolloClient } from '@apollo/client';
+import { logoutUser } from '../store/authSlice';
 
 const UserDropDown = () => {
 	const dispatch = useDispatch();

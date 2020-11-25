@@ -1,24 +1,20 @@
-import React, { useState } from 'react';
+import { useQuery } from '@apollo/client';
 import {
-	Avatar,
 	Box,
 	Button,
 	Divider,
 	Flex,
-	Icon,
-	IconButton,
 	Spinner,
 	Stack,
 	Text,
 } from '@chakra-ui/react';
-import { useSelector } from 'react-redux';
-import UserInfo from '../components/UserInfo';
-import ProfileInfo from '../components/ProfileInfo';
-import UserInfoEdit from '../components/UserInfoEdit';
-import ProfileInfoEdit from '../components/ProfileInfoEdit';
-import { useQuery } from '@apollo/client';
-import { GET_PROFILE_INFO, GET_USER } from '../utils/graphql';
+import React, { useState } from 'react';
 import { FiEdit } from 'react-icons/fi';
+import ProfileInfo from '../components/ProfileInfo';
+import ProfileInfoEdit from '../components/ProfileInfoEdit';
+import UserInfo from '../components/UserInfo';
+import UserInfoEdit from '../components/UserInfoEdit';
+import { GET_PROFILE_INFO, GET_USER } from '../utils/graphql';
 
 const MyProfile = () => {
 	const [profileEdit, setProfileEdit] = useState(false);
