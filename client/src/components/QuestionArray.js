@@ -14,7 +14,12 @@ import {
 	VStack,
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
-import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
+import {
+	useFieldArray,
+	useFormContext,
+	useWatch,
+	Controller,
+} from 'react-hook-form';
 import { MdDelete } from 'react-icons/md';
 import TextareaAutosize from 'react-textarea-autosize';
 import { uuid } from 'uuidv4';
@@ -22,34 +27,34 @@ import ChoiceArray from './ChoiceArray';
 
 let renderCount = 0;
 
-const QuestionArray = () => {
+const QuestionArray = ({ updateMode, doneFetching, setDoneFetching }) => {
 	const { control, register, getValues, errors, watch } = useFormContext();
 	const { fields, append, remove } = useFieldArray({
 		control,
 		name: 'questions',
 		keyName: 'defaultID',
 	});
-	const [questions, setQuestions] = useState();
-
 	useEffect(() => {
-		append(
-			{
-				id: uuid(),
-				question: '',
-				answer: '',
-				explanation: '',
-				choices: [
-					{ id: uuid(), value: '' },
-					{ id: uuid(), value: '' },
-				],
-			},
-			false
-		);
-	}, []);
+		if (!updateMode) {
+			append(
+				{
+					id: uuid(),
+					question: '',
+					answer: '',
+					explanation: '',
+					withExplanation: false,
+					choices: [],
+				},
+				false
+			);
+		}
+	}, [updateMode]);
 	console.log('Rendering....' + renderCount++);
+
 	return (
 		<VStack spacing='15px' p='10px' w='full'>
 			{fields.map((question, index) => {
+				const explain = watch(`questions[${index}].withExplanation`);
 				return (
 					<Box
 						key={question.defaultID}
@@ -82,22 +87,21 @@ const QuestionArray = () => {
 								<Flex mt='-15px' mr='-10px'>
 									<Tooltip hasArrow label='Add explanation'>
 										<FormControl display='flex' alignItems='center'>
-											{/* <FormLabel
-												htmlFor='toggleExplanation'
-												mb='0'
-												fontWeight='400'
-												fontSize='13px'
-												>
-												Add explanation
-											</FormLabel> */}
-											<Switch
-												colorScheme='purple'
-												size='sm'
+											<Controller
+												control={control}
 												name={`questions[${index}].withExplanation`}
-												ref={register}
-												onClick={() => {
-													const data = getValues();
-													setQuestions(data.questions);
+												defaultValue={question.withExplanation}
+												render={(props) => {
+													return (
+														<Switch
+															size='sm'
+															colorScheme='purple'
+															onChange={(e) => {
+																props.onChange(e.target.checked);
+															}}
+															isChecked={props.value}
+														/>
+													);
 												}}
 											/>
 										</FormControl>
@@ -132,6 +136,7 @@ const QuestionArray = () => {
 									overflow='hidden'
 									py='7px'
 									isInvalid={errors.questions?.[index]?.question ? true : false}
+									defaultValue={question.question}
 								/>
 								<FormErrorMessage m='0' px='5px' pb='5px'>
 									{`Question ${index + 1} is required field`}
@@ -140,8 +145,11 @@ const QuestionArray = () => {
 							<ChoiceArray
 								questionIndex={index}
 								answerValue={question.answer}
+								updateMode={updateMode}
+								doneFetching={doneFetching}
 							/>
-							{questions?.[index]?.withExplanation && (
+
+							{explain && (
 								<Input
 									name={`questions[${index}].explanation`}
 									ref={register()}
@@ -149,6 +157,7 @@ const QuestionArray = () => {
 									as={TextareaAutosize}
 									type='text'
 									variant='filled'
+									defaultValue={question.explanation}
 									bg='#f7fafc'
 									_focus={{ outline: 'none', bg: 'gray.50' }}
 									_hover={{ bg: 'gray.50' }}
@@ -166,18 +175,22 @@ const QuestionArray = () => {
 				colorScheme='purple'
 				size='lg'
 				w='full'
-				onClick={() =>
-					append({
-						id: uuid(),
-						question: '',
-						answer: '',
-						explanation: '',
-						choices: [
-							{ id: uuid(), value: '' },
-							{ id: uuid(), value: '' },
-						],
-					})
-				}
+				onClick={() => {
+					setDoneFetching(false);
+					setTimeout(() => {
+						append({
+							id: uuid(),
+							question: '',
+							answer: '',
+							withExplanation: false,
+							explanation: '',
+							choices: [
+								{ id: uuid(), value: '' },
+								{ id: uuid(), value: '' },
+							],
+						});
+					}, 50);
+				}}
 			>
 				Add Question
 			</Button>

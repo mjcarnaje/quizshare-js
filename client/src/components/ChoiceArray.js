@@ -21,18 +21,23 @@ import { MdDelete } from 'react-icons/md';
 import TextareaAutosize from 'react-textarea-autosize';
 import { uuid } from 'uuidv4';
 
-const ChoiceArray = ({ questionIndex, answerValue }) => {
+const ChoiceArray = ({
+	questionIndex,
+	answerValue,
+	updateMode,
+	doneFetching,
+}) => {
 	const { control, register, getValues, errors } = useFormContext();
 	const { fields, remove, append } = useFieldArray({
 		control,
 		name: `questions[${questionIndex}].choices`,
 		keyName: 'defaultID',
 	});
-
 	useEffect(() => {
+		if (updateMode && doneFetching) return;
 		append({ id: uuid(), value: '' }, false);
 		append({ id: uuid(), value: '' }, false);
-	}, []);
+	}, [updateMode]);
 
 	return (
 		<Box my='10px'>

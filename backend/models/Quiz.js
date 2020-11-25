@@ -15,6 +15,7 @@ const quizSchema = new Schema({
 			choices: [{ id: String, value: String }],
 			answer: String,
 			explanation: String,
+			withExplanation: Boolean,
 		},
 	],
 	isPublic: {

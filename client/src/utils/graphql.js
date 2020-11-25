@@ -76,6 +76,7 @@ export const QUIZ_DATA_FOR_UPDATE = gql`
 				}
 				answer
 				explanation
+				withExplanation
 			}
 		}
 	}
@@ -204,6 +205,7 @@ export const CREATE_QUIZ = gql`
 				}
 				answer
 				explanation
+				withExplanation
 			}
 			author {
 				username
@@ -228,6 +230,7 @@ export const UPDATE_QUIZ = gql`
 				}
 				answer
 				explanation
+				withExplanation
 			}
 			questionCount
 		}

@@ -1,4 +1,4 @@
-import { useMutation } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 import {
 	Box,
 	Button,
@@ -12,12 +12,14 @@ import {
 	Image,
 	Input,
 	Spacer,
+	Spinner,
 	Textarea,
 	useDisclosure,
 	useToast,
 	VStack,
 } from '@chakra-ui/react';
 import React, { useState } from 'react';
+import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { ImFilePicture } from 'react-icons/im';
 import { Link, useHistory } from 'react-router-dom';
@@ -25,10 +27,19 @@ import TextareaAutosize from 'react-textarea-autosize';
 import { uuid } from 'uuidv4';
 import CropperModal from '../components/CropperModal';
 import QuestionArray from '../components/QuestionArray';
-import { CREATE_QUIZ, GET_ALL_QUIZZES } from '../utils/graphql';
+import {
+	CREATE_QUIZ,
+	GET_ALL_QUIZZES,
+	UPDATE_QUIZ,
+	QUIZ_DATA_FOR_UPDATE,
+} from '../utils/graphql';
 import { validateImg } from '../utils/validators';
 
-const Create = () => {
+const CreateUpdateQuiz = (props) => {
+	const quizId = props.match.params.id;
+	const [updateMode, setUpdateMode] = useState(false);
+	const [doneFetching, setDoneFetching] = useState(false);
+
 	const history = useHistory();
 	const toast = useToast();
 
@@ -39,34 +50,60 @@ const Create = () => {
 
 	const methods = useForm();
 
-	const [createQuizMutation, { loading: createLoading }] = useMutation(
-		CREATE_QUIZ
-	);
+	const [createQuiz, { loading: createLoading }] = useMutation(CREATE_QUIZ);
+	const [updateQuiz, { loading: updateLoading }] = useMutation(UPDATE_QUIZ);
 
 	const onSubmit = async (data) => {
 		const value = { ...data, image: croppedPic || '' };
 		try {
-			await createQuizMutation({
-				variables: value,
-				update(cache) {
-					const data = cache.readQuery({
-						query: GET_ALL_QUIZZES,
-					});
-					cache.writeQuery({
-						query: GET_ALL_QUIZZES,
-						data: {
-							getQuizzes: [value, ...data.getQuizzes],
-						},
-					});
-					toast({
-						title: 'Quiz created.',
-						description: "You've created a quiz.",
-						status: 'success',
-						duration: 3000,
-						isClosable: true,
-					});
-				},
-			});
+			if (updateMode) {
+				const { data } = await updateQuiz({
+					variables: {
+						quizId,
+						quizInput: value,
+					},
+					update(cache) {
+						const data = cache.readQuery({
+							query: GET_ALL_QUIZZES,
+						});
+						cache.writeQuery({
+							query: GET_ALL_QUIZZES,
+							data: {
+								getQuizzes: [value, ...data?.getQuizzes],
+							},
+						});
+						toast({
+							title: 'Quiz updated.',
+							description: 'The quiz is now updated.',
+							status: 'success',
+							duration: 3000,
+							isClosable: true,
+						});
+					},
+				});
+			} else {
+				const { data } = await createQuiz({
+					variables: value,
+					update(cache) {
+						const data = cache.readQuery({
+							query: GET_ALL_QUIZZES,
+						});
+						cache.writeQuery({
+							query: GET_ALL_QUIZZES,
+							data: {
+								getQuizzes: [value, ...data?.getQuizzes],
+							},
+						});
+						toast({
+							title: 'Quiz created.',
+							description: "You've created a quiz.",
+							status: 'success',
+							duration: 3000,
+							isClosable: true,
+						});
+					},
+				});
+			}
 			history.push('/home');
 		} catch (err) {
 			console.error(err);
@@ -97,7 +134,60 @@ const Create = () => {
 		};
 	};
 
-	const { errors, register } = methods;
+	const {
+		loading: updateDataLoading,
+		error,
+		data: { getQuiz: updateDataQuery } = {},
+	} = useQuery(QUIZ_DATA_FOR_UPDATE, {
+		variables: {
+			quizId,
+		},
+	});
+
+	const { errors, register, reset } = methods;
+
+	useEffect(() => {
+		if (quizId) {
+			setUpdateMode(true);
+			if (updateDataQuery) {
+				const removeTypename = (value) => {
+					if (value === null || value === undefined) {
+						return value;
+					} else if (Array.isArray(value)) {
+						return value.map((v) => removeTypename(v));
+					} else if (typeof value === 'object') {
+						const newObj = {};
+						Object.entries(value).forEach(([key, v]) => {
+							if (key !== '__typename') {
+								newObj[key] = removeTypename(v);
+							}
+						});
+						return newObj;
+					}
+					return value;
+				};
+				const data = removeTypename(updateDataQuery);
+				if (data?.image) {
+					setOriginalPic(data.image);
+					setCroppedPic(data.image);
+				}
+				reset(data);
+				setDoneFetching(true);
+			}
+		}
+	}, [quizId, updateDataQuery]);
+
+	if (updateDataLoading) {
+		return (
+			<Spinner
+				thickness='4px'
+				speed='0.65s'
+				emptyColor='gray.200'
+				color='purple.500'
+				size='xl'
+			/>
+		);
+	}
 
 	return (
 		<Box w='full' minH='full' my='40px'>
@@ -224,7 +314,11 @@ const Create = () => {
 									Description is required field
 								</FormErrorMessage>
 							</FormControl>
-							<QuestionArray />
+							<QuestionArray
+								updateMode={updateMode}
+								doneFetching={doneFetching}
+								setDoneFetching={setDoneFetching}
+							/>
 							<Flex w='full'>
 								<Spacer />
 								<Button
@@ -241,7 +335,7 @@ const Create = () => {
 									type='submit'
 									px='20px'
 									ml='10px'
-									isLoading={createLoading}
+									isLoading={createLoading || updateLoading}
 								>
 									Save
 								</Button>
@@ -254,4 +348,4 @@ const Create = () => {
 	);
 };
 
-export default Create;
+export default CreateUpdateQuiz;
