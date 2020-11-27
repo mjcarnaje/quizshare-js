@@ -12,3 +12,16 @@
 	border-radius: 10px;
 	background: rgb(228, 228, 228);
 }
+
+.headerLinks {
+	color: #718096;
+}
+
+.isActive {
+	font-weight: 600;
+	color: #6b46c1;
+}
+.isActiveDashboard {
+	font-weight: 600;
+	background-color: white;
+}

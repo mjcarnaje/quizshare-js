@@ -2,6 +2,7 @@ import { useMutation, useQuery } from '@apollo/client';
 import {
 	Box,
 	Button,
+	ScaleFade,
 	Center,
 	Flex,
 	FormControl,
@@ -11,12 +12,14 @@ import {
 	HStack,
 	Image,
 	Input,
+	Slide,
 	Spacer,
 	Spinner,
 	Textarea,
 	useDisclosure,
 	useToast,
 	VStack,
+	SlideFade,
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -44,7 +47,13 @@ const CreateUpdateQuiz = (props) => {
 	const [originalPic, setOriginalPic] = useState();
 	const [previewPic, setPreviewPic] = useState();
 	const [croppedPic, setCroppedPic] = useState();
-	const { isOpen, onOpen, onClose } = useDisclosure();
+
+	const {
+		isOpen: isOpenModal,
+		onOpen: onOpenModal,
+		onClose: onCloseModal,
+	} = useDisclosure();
+	const { isOpen, onToggle } = useDisclosure();
 
 	const methods = useForm();
 
@@ -122,7 +131,7 @@ const CreateUpdateQuiz = (props) => {
 
 	const editSelectedPic = () => {
 		setPreviewPic(originalPic);
-		onOpen();
+		onOpenModal();
 	};
 
 	const openImageCropper = (picture) => {
@@ -131,9 +140,13 @@ const CreateUpdateQuiz = (props) => {
 		reader.onloadend = () => {
 			setOriginalPic(reader.result);
 			setPreviewPic(reader.result);
-			onOpen();
+			onOpenModal();
 		};
 	};
+
+	useEffect(() => {
+		onToggle();
+	}, []);
 
 	const {
 		loading: updateDataLoading,
@@ -191,160 +204,162 @@ const CreateUpdateQuiz = (props) => {
 	}
 
 	return (
-		<Box w='full' minH='full' my='40px'>
-			<Heading
-				as='h1'
-				fontFamily='inter'
-				fontWeight='800'
-				color='gray.700'
-				fontSize='56px'
-				py='50px'
-				textAlign='center'
-			>
-				Create an interactive quiz
-			</Heading>
-			<Box w='60%' m='auto' bg='white' boxShadow='sm' rounded='md' p='24px'>
-				<FormProvider {...methods}>
-					<form onSubmit={methods.handleSubmit(onSubmit)}>
-						<VStack spacing='20px'>
-							<input
-								hidden
-								id='picUploader'
-								type='file'
-								name='image'
-								onChange={(e) => selectPicture(e)}
-							/>
-							{croppedPic ? (
-								<Flex direction='column' align='center' w='full'>
-									<Image
-										src={croppedPic}
-										objectFit='cover'
-										w='full'
-										rounded='md'
-									/>
-									<HStack spacing='20px' mt='15px'>
+		<Box w='full' minH='full' py='40px'>
+			<SlideFade in={isOpen} offsetY='20px'>
+				<Heading
+					as='h1'
+					fontFamily='inter'
+					fontWeight='800'
+					color='gray.700'
+					fontSize='56px'
+					py='50px'
+					textAlign='center'
+				>
+					Create an interactive quiz
+				</Heading>
+				<Box w='60%' m='auto' bg='white' boxShadow='sm' rounded='md' p='24px'>
+					<FormProvider {...methods}>
+						<form onSubmit={methods.handleSubmit(onSubmit)}>
+							<VStack spacing='20px'>
+								<input
+									hidden
+									id='picUploader'
+									type='file'
+									name='image'
+									onChange={(e) => selectPicture(e)}
+								/>
+								{croppedPic ? (
+									<Flex direction='column' align='center' w='full'>
+										<Image
+											src={croppedPic}
+											objectFit='cover'
+											w='full'
+											rounded='md'
+										/>
+										<HStack spacing='20px' mt='15px'>
+											<Button
+												as='label'
+												htmlFor='picUploader'
+												onClick={(e) => selectPicture(e)}
+											>
+												Upload image
+											</Button>
+											<Button onClick={editSelectedPic}>Edit image</Button>
+										</HStack>
+									</Flex>
+								) : (
+									<Center bg='gray.100' w='full' h='200px' rounded='md'>
 										<Button
 											as='label'
 											htmlFor='picUploader'
-											onClick={(e) => selectPicture(e)}
+											leftIcon={<ImFilePicture fontSize='30px' />}
+											color='gray.400'
+											fontFamily='inter'
+											size='lg'
+											_hover={{ bg: 'gray.200' }}
 										>
-											Upload image
+											Upload image (optional)
 										</Button>
-										<Button onClick={editSelectedPic}>Edit image</Button>
-									</HStack>
-								</Flex>
-							) : (
-								<Center bg='gray.100' w='full' h='200px' rounded='md'>
-									<Button
-										as='label'
-										htmlFor='picUploader'
-										leftIcon={<ImFilePicture fontSize='30px' />}
-										color='gray.400'
+									</Center>
+								)}
+
+								<CropperModal
+									onClose={onCloseModal}
+									isOpen={isOpenModal}
+									previewPic={previewPic}
+									setPreviewPic={setPreviewPic}
+									setCroppedPic={setCroppedPic}
+									aspectRatio={16 / 9}
+								/>
+								<FormControl isInvalid={errors.title}>
+									<FormLabel
+										fontSize='14px'
+										fontWeight='400'
+										color='gray.700'
+										fontFamily='inter'
+										letterSpacing='1px'
+									>
+										TITLE
+									</FormLabel>
+									<Input
+										variant='filled'
+										ref={register({ required: true })}
+										name='title'
+										type='text'
+										variant='filled'
+										bg='#f7fafc'
+										_focus={{ outline: 'none', bg: 'gray.50' }}
+										_hover={{ bg: 'gray.50' }}
 										fontFamily='inter'
 										size='lg'
-										_hover={{ bg: 'gray.200' }}
+										fontSize='20px'
+										placeholder='Type the title here...'
+										isInvalid={errors.title ? true : false}
+									/>
+									<FormErrorMessage>Title is required field</FormErrorMessage>
+								</FormControl>
+								<FormControl isInvalid={errors.description}>
+									<FormLabel
+										fontSize='14px'
+										fontWeight='400'
+										color='gray.700'
+										fontFamily='inter'
+										letterSpacing='1px'
 									>
-										Upload image (optional)
+										DESCRIPTION
+									</FormLabel>
+									<Textarea
+										variant='filled'
+										as={TextareaAutosize}
+										ref={register({ required: true })}
+										name='description'
+										type='text'
+										variant='filled'
+										bg='#f7fafc'
+										_focus={{ outline: 'none', bg: 'gray.50' }}
+										_hover={{ bg: 'gray.50' }}
+										fontFamily='inter'
+										placeholder='Type the description here...'
+										resize='none'
+										overflow='hidden'
+										py='5px'
+										isInvalid={errors.description ? true : false}
+									/>
+									<FormErrorMessage>
+										Description is required field
+									</FormErrorMessage>
+								</FormControl>
+								<QuestionArray
+									updateMode={updateMode}
+									doneFetching={doneFetching}
+									setDoneFetching={setDoneFetching}
+								/>
+								<Flex w='full'>
+									<Spacer />
+									<Button
+										as={Link}
+										to='/home'
+										variant='outline'
+										colorScheme='purple'
+										px='20px'
+									>
+										Cancel
 									</Button>
-								</Center>
-							)}
-
-							<CropperModal
-								onClose={onClose}
-								isOpen={isOpen}
-								previewPic={previewPic}
-								setPreviewPic={setPreviewPic}
-								setCroppedPic={setCroppedPic}
-								aspectRatio={16 / 9}
-							/>
-							<FormControl isInvalid={errors.title}>
-								<FormLabel
-									fontSize='14px'
-									fontWeight='400'
-									color='gray.700'
-									fontFamily='inter'
-									letterSpacing='1px'
-								>
-									TITLE
-								</FormLabel>
-								<Input
-									variant='filled'
-									ref={register({ required: true })}
-									name='title'
-									type='text'
-									variant='filled'
-									bg='#f7fafc'
-									_focus={{ outline: 'none', bg: 'gray.50' }}
-									_hover={{ bg: 'gray.50' }}
-									fontFamily='inter'
-									size='lg'
-									fontSize='20px'
-									placeholder='Type the title here...'
-									isInvalid={errors.title ? true : false}
-								/>
-								<FormErrorMessage>Title is required field</FormErrorMessage>
-							</FormControl>
-							<FormControl isInvalid={errors.description}>
-								<FormLabel
-									fontSize='14px'
-									fontWeight='400'
-									color='gray.700'
-									fontFamily='inter'
-									letterSpacing='1px'
-								>
-									DESCRIPTION
-								</FormLabel>
-								<Textarea
-									variant='filled'
-									as={TextareaAutosize}
-									ref={register({ required: true })}
-									name='description'
-									type='text'
-									variant='filled'
-									bg='#f7fafc'
-									_focus={{ outline: 'none', bg: 'gray.50' }}
-									_hover={{ bg: 'gray.50' }}
-									fontFamily='inter'
-									placeholder='Type the description here...'
-									resize='none'
-									overflow='hidden'
-									py='5px'
-									isInvalid={errors.description ? true : false}
-								/>
-								<FormErrorMessage>
-									Description is required field
-								</FormErrorMessage>
-							</FormControl>
-							<QuestionArray
-								updateMode={updateMode}
-								doneFetching={doneFetching}
-								setDoneFetching={setDoneFetching}
-							/>
-							<Flex w='full'>
-								<Spacer />
-								<Button
-									as={Link}
-									to='/home'
-									variant='outline'
-									colorScheme='purple'
-									px='20px'
-								>
-									Cancel
-								</Button>
-								<Button
-									colorScheme='purple'
-									type='submit'
-									px='20px'
-									ml='10px'
-									isLoading={createLoading || updateLoading}
-								>
-									Save
-								</Button>
-							</Flex>
-						</VStack>
-					</form>
-				</FormProvider>
-			</Box>
+									<Button
+										colorScheme='purple'
+										type='submit'
+										px='20px'
+										ml='10px'
+										isLoading={createLoading || updateLoading}
+									>
+										Save
+									</Button>
+								</Flex>
+							</VStack>
+						</form>
+					</FormProvider>
+				</Box>
+			</SlideFade>
 		</Box>
 	);
 };

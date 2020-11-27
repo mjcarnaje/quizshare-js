@@ -1,26 +1,42 @@
-import { Box, Button, Flex, Heading, Text } from '@chakra-ui/react';
+import {
+	Box,
+	Button,
+	Center,
+	Flex,
+	Heading,
+	Spacer,
+	Text,
+} from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { GoHome } from 'react-icons/go';
 import { MdCreateNewFolder } from 'react-icons/md';
 import { useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import UserDropDown from './UserDropDown';
 
 const MenuItems = ({ children, to, icon }) => (
-	<Link to={to}>
-		<Flex justify='center' align='center' ml='24px'>
+	<Box
+		as={NavLink}
+		to={to}
+		activeClassName='isActive'
+		className='headerLinks'
+		mr='30px'
+		_hover={{ bg: 'gray.100' }}
+		px='10px'
+		borderRadius='30px'
+	>
+		<Center>
 			<Box mr='8px'>{icon}</Box>
 			<Text display='block' fontFamily='inter'>
 				{children}
 			</Text>
-		</Flex>
-	</Link>
+		</Center>
+	</Box>
 );
 
 const Header = (props) => {
 	const isAuth = useSelector((state) => state.auth.user);
 	const [show, setShow] = useState(false);
-	const handleToggle = () => setShow(!show);
 
 	return (
 		<Flex
@@ -31,56 +47,28 @@ const Header = (props) => {
 			height='4rem'
 			paddingY='.75rem'
 			paddingX='2rem'
-			color='purple.500'
-			position='absolute'
-			bg='white'
-			top='0'
-			left='0'
 			width='100%'
 			shadow='sm'
+			color='purple.500'
+			position='fixed'
+			top='0'
+			bg='white'
+			zIndex='1000'
 		>
-			<Flex align='center' mr={5}>
-				<Link to='/home'>
-					<Heading as='h1' size='lg' fontWeight='sm' fontFamily='berkshire'>
-						QuizShare
-					</Heading>
-				</Link>
-			</Flex>
+			<Link to='/home'>
+				<Heading as='h1' size='lg' fontWeight='sm' fontFamily='berkshire'>
+					QuizShare
+				</Heading>
+			</Link>
+			<Spacer />
+			<MenuItems to='/home' icon={<GoHome />}>
+				Home
+			</MenuItems>
+			<MenuItems to='/create-quiz' icon={<MdCreateNewFolder />}>
+				Create Quiz
+			</MenuItems>
 
-			<Box display={{ base: 'block', md: 'none' }} onClick={handleToggle}>
-				<svg
-					xmlns='http://www.w3.org/2000/svg'
-					width='24'
-					height='24'
-					viewBox='0 0 24 24'
-				>
-					<path d='M24 6h-24v-4h24v4zm0 4h-24v4h24v-4zm0 8h-24v4h24v-4z' />
-				</svg>
-			</Box>
-
-			<Box
-				display={{ base: show ? 'block' : 'none', md: 'flex' }}
-				width={{ base: 'full', md: 'auto' }}
-				alignItems='center'
-				flexGrow={1}
-			>
-				<Flex ml='auto' px='50px'>
-					<MenuItems to='/home' icon={<GoHome />}>
-						Home
-					</MenuItems>
-					<MenuItems to='/create-quiz' icon={<MdCreateNewFolder />}>
-						Create Quiz
-					</MenuItems>
-				</Flex>
-			</Box>
-
-			<Box
-				display={{ base: show ? 'flex' : 'none', md: 'block' }}
-				flexDirection={{ base: show ? 'column' : '' }}
-				mt={{ base: 4, md: 0 }}
-				width={{ base: 'full', md: 'auto' }}
-				fontFamily='inter'
-			>
+			<Box display='block' width='auto' fontFamily='inter'>
 				{isAuth ? (
 					<UserDropDown />
 				) : (

@@ -29,7 +29,7 @@ function App() {
 	return (
 		<Router>
 			<Header />
-			<Grid placeItems='center' minH='100vh' bg='custombg' pt='4rem'>
+			<Grid placeItems='center' minH='100vh' bg='custombg' pt='64px'>
 				<Switch>
 					<Route exact path='/home' component={Home} />
 					<Route exact path='/create-quiz' component={CreateUpdateQuiz} />

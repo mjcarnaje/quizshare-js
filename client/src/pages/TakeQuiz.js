@@ -7,6 +7,8 @@ import {
 	Flex,
 	Grid,
 	Heading,
+	ScaleFade,
+	useDisclosure,
 	HStack,
 	Image,
 	Spacer,
@@ -14,6 +16,10 @@ import {
 	Stack,
 	Text,
 	VStack,
+	Alert,
+	AlertIcon,
+	AlertTitle,
+	AlertDescription,
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -32,6 +38,8 @@ const TakeQuiz = (props) => {
 	const questionFromOrignal = questions ? questions[currentIndex + 1] : null;
 	const answered = recordedAnswers[currentIndex];
 
+	const { isOpen, onToggle } = useDisclosure();
+
 	const { loading, error, data: { getQuiz: questionsData } = {} } = useQuery(
 		QUIZ_TAKE_DATA,
 		{
@@ -47,9 +55,11 @@ const TakeQuiz = (props) => {
 		setShowExplanation(true);
 		setRecordedAnswers([...recordedAnswers, { correct, selected: choiceId }]);
 		if (correct) setScore((prev) => prev + 1);
+		onToggle();
 	};
 
 	const nextQuestion = () => {
+		onToggle();
 		setShowExplanation(false);
 		if (!questionFromOrignal) return setFinished(true);
 		setCurrentIndex((prev) => prev + 1);
@@ -68,7 +78,9 @@ const TakeQuiz = (props) => {
 	}, [questionsData]);
 
 	useEffect(() => {
-		questions && setCurrentQuestion(questions[currentIndex]);
+		if (questions) {
+			setCurrentQuestion(questions[currentIndex]);
+		}
 	}, [questions, currentIndex]);
 
 	if (loading) {
@@ -87,7 +99,6 @@ const TakeQuiz = (props) => {
 
 	const { question, choices, answer, explanation } = currentQuestion || {};
 	const passed = score / questions?.length > 0.75;
-
 	return (
 		<Container
 			maxW='lg'
@@ -103,14 +114,26 @@ const TakeQuiz = (props) => {
 			{finished ? (
 				<Grid templateColumns='repeat(2, 1fr)' m='auto' w='full' p='30px'>
 					<Box>
-						<Image
+						<Alert
+							status={passed ? 'success' : 'error'}
+							variant='subtle'
+							flexDirection='column'
+							alignItems='center'
+							justifyContent='center'
+							textAlign='center'
 							borderRadius='5px'
-							src={
-								passed
-									? 'https://media.giphy.com/media/a0h7sAqON67nO/giphy.gif'
-									: 'https://media.giphy.com/media/li0dswKqIZNpm/giphy.gif'
-							}
-						/>
+							h='full'
+						>
+							<AlertIcon boxSize='40px' mr={0} />
+							<AlertTitle mt={4} mb={1} fontSize='lg'>
+								{passed ? "You've pass the quiz!" : 'Nice score 😀'}
+							</AlertTitle>
+							<AlertDescription maxWidth='sm'>
+								{passed
+									? '"Success is never final."'
+									: '"Failure is not the opposite of success it\'s part of success"'}
+							</AlertDescription>
+						</Alert>
 					</Box>
 					<Stack spacing={24} m='auto' w='full' align='center'>
 						<Heading
@@ -233,9 +256,8 @@ const TakeQuiz = (props) => {
 						))}
 					</Box>
 					<Spacer />
-					{showExplanation &&
-						currentQuestion.explanation !== null &&
-						currentQuestion.explanation?.trim() !== '' && (
+					{showExplanation && currentQuestion.explanation !== null && (
+						<ScaleFade initialScale={0.9} in={isOpen}>
 							<Box
 								bg='gray.100'
 								borderRadius='8px'
@@ -249,7 +271,8 @@ const TakeQuiz = (props) => {
 									{explanation}
 								</Text>
 							</Box>
-						)}
+						</ScaleFade>
+					)}
 					<div className='customForScrolling'>
 						<HStack
 							spacing='20px'
