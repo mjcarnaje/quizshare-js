@@ -3,10 +3,9 @@ const { cloudinary } = require('./cloudinary');
 module.exports.uploadPic = async (base64File) => {
 	const pic = await cloudinary.uploader.upload(base64File, {
 		upload_preset: 'profiles',
-		eager: [{ width: 700 }],
 	});
 
-	return pic.eager[0].url;
+	return pic.url;
 };
 
 module.exports.deletePic = async (link) => {

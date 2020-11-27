@@ -7,6 +7,7 @@ module.exports = gql`
 		token: String
 		username: String!
 		avatar: String
+		cover: String
 		createdAt: String!
 	}
 	type Like {
@@ -90,6 +91,7 @@ module.exports = gql`
 	input UpdateAccountInput {
 		email: String
 		avatar: String
+		cover: String
 		username: String
 		password: String
 		confirmPassword: String

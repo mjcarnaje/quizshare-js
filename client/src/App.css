@@ -23,5 +23,6 @@
 }
 .isActiveDashboard {
 	font-weight: 600;
+	color: #6b46c1;
 	background-color: white;
 }

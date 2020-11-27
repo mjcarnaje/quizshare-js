@@ -40,10 +40,9 @@ const CropperModal = ({
 
 		const scaleX = image.naturalWidth / image.width;
 		const scaleY = image.naturalHeight / image.height;
-		canvas.width = crop.width;
-		canvas.height = crop.height;
+		canvas.width = Math.ceil(crop.width * scaleX);
+		canvas.height = Math.ceil(crop.height * scaleY);
 		const ctx = canvas.getContext('2d');
-
 		ctx.drawImage(
 			image,
 			crop.x * scaleX,
@@ -52,8 +51,8 @@ const CropperModal = ({
 			crop.height * scaleY,
 			0,
 			0,
-			crop.width,
-			crop.height
+			crop.width * scaleX,
+			crop.height * scaleY
 		);
 
 		const base64Image = canvas.toDataURL('image/jpeg');
@@ -62,14 +61,18 @@ const CropperModal = ({
 	return (
 		<Modal
 			isCentered
-			onClose={onClose}
+			onClose={() => {
+				onClose();
+				setPreviewPic(null);
+				setCrop({ unit: '%', width: 100, aspect: aspectRatio });
+			}}
 			isOpen={isOpen}
 			motionPreset='slideInBottom'
 			size='xl'
 		>
 			<ModalOverlay />
 			<ModalContent>
-				<ModalBody p='12px'>
+				<ModalBody p='12px' maxHeight='80vh' overflowY='scroll'>
 					<ReactCrop
 						src={previewPic}
 						onImageLoaded={onLoad}
@@ -79,7 +82,15 @@ const CropperModal = ({
 					/>
 				</ModalBody>
 				<ModalFooter>
-					<Button colorScheme='purple' mr={3} onClick={onClose}>
+					<Button
+						colorScheme='purple'
+						mr={3}
+						onClick={() => {
+							onClose();
+							setPreviewPic(null);
+							setCrop({ unit: '%', width: 100, aspect: aspectRatio });
+						}}
+					>
 						Close
 					</Button>
 					<Button
@@ -87,6 +98,7 @@ const CropperModal = ({
 						onClick={() => {
 							onClose();
 							setPreviewPic(null);
+							setCrop({ unit: '%', width: 100, aspect: aspectRatio });
 						}}
 					>
 						Save

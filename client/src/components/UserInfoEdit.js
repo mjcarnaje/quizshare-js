@@ -1,5 +1,6 @@
 import { gql, useMutation } from '@apollo/client';
 import {
+	AspectRatio,
 	Avatar,
 	Box,
 	Button,
@@ -7,6 +8,7 @@ import {
 	FormControl,
 	FormHelperText,
 	FormLabel,
+	Image,
 	Input,
 	Modal,
 	ModalBody,
@@ -24,10 +26,13 @@ import { useDispatch } from 'react-redux';
 import { loadCurrentUser } from '../store/authSlice';
 import { validateImg } from '../utils/validators';
 import CropperModal from '../components/CropperModal';
+import { FiUploadCloud } from 'react-icons/fi';
+import { GET_USER } from '../utils/graphql';
 
 const UPDATE_ACCOUNT_INFO = gql`
 	mutation updateAccount(
 		$avatar: String
+		$cover: String
 		$username: String
 		$email: String
 		$password: String
@@ -36,6 +41,7 @@ const UPDATE_ACCOUNT_INFO = gql`
 		updateAccount(
 			updateAccountInput: {
 				avatar: $avatar
+				cover: $cover
 				username: $username
 				email: $email
 				password: $password
@@ -53,11 +59,17 @@ const UPDATE_ACCOUNT_INFO = gql`
 
 const UserInfoEdit = ({
 	isEdit,
-	userInfo: { username: authUsername, email: authEmail, avatar: authAvatar },
+	userInfo: {
+		username: authUsername,
+		email: authEmail,
+		avatar: authAvatar,
+		cover: authCover,
+	},
 }) => {
 	const dispatch = useDispatch();
 	const [values, setValues] = useState({
 		avatar: '',
+		cover: '',
 		username: '',
 		email: '',
 		password: '',
@@ -66,21 +78,33 @@ const UserInfoEdit = ({
 
 	const toast = useToast();
 
+	const [aspectRatio, setAspectRatio] = useState(1);
+	const [isCover, setIsCover] = useState(false);
+
 	const [originalPic, setOriginalPic] = useState();
-	const [previewPic, setPreviewPic] = useState();
 	const [croppedPic, setCroppedPic] = useState();
+	const [previewPic, setPreviewPic] = useState();
+
+	const [originalPicCover, setOriginalPicCover] = useState();
+	const [croppedPicCover, setCroppedPicCover] = useState();
+	const [previewPicCover, setPreviewPicCover] = useState();
+
 	const { isOpen, onOpen, onClose } = useDisclosure();
 
 	const onChange = (e) => {
 		setValues({ ...values, [e.target.name]: e.target.value });
 	};
 
-	const selectPicture = (e) => {
+	const selectPicture = (e, s) => {
+		if (s === 'avatar') setIsCover(false);
+		if (s === 'cover') setIsCover(true);
+
 		const selected = e.target.files?.[0];
 		if (selected) {
 			const picture = validateImg(selected);
 			if (!picture) return;
-			openImageCropper(picture);
+
+			openImageCropper(picture, s);
 		}
 	};
 
@@ -89,12 +113,18 @@ const UserInfoEdit = ({
 		onOpen();
 	};
 
-	const openImageCropper = (picture) => {
+	const openImageCropper = (picture, s) => {
 		const reader = new FileReader();
 		reader.readAsDataURL(picture);
 		reader.onloadend = () => {
-			setOriginalPic(reader.result);
-			setPreviewPic(reader.result);
+			if (s === 'avatar') {
+				setOriginalPic(reader.result);
+				setPreviewPic(reader.result);
+			}
+			if (s === 'cover') {
+				setOriginalPicCover(reader.result);
+				setPreviewPicCover(reader.result);
+			}
 			onOpen();
 		};
 	};
@@ -107,9 +137,24 @@ const UserInfoEdit = ({
 				: values?.avatar?.includes('cloudinary')
 				? ''
 				: values?.avatar,
+			cover: croppedPicCover
+				? croppedPicCover
+				: values?.cover?.includes('cloudinary')
+				? ''
+				: values?.cover,
 		},
 		update(cache, { data: { updateAccount } = {} }) {
 			isEdit(false);
+			const data = cache.readQuery({
+				query: GET_USER,
+			});
+			cache.writeQuery({
+				query: GET_USER,
+				data: {
+					currentUser: { ...data?.currentUser, cover: croppedPicCover },
+				},
+			});
+
 			dispatch(loadCurrentUser(updateAccount));
 
 			toast({
@@ -142,16 +187,83 @@ const UserInfoEdit = ({
 		setValues({
 			...values,
 			avatar: authAvatar,
+			cover: authCover,
 			username: authUsername,
 			email: authEmail,
 		});
 	}, []);
 
-	const { username, email, password, confirmPassword } = values;
+	const { username, email, password, confirmPassword, cover } = values;
 
 	return (
-		<>
-			<Box py='16px' px='32px'>
+		<Box pb='16px'>
+			<Box
+				role='group'
+				px='5px'
+				pt='5px'
+				boxShadow='sm'
+				position='relative'
+				cursor='pointer'
+			>
+				<Box overflow='hidden' position='relative'>
+					<Box
+						position='absolute'
+						top='0'
+						left='0'
+						w='full'
+						h='full'
+						transition='ease-in'
+						transitionDuration='.2s'
+						_groupHover={{ background: 'rgba(0, 0, 0, .3)' }}
+						zIndex='10'
+					></Box>
+					<AspectRatio ratio={16 / 5}>
+						<Image
+							src={
+								croppedPicCover
+									? croppedPicCover
+									: cover
+									? cover
+									: 'https://bit.ly/naruto-sage'
+							}
+							objectFit='cover'
+							transform='scale(1.02)'
+							transition='ease-in'
+							transitionDuration='.2s'
+							_groupHover={{ transform: 'scale(1)' }}
+						/>
+					</AspectRatio>
+				</Box>
+				<Box
+					position='absolute'
+					top='50%'
+					left='50%'
+					transform='translate(-50%, -50%)'
+					display='none'
+					_groupHover={{ display: 'block' }}
+					zIndex='15'
+				>
+					<input
+						id='coverUploadButton'
+						type='file'
+						name='image'
+						onChange={(e) => selectPicture(e, 'cover')}
+						hidden
+					/>
+
+					<Button
+						as='label'
+						htmlFor='coverUploadButton'
+						variant='ghost'
+						colorScheme='purple'
+						variant='solid'
+						leftIcon={<FiUploadCloud />}
+					>
+						Cover photo
+					</Button>
+				</Box>
+			</Box>
+			<Box pt='16px' px='32px'>
 				<Box pb='12px'>
 					<Text
 						w='190px'
@@ -171,15 +283,15 @@ const UserInfoEdit = ({
 						/>
 
 						<input
-							id='image-button'
+							id='avatarUploadButton'
 							type='file'
 							name='image'
-							onChange={(e) => selectPicture(e)}
+							onChange={(e) => selectPicture(e, 'avatar')}
 							hidden
 						/>
 						<Button
 							as='label'
-							htmlFor='image-button'
+							htmlFor='avatarUploadButton'
 							colorScheme='gray'
 							color='gray.600'
 							variant='ghost'
@@ -187,13 +299,18 @@ const UserInfoEdit = ({
 						>
 							Upload an image
 						</Button>
+
 						<CropperModal
 							onClose={onClose}
 							isOpen={isOpen}
-							previewPic={previewPic}
-							setPreviewPic={setPreviewPic}
-							setCroppedPic={setCroppedPic}
-							aspectRatio={1 / 1}
+							previewPic={previewPic || previewPicCover}
+							setPreviewPic={
+								isCover === false ? setPreviewPic : setPreviewPicCover
+							}
+							setCroppedPic={
+								isCover === false ? setCroppedPic : setCroppedPicCover
+							}
+							aspectRatio={isCover ? 1 : 16 / 5}
 						/>
 					</Flex>
 				</Box>
@@ -317,7 +434,7 @@ const UserInfoEdit = ({
 					</Button>
 				</Flex>
 			</Box>
-		</>
+		</Box>
 	);
 };
 

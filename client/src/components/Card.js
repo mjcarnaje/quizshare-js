@@ -33,9 +33,10 @@ const Card = ({
 }) => {
 	const user = useSelector((state) => state.auth.user);
 	return (
-		<Box minH='180px'>
+		<Box minH='180'>
 			<Flex
 				direction='column'
+				h='full'
 				rounded='8px'
 				boxShadow='sm'
 				bg='white'
@@ -98,6 +99,7 @@ const Card = ({
 						{title.length > 40 ? `${title.slice(0, 40)}...` : title}
 					</Heading>
 				</Flex>
+
 				<Box px='12px' pt='20px' as={Link} to={`/quiz/${id}`}>
 					<Text fontFamily='inter' fontSize='15px' wordBreak='break-all'>
 						{description.length > 70

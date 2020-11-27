@@ -130,7 +130,7 @@ const TakeQuiz = (props) => {
 							</AlertTitle>
 							<AlertDescription maxWidth='sm'>
 								{passed
-									? '"Success is never final."'
+									? '"Success is never final. 🙌"'
 									: '"Failure is not the opposite of success it\'s part of success"'}
 							</AlertDescription>
 						</Alert>

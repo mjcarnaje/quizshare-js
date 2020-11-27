@@ -154,6 +154,7 @@ export const GET_USER = gql`
 			username
 			avatar
 			createdAt
+			cover
 		}
 	}
 `;

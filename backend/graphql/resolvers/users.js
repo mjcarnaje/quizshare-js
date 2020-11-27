@@ -114,6 +114,7 @@ module.exports = {
 			{
 				updateAccountInput: {
 					avatar,
+					cover,
 					email,
 					username,
 					password,
@@ -183,6 +184,11 @@ module.exports = {
 				if (avatar) {
 					const pic = await uploadPic(avatar);
 					userFields.avatar = pic;
+				}
+
+				if (cover) {
+					const picCover = await uploadPic(cover);
+					userFields.cover = picCover;
 				}
 
 				if (userData) {

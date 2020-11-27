@@ -41,7 +41,7 @@ const MyProfile = () => {
 			</Flex>
 		);
 	} else {
-		userInfo = <UserInfo data={currentUser} />;
+		userInfo = <UserInfo isEdit={setUserEdit} data={currentUser} />;
 	}
 
 	const { loading: profileLoading, data: { getProfileUser } = {} } = useQuery(

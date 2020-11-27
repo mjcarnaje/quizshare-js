@@ -16,12 +16,12 @@ const DashboardNavigation = ({ url }) => {
 						as={NavLink}
 						key={item[0]}
 						to={`${url}/${item[0].toLowerCase()}`}
+						className='headerLinks'
 						activeClassName='isActiveDashboard'
 						px='10px'
 						py='20px'
 						fontFamily='inter'
 						fontSize='17px'
-						color='purple.600'
 						borderTopWidth='1px'
 						borderRadius='8px'
 						_first={{ borderTopWidth: 0 }}
