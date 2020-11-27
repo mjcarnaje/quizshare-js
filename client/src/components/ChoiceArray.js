@@ -19,7 +19,7 @@ import { Controller, useFieldArray, useFormContext } from 'react-hook-form';
 import { BsPlusSquare } from 'react-icons/bs';
 import { MdDelete } from 'react-icons/md';
 import TextareaAutosize from 'react-textarea-autosize';
-import { uuid } from 'uuidv4';
+import { v4 as uuid } from 'uuid';
 
 const ChoiceArray = ({
 	questionIndex,

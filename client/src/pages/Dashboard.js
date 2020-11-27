@@ -14,7 +14,7 @@ const Dashboard = () => {
 			<Box w='full' bg='white' py='24px' px='10px'>
 				<DashboardHeader />
 			</Box>
-			<Grid w='full' py='24px' px='32px' templateColumns='1fr 3fr'>
+			<Grid w='full' py='24px' px='44px' templateColumns='1fr 3fr'>
 				<DashboardNavigation url={url} />
 				<Switch>
 					<Route exact path='/dashboard/profile' component={MyProfile} />

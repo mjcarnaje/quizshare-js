@@ -7,8 +7,10 @@ import {
 	Spinner,
 	Stack,
 	Text,
+	useDisclosure,
+	SlideFade,
 } from '@chakra-ui/react';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FiEdit } from 'react-icons/fi';
 import ProfileInfo from '../components/ProfileInfo';
 import ProfileInfoEdit from '../components/ProfileInfoEdit';
@@ -17,12 +19,18 @@ import UserInfoEdit from '../components/UserInfoEdit';
 import { GET_PROFILE_INFO, GET_USER } from '../utils/graphql';
 
 const MyProfile = () => {
+	const { isOpen, onToggle } = useDisclosure();
+
 	const [profileEdit, setProfileEdit] = useState(false);
 	const [userEdit, setUserEdit] = useState(false);
 
 	const { loading: userLoading, data: { currentUser } = {} } = useQuery(
 		GET_USER
 	);
+
+	useEffect(() => {
+		onToggle();
+	}, []);
 
 	let userInfo;
 
@@ -53,7 +61,7 @@ const MyProfile = () => {
 	}
 
 	return (
-		<>
+		<SlideFade in={isOpen} offsetY='20px'>
 			<Stack spacing={4}>
 				<Box bg='white' borderRadius='8px' boxShadow='sm'>
 					<Flex py='16px' px='24px' w='full'>
@@ -115,7 +123,7 @@ const MyProfile = () => {
 					)}
 				</Box>
 			</Stack>
-		</>
+		</SlideFade>
 	);
 };
 

@@ -6,6 +6,7 @@ import {
 	MenuItem,
 	MenuList,
 	Text,
+	Tooltip,
 } from '@chakra-ui/react';
 import React from 'react';
 import { BsThreeDots } from 'react-icons/bs';
@@ -66,18 +67,20 @@ const MenuButtons = ({ deleteOnly, quizId, commentId }) => {
 		<Menu>
 			{({ isOpen }) => (
 				<>
-					<MenuButton
-						isActive={isOpen}
-						as={Button}
-						bg='transparent'
-						size='sm'
-						h='32px'
-						w='32px'
-						borderRadius='200px'
-						_focus={{ outline: 'none' }}
-					>
-						<BsThreeDots />
-					</MenuButton>
+					<Tooltip hasArrow label='Option'>
+						<MenuButton
+							isActive={isOpen}
+							as={Button}
+							bg='transparent'
+							size='sm'
+							h='32px'
+							w='32px'
+							borderRadius='200px'
+							_focus={{ outline: 'none' }}
+						>
+							<BsThreeDots />
+						</MenuButton>
+					</Tooltip>
 					<MenuList minWidth='140px'>
 						{!deleteOnly && (
 							<MenuItem as={Link} to={`/quiz/edit/${quizId}`}>

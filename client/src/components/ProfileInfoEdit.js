@@ -77,7 +77,7 @@ const ProfileInforEdit = ({ profileData, isEdit }) => {
 
 			setValues(profileInputs);
 		}
-	}, [profileData, values]);
+	}, [profileData]);
 
 	const {
 		firstName,
@@ -89,6 +89,7 @@ const ProfileInforEdit = ({ profileData, isEdit }) => {
 		instagram,
 		youtube,
 	} = values;
+
 	return (
 		<>
 			<Box py='16px' px='32px'>

@@ -18,20 +18,18 @@ import {
 	useToast,
 	VStack,
 } from '@chakra-ui/react';
-import React, { useState } from 'react';
-import { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { ImFilePicture } from 'react-icons/im';
 import { Link, useHistory } from 'react-router-dom';
 import TextareaAutosize from 'react-textarea-autosize';
-import { uuid } from 'uuidv4';
 import CropperModal from '../components/CropperModal';
 import QuestionArray from '../components/QuestionArray';
 import {
 	CREATE_QUIZ,
 	GET_ALL_QUIZZES,
-	UPDATE_QUIZ,
 	QUIZ_DATA_FOR_UPDATE,
+	UPDATE_QUIZ,
 } from '../utils/graphql';
 import { validateImg } from '../utils/validators';
 
@@ -57,7 +55,7 @@ const CreateUpdateQuiz = (props) => {
 		const value = { ...data, image: croppedPic || '' };
 		try {
 			if (updateMode) {
-				const { data } = await updateQuiz({
+				await updateQuiz({
 					variables: {
 						quizId,
 						quizInput: value,
@@ -66,12 +64,14 @@ const CreateUpdateQuiz = (props) => {
 						const data = cache.readQuery({
 							query: GET_ALL_QUIZZES,
 						});
+
 						cache.writeQuery({
 							query: GET_ALL_QUIZZES,
 							data: {
 								getQuizzes: [value, ...data?.getQuizzes],
 							},
 						});
+
 						toast({
 							title: 'Quiz updated.',
 							description: 'The quiz is now updated.',
@@ -82,7 +82,7 @@ const CreateUpdateQuiz = (props) => {
 					},
 				});
 			} else {
-				const { data } = await createQuiz({
+				await createQuiz({
 					variables: value,
 					update(cache) {
 						const data = cache.readQuery({
@@ -94,6 +94,7 @@ const CreateUpdateQuiz = (props) => {
 								getQuizzes: [value, ...data?.getQuizzes],
 							},
 						});
+
 						toast({
 							title: 'Quiz created.',
 							description: "You've created a quiz.",

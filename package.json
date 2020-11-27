@@ -26,7 +26,7 @@
     "react-icons": "^3.11.0",
     "react-image-crop": "^8.6.6",
     "react-textarea-autosize": "^8.3.0",
-    "uuidv4": "^6.2.5"
+    "uuid": "^8.3.1"
   },
   "devDependencies": {
     "nodemon": "^2.0.6"

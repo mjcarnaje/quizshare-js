@@ -23,6 +23,7 @@ import 'react-image-crop/dist/ReactCrop.css';
 import { useDispatch } from 'react-redux';
 import { loadCurrentUser } from '../store/authSlice';
 import { validateImg } from '../utils/validators';
+import CropperModal from '../components/CropperModal';
 
 const UPDATE_ACCOUNT_INFO = gql`
 	mutation updateAccount(
@@ -64,29 +65,48 @@ const UserInfoEdit = ({
 	});
 
 	const toast = useToast();
-	const { isOpen, onOpen, onClose } = useDisclosure();
 
-	const [originalPic, setUpOriginalPic] = useState(null);
-	const [previewSource, setPreviewSource] = useState();
-	const [finalImage, setFinalImage] = useState(null);
-	const imgRef = useRef(null);
-	const [crop, setCrop] = useState({ unit: '%', width: 100, aspect: 1 / 1 });
-	const [completedCrop, setCompletedCrop] = useState(null);
+	const [originalPic, setOriginalPic] = useState();
+	const [previewPic, setPreviewPic] = useState();
+	const [croppedPic, setCroppedPic] = useState();
+	const { isOpen, onOpen, onClose } = useDisclosure();
 
 	const onChange = (e) => {
 		setValues({ ...values, [e.target.name]: e.target.value });
 	};
 
+	const selectPicture = (e) => {
+		const selected = e.target.files?.[0];
+		if (selected) {
+			const picture = validateImg(selected);
+			if (!picture) return;
+			openImageCropper(picture);
+		}
+	};
+
+	const editSelectedPic = () => {
+		setPreviewPic(originalPic);
+		onOpen();
+	};
+
+	const openImageCropper = (picture) => {
+		const reader = new FileReader();
+		reader.readAsDataURL(picture);
+		reader.onloadend = () => {
+			setOriginalPic(reader.result);
+			setPreviewPic(reader.result);
+			onOpen();
+		};
+	};
+
 	const [updateProfile, { loading }] = useMutation(UPDATE_ACCOUNT_INFO, {
 		variables: {
 			...values,
-			avatar: values.avatar
-				? finalImage
-					? finalImage
-					: ''
-				: values.avatar.includes('cloudinary')
+			avatar: croppedPic
+				? croppedPic
+				: values?.avatar?.includes('cloudinary')
 				? ''
-				: '',
+				: values?.avatar,
 		},
 		update(cache, { data: { updateAccount } = {} }) {
 			isEdit(false);
@@ -118,40 +138,6 @@ const UserInfoEdit = ({
 		updateProfile();
 	};
 
-	const onLoad = useCallback((img) => {
-		imgRef.current = img;
-	}, []);
-
-	useEffect(() => {
-		if (!completedCrop || !imgRef.current) {
-			return;
-		}
-		const image = imgRef.current;
-		const crop = completedCrop;
-		const canvas = document.createElement('canvas');
-
-		const scaleX = image.naturalWidth / image.width;
-		const scaleY = image.naturalHeight / image.height;
-		canvas.width = crop.width;
-		canvas.height = crop.height;
-		const ctx = canvas.getContext('2d');
-
-		ctx.drawImage(
-			image,
-			crop.x * scaleX,
-			crop.y * scaleY,
-			crop.width * scaleX,
-			crop.height * scaleY,
-			0,
-			0,
-			crop.width,
-			crop.height
-		);
-
-		const base64Image = canvas.toDataURL('image/jpeg');
-		setFinalImage(base64Image);
-	}, [completedCrop, previewSource]);
-
 	useEffect(() => {
 		setValues({
 			...values,
@@ -159,7 +145,7 @@ const UserInfoEdit = ({
 			username: authUsername,
 			email: authEmail,
 		});
-	}, [values, authAvatar, authUsername, authEmail]);
+	}, []);
 
 	const { username, email, password, confirmPassword } = values;
 
@@ -180,30 +166,15 @@ const UserInfoEdit = ({
 					<Flex alignItems='center'>
 						<Avatar
 							name={authUsername && authUsername}
-							src={finalImage ? finalImage : authAvatar ? authAvatar : ''}
+							src={croppedPic ? croppedPic : authAvatar ? authAvatar : ''}
 							size='xl'
 						/>
+
 						<input
 							id='image-button'
 							type='file'
 							name='image'
-							onChange={(e) => {
-								const oneIsSelected =
-									e.target.files && e.target.files.length > 0;
-								if (oneIsSelected) {
-									const file = e.target.files[0];
-									const imageFile = validateImg(file);
-									if (!imageFile) return;
-
-									const reader = new FileReader();
-									reader.readAsDataURL(imageFile);
-									reader.onloadend = () => {
-										setUpOriginalPic(reader.result);
-										setPreviewSource(reader.result);
-										onOpen();
-									};
-								}
-							}}
+							onChange={(e) => selectPicture(e)}
 							hidden
 						/>
 						<Button
@@ -216,47 +187,14 @@ const UserInfoEdit = ({
 						>
 							Upload an image
 						</Button>
-						<Modal
-							isCentered
+						<CropperModal
 							onClose={onClose}
 							isOpen={isOpen}
-							motionPreset='slideInBottom'
-							size='xl'
-						>
-							<ModalOverlay />
-							<ModalContent>
-								<ModalBody p='12px'>
-									<ReactCrop
-										src={previewSource}
-										onImageLoaded={onLoad}
-										crop={crop}
-										onChange={(c) => setCrop(c)}
-										onComplete={(c) => setCompletedCrop(c)}
-									/>
-								</ModalBody>
-								<ModalFooter>
-									<Button
-										colorScheme='purple'
-										mr={3}
-										onClick={() => {
-											setFinalImage(null);
-											onClose();
-										}}
-									>
-										Cancel
-									</Button>
-									<Button
-										variant='ghost'
-										onClick={() => {
-											onClose();
-											setPreviewSource(null);
-										}}
-									>
-										Save
-									</Button>
-								</ModalFooter>
-							</ModalContent>
-						</Modal>
+							previewPic={previewPic}
+							setPreviewPic={setPreviewPic}
+							setCroppedPic={setCroppedPic}
+							aspectRatio={1 / 1}
+						/>
 					</Flex>
 				</Box>
 				<FormControl py='8px'>

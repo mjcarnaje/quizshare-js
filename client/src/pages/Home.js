@@ -23,22 +23,18 @@ const Home = () => {
 	if (error) return <p>Error</p>;
 
 	return (
-		<Container maxW='lg'>
+		<Container maxW='lg' py='50px'>
 			<Heading
 				as='h1'
-				py='1rem'
-				fontSize='3rem'
-				letterSpacing='3px'
-				textAlign='center'
 				fontFamily='inter'
-				fontWeight='bold'
+				fontWeight='800'
 				color='gray.700'
-				textTransform='uppercase'
+				fontSize='56px'
+				textAlign='center'
 			>
-				All Quizzes
+				All quizzes
 			</Heading>
-			<Divider borderColor='purple.400' w='25%' m='auto' />
-			<Grid h='auto' w='full' mt={5} templateColumns='repeat(3, 1fr)' gap={4}>
+			<Grid h='auto' w='full' mt={10} templateColumns='repeat(3, 1fr)' gap={4}>
 				{quizzesData.map((quiz) => {
 					return <Card key={quiz.id} quizData={quiz} />;
 				})}

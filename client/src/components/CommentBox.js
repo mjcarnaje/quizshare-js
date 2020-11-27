@@ -21,19 +21,19 @@ const CommentBox = ({
 				my='10px'
 				bg='white'
 				borderRadius='8px'
-				p='15px'
+				p='10px'
 				display='flex'
 				boxShadow='sm'
 				position='relative'
 			>
-				<Avatar name={user.username && user.username} src={`${avatar}`} />
+				<Avatar name={user?.username && user?.username} src={`${avatar}`} />
 				<Box ml='10px'>
 					<Box display='flex' alignItems='center'>
 						<Text fontFamily='inter' fontSize='17px' fontWeight='semibold'>
-							{username}
+							{username ? username : 'unknown'}
 						</Text>
 						<Text ml='5px' fontFamily='inter' fontSize='14px' color='gray.600'>
-							{email}
+							{email ? email : 'unknown'}
 						</Text>
 						<Text ml='5px' fontWeight='bold' color='gray.600'>
 							&#183;

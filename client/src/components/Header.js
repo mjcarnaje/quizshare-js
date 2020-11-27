@@ -1,5 +1,5 @@
 import { Box, Button, Flex, Heading, Text } from '@chakra-ui/react';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { GoHome } from 'react-icons/go';
 import { MdCreateNewFolder } from 'react-icons/md';
 import { useSelector } from 'react-redux';
@@ -70,12 +70,6 @@ const Header = (props) => {
 					</MenuItems>
 					<MenuItems to='/create-quiz' icon={<MdCreateNewFolder />}>
 						Create Quiz
-					</MenuItems>
-					<MenuItems to='/create-quiz2' icon={<MdCreateNewFolder />}>
-						Create Quiz V2
-					</MenuItems>
-					<MenuItems to='/create' icon={<MdCreateNewFolder />}>
-						Create Legit
 					</MenuItems>
 				</Flex>
 			</Box>

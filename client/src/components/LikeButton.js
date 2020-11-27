@@ -25,10 +25,11 @@ const LikeButton = ({ quiz: { likes, id, likeCount }, user }) => {
 		} else {
 			setIsLiked(false);
 		}
-	}, [user, likes]);
+	}, [likes]);
 
 	const [toggleLikeQuiz] = useMutation(LIKE_QUIZ_MUTATION, {
 		onError(err) {
+			console.log(err);
 			return err;
 		},
 		variables: { quizId: id },
@@ -37,7 +38,6 @@ const LikeButton = ({ quiz: { likes, id, likeCount }, user }) => {
 	return (
 		<>
 			<Box
-				as='button'
 				role='group'
 				display='flex'
 				alignItems='center'

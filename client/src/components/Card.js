@@ -6,6 +6,7 @@ import {
 	Heading,
 	Image,
 	Spacer,
+	Tag,
 	Text,
 } from '@chakra-ui/react';
 import moment from 'moment';
@@ -48,8 +49,8 @@ const Card = ({
 							src={image}
 							objectFit='cover'
 							loading='lazy'
-							pb='12px'
 							borderRadius='8px'
+							pb='10px'
 						/>
 					</AspectRatio>
 				)}

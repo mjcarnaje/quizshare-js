@@ -112,7 +112,7 @@ const TakeQuiz = (props) => {
 							}
 						/>
 					</Box>
-					<Stack spacing={20} m='auto'>
+					<Stack spacing={24} m='auto' w='full' align='center'>
 						<Heading
 							as='h1'
 							fontFamily='montserrat'
@@ -122,7 +122,7 @@ const TakeQuiz = (props) => {
 						>
 							{`${score} / ${questions.length}`}
 						</Heading>
-						<VStack>
+						<VStack w='70%'>
 							<Button onClick={playAgain} colorScheme='purple' w='full'>
 								Play Again
 							</Button>

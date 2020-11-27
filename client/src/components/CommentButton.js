@@ -67,7 +67,6 @@ const CommentButton = ({ user, quiz: { commentCount, comments, id } }) => {
 	return (
 		<>
 			<Box
-				as='button'
 				role='group'
 				display='flex'
 				alignItems='center'
