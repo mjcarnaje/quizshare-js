@@ -11,6 +11,7 @@ import {
 	Button,
 	Spinner,
 	Text,
+	useDisclosure,
 	useToast,
 } from '@chakra-ui/react';
 import React, { useRef, useState } from 'react';
@@ -30,10 +31,8 @@ const DashboardHeader = () => {
 	const toast = useToast();
 	const dispatch = useDispatch();
 
-	const [isOpen, setIsOpen] = useState();
-	const onClose = () => setIsOpen(false);
+	const { isOpen, onOpen, onClose } = useDisclosure();
 	const cancelRef = useRef();
-	const btnRef = useRef();
 
 	const { loading: currentUserLoading, data: { currentUser } = {} } = useQuery(
 		GET_USER
@@ -41,9 +40,10 @@ const DashboardHeader = () => {
 
 	const [deleteUser, { loading }] = useMutation(DELETE_USER, {
 		update() {
+			localStorage.removeItem('token');
 			cache.clearStore();
 			dispatch(logoutUser());
-			setIsOpen(false);
+			onClose();
 
 			toast({
 				title: 'Account deleted.',
@@ -69,13 +69,16 @@ const DashboardHeader = () => {
 	const { username, avatar, email } = currentUser;
 	return (
 		<Box
-			m='auto'
 			display='flex'
 			alignItems='center'
 			justifyContent='space-between'
+			w='full'
+			bg='white'
+			py='24px'
+			px='10px'
 		>
 			<Box display='flex' alignItems='center' w='full'>
-				<Avatar name={username && username} src={avatar && avatar} />
+				<Avatar name={username} src={avatar} />
 				<Box ml='15px'>
 					<Text
 						fontFamily='inter'
@@ -83,7 +86,7 @@ const DashboardHeader = () => {
 						fontSize='20px'
 						color='blue.900'
 					>
-						{username && username}
+						{username}
 					</Text>
 					<Text
 						fontFamily='inter'
@@ -92,23 +95,24 @@ const DashboardHeader = () => {
 						color='gray.700'
 						lineHeight='1'
 					>
-						{email && email}
+						{email}
 					</Text>
 				</Box>
 				<Box ml='auto'>
 					<Button
 						leftIcon={<MdDeleteForever />}
 						colorScheme='red'
-						onClick={() => setIsOpen(true)}
+						onClick={onOpen}
 						size='sm'
 					>
 						Delete Account
 					</Button>
 
 					<AlertDialog
+						motionPreset='slideInBottom'
 						leastDestructiveRef={cancelRef}
-						finalFocusRef={btnRef}
 						onClose={onClose}
+						isOpen={isOpen}
 						isCentered
 					>
 						<AlertDialogOverlay />

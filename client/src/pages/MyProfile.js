@@ -9,6 +9,7 @@ import {
 	Text,
 	useDisclosure,
 	SlideFade,
+	Center,
 } from '@chakra-ui/react';
 import React, { useState, useEffect } from 'react';
 import { FiEdit } from 'react-icons/fi';
@@ -19,7 +20,7 @@ import UserInfoEdit from '../components/UserInfoEdit';
 import { GET_PROFILE_INFO, GET_USER } from '../utils/graphql';
 
 const MyProfile = () => {
-	const { isOpen, onToggle } = useDisclosure();
+	const { isOpen, onOpen } = useDisclosure();
 
 	const [profileEdit, setProfileEdit] = useState(false);
 	const [userEdit, setUserEdit] = useState(false);
@@ -29,7 +30,7 @@ const MyProfile = () => {
 	);
 
 	useEffect(() => {
-		onToggle();
+		onOpen();
 	}, []);
 
 	let userInfo;
@@ -37,7 +38,13 @@ const MyProfile = () => {
 	if (userLoading) {
 		userInfo = (
 			<Flex w='full' justify='center' align='center' h='300px'>
-				<Spinner thickness='8px' speed='.7s' color='purple.500' size='70px' />
+				<Spinner
+					thickness='4px'
+					speed='0.65s'
+					emptyColor='gray.200'
+					color='purple.500'
+					size='xl'
+				/>
 			</Flex>
 		);
 	} else {
@@ -53,7 +60,13 @@ const MyProfile = () => {
 	if (profileLoading) {
 		profileInfo = (
 			<Flex w='full' justify='center' align='center' h='300px'>
-				<Spinner thickness='8px' speed='.7s' color='purple.500' size='70px' />
+				<Spinner
+					thickness='4px'
+					speed='0.65s'
+					emptyColor='gray.200'
+					color='purple.500'
+					size='xl'
+				/>
 			</Flex>
 		);
 	} else {
@@ -64,7 +77,7 @@ const MyProfile = () => {
 		<SlideFade in={isOpen} offsetY='20px'>
 			<Stack spacing={4}>
 				<Box bg='white' borderRadius='8px' boxShadow='sm'>
-					<Flex py='16px' px='24px' w='full'>
+					<Center py='16px' px='24px' w='full'>
 						<Text
 							fontFamily='inter'
 							fontWeight='bold'
@@ -83,7 +96,7 @@ const MyProfile = () => {
 								{userEdit ? 'Cancel' : 'Edit'}
 							</Button>
 						</Box>
-					</Flex>
+					</Center>
 					<Divider my='0px' />
 					{userEdit ? (
 						<UserInfoEdit isEdit={setUserEdit} userInfo={currentUser} />
@@ -92,14 +105,14 @@ const MyProfile = () => {
 					)}
 				</Box>
 				<Box bg='white' borderRadius='8px' boxShadow='sm'>
-					<Flex py='16px' px='24px' w='full'>
+					<Center py='16px' px='24px' w='full'>
 						<Text
 							fontFamily='inter'
 							fontWeight='bold'
 							fontSize='18px'
 							color='purple.600'
 						>
-							User Information
+							Profile
 						</Text>
 						<Box ml='auto'>
 							<Button
@@ -111,7 +124,7 @@ const MyProfile = () => {
 								{profileEdit ? 'Cancel' : 'Edit'}
 							</Button>
 						</Box>
-					</Flex>
+					</Center>
 					<Divider my='0px' />
 					{profileEdit ? (
 						<ProfileInfoEdit

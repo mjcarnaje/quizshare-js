@@ -29,7 +29,7 @@ module.exports = {
 				throw new Error(err);
 			}
 		},
-		getUserQuizzes: async (parent, { userId }, context) => {
+		getUserQuizzes: async (parent, args, context) => {
 			const user = checkAuth(context);
 			try {
 				const quizzes = await Quiz.find();
@@ -42,7 +42,20 @@ module.exports = {
 					throw new Error('Quiz not found');
 				}
 			} catch (err) {
-				throw new Error();
+				throw new Error(err);
+			}
+		},
+		getOthersQuizzes: async (parent, { userId }, context) => {
+			try {
+				const quizzes = await Quiz.find();
+				if (quizzes) {
+					const userQuizzes = quizzes.filter((q) => q.author == userId);
+					return userQuizzes;
+				} else {
+					throw new Error('Quiz not found');
+				}
+			} catch (err) {
+				throw new Error(err);
 			}
 		},
 	},
@@ -132,53 +145,6 @@ module.exports = {
 				} else {
 					throw new AuthenticationError('Action not allowed');
 				}
-			} catch (err) {
-				throw new Error(err);
-			}
-		},
-		addQuestion: async (parent, { quizId, questions }, context) => {
-			const user = checkAuth(context);
-			try {
-				const quiz = await Quiz.findById(quizId);
-
-				if (!quiz) {
-					throw new Error('Quiz not found');
-				}
-
-				if (user.id == quiz.author) {
-					quiz.questions.push(...questions);
-					await quiz.save();
-					return quiz;
-				} else {
-					throw new AuthenticationError('Action not allowed');
-				}
-			} catch (err) {
-				throw new Error(err);
-			}
-		},
-		deleteQuestion: async (parent, { quizId, questionId }, context) => {
-			const user = checkAuth(context);
-			try {
-				const quiz = await Quiz.findById(quizId);
-
-				if (!quiz) {
-					throw new Error('Quiz not found');
-				}
-
-				const question = quiz.questions.find(
-					(question) => question.id === questionId
-				);
-				if (!question) {
-					throw new Error('Question not found');
-				}
-
-				if (quiz.author.toString() !== user.id.toString()) {
-					throw new AuthenticationError('Action not allowed');
-				}
-				await question.remove();
-				await quiz.save();
-
-				return 'Question deleted successfully';
 			} catch (err) {
 				throw new Error(err);
 			}

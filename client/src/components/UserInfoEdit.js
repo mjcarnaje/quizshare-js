@@ -4,30 +4,25 @@ import {
 	Avatar,
 	Box,
 	Button,
+	Center,
 	Flex,
 	FormControl,
 	FormHelperText,
 	FormLabel,
 	Image,
 	Input,
-	Modal,
-	ModalBody,
-	ModalContent,
-	ModalFooter,
-	ModalOverlay,
 	Text,
 	useDisclosure,
 	useToast,
 } from '@chakra-ui/react';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import ReactCrop from 'react-image-crop';
+import React, { useEffect, useState } from 'react';
+import { FiUploadCloud } from 'react-icons/fi';
 import 'react-image-crop/dist/ReactCrop.css';
 import { useDispatch } from 'react-redux';
-import { loadCurrentUser } from '../store/authSlice';
-import { validateImg } from '../utils/validators';
 import CropperModal from '../components/CropperModal';
-import { FiUploadCloud } from 'react-icons/fi';
+import { loadCurrentUser } from '../store/authSlice';
 import { GET_USER } from '../utils/graphql';
+import { validateImg } from '../utils/validators';
 
 const UPDATE_ACCOUNT_INFO = gql`
 	mutation updateAccount(
@@ -99,7 +94,7 @@ const UserInfoEdit = ({
 		if (s === 'avatar') setIsCover(false);
 		if (s === 'cover') setIsCover(true);
 
-		const selected = e.target.files?.[0];
+		const selected = e.target.files[0];
 		if (selected) {
 			const picture = validateImg(selected);
 			if (!picture) return;
@@ -197,15 +192,13 @@ const UserInfoEdit = ({
 
 	return (
 		<Box pb='16px'>
-			<Box
-				role='group'
-				px='5px'
-				pt='5px'
-				boxShadow='sm'
-				position='relative'
-				cursor='pointer'
-			>
-				<Box overflow='hidden' position='relative'>
+			<Box role='group' p='5px' position='relative' cursor='pointer'>
+				<Box
+					overflow='hidden'
+					position='relative'
+					borderRadius='8px'
+					boxShadow='sm'
+				>
 					<Box
 						position='absolute'
 						top='0'
@@ -213,54 +206,58 @@ const UserInfoEdit = ({
 						w='full'
 						h='full'
 						transition='ease-in'
-						transitionDuration='.2s'
-						_groupHover={{ background: 'rgba(0, 0, 0, .3)' }}
+						transitionDuration='.3s'
+						_groupHover={{ background: 'rgba(0, 0, 0, .2)' }}
 						zIndex='10'
-					></Box>
-					<AspectRatio ratio={16 / 5}>
-						<Image
-							src={
-								croppedPicCover
-									? croppedPicCover
-									: cover
-									? cover
-									: 'https://bit.ly/naruto-sage'
-							}
-							objectFit='cover'
-							transform='scale(1.02)'
-							transition='ease-in'
-							transitionDuration='.2s'
-							_groupHover={{ transform: 'scale(1)' }}
-						/>
-					</AspectRatio>
-				</Box>
-				<Box
-					position='absolute'
-					top='50%'
-					left='50%'
-					transform='translate(-50%, -50%)'
-					display='none'
-					_groupHover={{ display: 'block' }}
-					zIndex='15'
-				>
-					<input
-						id='coverUploadButton'
-						type='file'
-						name='image'
-						onChange={(e) => selectPicture(e, 'cover')}
-						hidden
-					/>
-
-					<Button
-						as='label'
-						htmlFor='coverUploadButton'
-						variant='ghost'
-						colorScheme='purple'
-						variant='solid'
-						leftIcon={<FiUploadCloud />}
 					>
-						Cover photo
-					</Button>
+						<Center h='full'>
+							<input
+								id='coverUploadButton'
+								type='file'
+								name='image'
+								onChange={(e) => selectPicture(e, 'cover')}
+								hidden
+							/>
+
+							<Button
+								as='label'
+								htmlFor='coverUploadButton'
+								variant='ghost'
+								colorScheme='purple'
+								variant='solid'
+								transition='ease-in'
+								transitionDuration='.3s'
+								opacity='0'
+								_groupHover={{ opacity: '1' }}
+								leftIcon={<FiUploadCloud />}
+							>
+								Cover photo
+							</Button>
+						</Center>
+					</Box>
+					<AspectRatio ratio={16 / 5}>
+						{cover ? (
+							<Image
+								src={croppedPicCover ? croppedPicCover : cover}
+								objectFit='cover'
+								transform='scale(1.02)'
+								transition='ease-in'
+								transitionDuration='.2s'
+								_groupHover={{ transform: 'scale(1)' }}
+							/>
+						) : (
+							<Center w='full' h='full' bg='gray.100'>
+								<Text
+									fontFamily='inter'
+									fontWeight='800'
+									fontSize='30px'
+									color='gray.700'
+								>
+									No cover photo yet.
+								</Text>
+							</Center>
+						)}
+					</AspectRatio>
 				</Box>
 			</Box>
 			<Box pt='16px' px='32px'>
@@ -331,7 +328,7 @@ const UserInfoEdit = ({
 						fontFamily='inter'
 						fontWeight='400'
 						bg='gray.50'
-						w='60%'
+						maxW='420px'
 						focusBorderColor='purple.500'
 						placeholder='Enter username'
 						onChange={onChange}
@@ -355,7 +352,7 @@ const UserInfoEdit = ({
 						fontFamily='inter'
 						fontWeight='400'
 						bg='gray.50'
-						w='60%'
+						maxW='420px'
 						focusBorderColor='purple.500'
 						placeholder='Enter email'
 						onChange={onChange}
@@ -379,7 +376,7 @@ const UserInfoEdit = ({
 						fontFamily='inter'
 						fontWeight='400'
 						bg='gray.50'
-						w='60%'
+						maxW='420px'
 						focusBorderColor='purple.500'
 						placeholder='Enter new password'
 						onChange={onChange}
@@ -411,7 +408,7 @@ const UserInfoEdit = ({
 						fontFamily='inter'
 						fontWeight='400'
 						bg='gray.50'
-						w='60%'
+						maxW='420px'
 						focusBorderColor='purple.500'
 						placeholder='Confirm new password'
 						onChange={onChange}

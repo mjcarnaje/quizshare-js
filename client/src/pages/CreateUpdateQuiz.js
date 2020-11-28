@@ -2,7 +2,6 @@ import { useMutation, useQuery } from '@apollo/client';
 import {
 	Box,
 	Button,
-	ScaleFade,
 	Center,
 	Flex,
 	FormControl,
@@ -12,14 +11,13 @@ import {
 	HStack,
 	Image,
 	Input,
-	Slide,
+	SlideFade,
 	Spacer,
 	Spinner,
 	Textarea,
 	useDisclosure,
 	useToast,
 	VStack,
-	SlideFade,
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -53,7 +51,7 @@ const CreateUpdateQuiz = (props) => {
 		onOpen: onOpenModal,
 		onClose: onCloseModal,
 	} = useDisclosure();
-	const { isOpen, onToggle } = useDisclosure();
+	const { isOpen, onOpen } = useDisclosure();
 
 	const methods = useForm();
 
@@ -130,6 +128,16 @@ const CreateUpdateQuiz = (props) => {
 	};
 
 	const editSelectedPic = () => {
+		if (originalPic?.includes('cloudinary')) {
+			toast({
+				title: 'Hello my friend.',
+				description: 'You cannot edit uploaded file',
+				status: 'warning',
+				duration: 3000,
+				isClosable: true,
+			});
+			return;
+		}
 		setPreviewPic(originalPic);
 		onOpenModal();
 	};
@@ -145,7 +153,7 @@ const CreateUpdateQuiz = (props) => {
 	};
 
 	useEffect(() => {
-		onToggle();
+		onOpen();
 	}, []);
 
 	const {
@@ -204,30 +212,38 @@ const CreateUpdateQuiz = (props) => {
 	}
 
 	return (
-		<Box w='full' minH='full' py='40px'>
+		<Box w='full' minH='full' py='40px' px={{ base: '10px', md: '24px' }}>
 			<SlideFade in={isOpen} offsetY='20px'>
 				<Heading
 					as='h1'
 					fontFamily='inter'
 					fontWeight='800'
 					color='gray.700'
-					fontSize='56px'
-					py='50px'
+					lineHeight='1'
+					fontSize={{ base: '44px', md: '56px' }}
+					py={{ base: '30px', md: '50px' }}
 					textAlign='center'
 				>
 					Create an interactive quiz
 				</Heading>
-				<Box w='60%' m='auto' bg='white' boxShadow='sm' rounded='md' p='24px'>
+				<Box
+					maxWidth='760px'
+					m='auto'
+					bg='white'
+					boxShadow='sm'
+					rounded='md'
+					p={{ base: '10px', md: '24px' }}
+				>
 					<FormProvider {...methods}>
 						<form onSubmit={methods.handleSubmit(onSubmit)}>
+							<input
+								hidden
+								id='picUploader'
+								type='file'
+								name='image'
+								onChange={(e) => selectPicture(e)}
+							/>
 							<VStack spacing='20px'>
-								<input
-									hidden
-									id='picUploader'
-									type='file'
-									name='image'
-									onChange={(e) => selectPicture(e)}
-								/>
 								{croppedPic ? (
 									<Flex direction='column' align='center' w='full'>
 										<Image
@@ -248,7 +264,7 @@ const CreateUpdateQuiz = (props) => {
 										</HStack>
 									</Flex>
 								) : (
-									<Center bg='gray.100' w='full' h='200px' rounded='md'>
+									<Center bg='gray.100' w='full' h='190px' rounded='md'>
 										<Button
 											as='label'
 											htmlFor='picUploader'

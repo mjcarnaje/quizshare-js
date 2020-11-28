@@ -18,7 +18,9 @@ module.exports = {
 	Comment: {
 		author: async (parent) => {
 			const user = await User.findById(parent.author);
-
+			if (!user) {
+				console.log(parent.author);
+			}
 			return user;
 		},
 	},
@@ -28,7 +30,12 @@ module.exports = {
 		questionCount: (parent) => parent.questions.length,
 		author: async (parent) => {
 			const user = await User.findById(parent.author);
-
+			return user;
+		},
+	},
+	Profile: {
+		userData: async (parent) => {
+			const user = await User.findById(parent.user);
 			return user;
 		},
 	},

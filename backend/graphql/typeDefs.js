@@ -10,6 +10,23 @@ module.exports = gql`
 		cover: String
 		createdAt: String!
 	}
+	type Profile {
+		id: ID!
+		user: ID!
+		firstName: String
+		lastName: String
+		bio: String
+		birthday: String
+		country: String
+		social: Social
+		userData: User
+	}
+	type Social {
+		facebook: String
+		twitter: String
+		instagram: String
+		youtube: String
+	}
 	type Like {
 		id: ID!
 		createdAt: String!
@@ -33,7 +50,6 @@ module.exports = gql`
 		explanation: String
 		withExplanation: Boolean
 	}
-
 	type Quiz {
 		id: ID!
 		image: String
@@ -45,24 +61,8 @@ module.exports = gql`
 		likeCount: Int
 		comments: [Comment]
 		commentCount: Int
-		isPublic: Boolean
 		createdAt: String
 		author: User!
-	}
-	type Social {
-		facebook: String
-		twitter: String
-		instagram: String
-		youtube: String
-	}
-	type Profile {
-		id: ID!
-		user: ID!
-		firstName: String
-		lastName: String
-		birthday: String
-		country: String
-		social: Social
 	}
 	input ChoicesInput {
 		id: String!
@@ -99,6 +99,7 @@ module.exports = gql`
 	input ProfileInput {
 		firstName: String
 		lastName: String
+		bio: String
 		country: String
 		birthday: String
 		facebook: String
@@ -111,9 +112,14 @@ module.exports = gql`
 		getQuiz(quizId: ID!): Quiz!
 		getUserQuizzes: [Quiz]!
 
+		getAllUser: [Profile!]!
+
+		getOthersQuizzes(userId: ID!): [Quiz]!
+
 		currentUser: User!
 
-		getProfileUser: Profile
+		getProfileUser: Profile!
+		getOthersProfile(userId: ID!): Profile!
 	}
 	type Mutation {
 		register(registerInput: RegisterInput!): User!

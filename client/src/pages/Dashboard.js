@@ -10,11 +10,16 @@ const Dashboard = () => {
 	let { url } = useRouteMatch();
 
 	return (
-		<Box w='full' h='full'>
-			<Box w='full' bg='white' py='24px' px='10px'>
-				<DashboardHeader />
-			</Box>
-			<Grid w='full' py='24px' px='44px' templateColumns='1fr 3fr'>
+		<Box w='full' minH='100vh'>
+			<DashboardHeader />
+			<Grid
+				px={{ sm: '10px', md: '32px' }}
+				maxW='1100px'
+				py='24px'
+				templateColumns={{ base: '1fr', lg: '1fr 3fr' }}
+				gap='10px'
+				mx='auto'
+			>
 				<DashboardNavigation url={url} />
 				<Switch>
 					<Route exact path='/dashboard/profile' component={MyProfile} />

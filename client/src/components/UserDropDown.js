@@ -7,6 +7,7 @@ import {
 	MenuGroup,
 	MenuItem,
 	MenuList,
+	useBreakpointValue,
 } from '@chakra-ui/react';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -17,6 +18,8 @@ const UserDropDown = () => {
 	const dispatch = useDispatch();
 	const user = useSelector((state) => state.auth.user);
 	const client = useApolloClient();
+
+	const show = useBreakpointValue({ base: true, lg: false });
 
 	return (
 		<>
@@ -29,6 +32,22 @@ const UserDropDown = () => {
 					/>
 				</MenuButton>
 				<MenuList>
+					{show && (
+						<>
+							<MenuGroup display={{ sm: 'block', lg: 'none' }}>
+								<MenuItem as={Link} to='/home'>
+									Home
+								</MenuItem>
+								<MenuItem as={Link} to='/create-quiz'>
+									Create Quiz
+								</MenuItem>
+								<MenuItem as={Link} to='/users'>
+									Users
+								</MenuItem>
+							</MenuGroup>
+							<MenuDivider />
+						</>
+					)}
 					<MenuGroup>
 						<MenuItem as={Link} to='/dashboard/profile'>
 							Profile

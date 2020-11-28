@@ -56,7 +56,7 @@ const SingleQuiz = ({ match: { params }, history }) => {
 		commentCount,
 		questionCount,
 		createdAt,
-		author: { avatar, username, email },
+		author: { avatar, username, email, id: authorID },
 	} = quizData;
 	return (
 		<Container maxW='md' py='30px' minH='90vh'>
@@ -102,7 +102,12 @@ const SingleQuiz = ({ match: { params }, history }) => {
 				boxShadow='sm'
 			>
 				<Box display='flex' w='full'>
-					<Avatar name='Dan Abrahmov' src={`${avatar}`} />
+					<Avatar
+						as={Link}
+						to={`/user/${authorID}`}
+						name='Dan Abrahmov'
+						src={`${avatar}`}
+					/>
 					<Box ml='10px'>
 						<Text fontFamily='inter' fontSize='17px' fontWeight='semibold'>
 							{username}
@@ -189,9 +194,11 @@ const SingleQuiz = ({ match: { params }, history }) => {
 					</Link>
 				</Box>
 			</Box>
-			{comments.map((comment) => (
-				<CommentBox key={comment.id} commentData={comment} quizId={id} />
-			))}
+			{comments.map((comment) => {
+				return (
+					<CommentBox key={comment.id} commentData={comment} quizId={id} />
+				);
+			})}
 		</Container>
 	);
 };

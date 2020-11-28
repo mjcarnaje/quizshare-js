@@ -8,6 +8,7 @@ import {
 	FormControl,
 	FormErrorMessage,
 	FormLabel,
+	useToast,
 	Grid,
 	Image,
 	Input,
@@ -46,6 +47,7 @@ const Login = (props) => {
 	const [error, setError] = useState(null);
 	const dispatch = useDispatch();
 	const [loginMutation] = useMutation(LOGIN);
+	const toast = useToast();
 
 	return (
 		<Grid
@@ -93,7 +95,14 @@ const Login = (props) => {
 								dispatch(loginUser(data.login));
 								props.history.push('/home');
 							} catch (err) {
-								console.log(err);
+								toast({
+									title: 'Error',
+									description: `${err?.graphQLErrors?.[0]?.message}`,
+									status: 'error',
+									duration: 3000,
+									isClosable: true,
+									position: 'bottom',
+								});
 							}
 						}}
 					>

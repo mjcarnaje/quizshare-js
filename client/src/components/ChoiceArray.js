@@ -60,7 +60,11 @@ const ChoiceArray = ({
 				rules={{ required: true }}
 				defaultValue={answerValue}
 			>
-				<Grid my='10px' templateColumns='repeat(2, 1fr)' gap='8px'>
+				<Grid
+					my='10px'
+					templateColumns='repeat(auto-fit, minmax(240px, 1fr))'
+					gap={4}
+				>
 					{fields.map((choice, index) => {
 						const ID = choice.id;
 						return (

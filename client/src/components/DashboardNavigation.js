@@ -1,4 +1,4 @@
-import { Box, Flex, Stack, Text } from '@chakra-ui/react';
+import { Box, Center, Flex, Grid, Spacer, Stack, Text } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { BsFillPersonLinesFill } from 'react-icons/bs';
 import { CgFileDocument } from 'react-icons/cg';
@@ -6,13 +6,15 @@ import { Link, NavLink } from 'react-router-dom';
 
 const DashboardNavigation = ({ url }) => {
 	return (
-		<Box px='10px'>
-			<Stack spacing={0} rounded='md'>
+		<Box>
+			<Grid templateColumns='repeat(auto-fit, minmax(320px, 1fr))' gap={4}>
 				{[
 					['Profile', <BsFillPersonLinesFill />],
 					['Quizzes', <CgFileDocument />],
 				].map((item) => (
 					<Box
+						flex='1'
+						maxW='full'
 						as={NavLink}
 						key={item[0]}
 						to={`${url}/${item[0].toLowerCase()}`}
@@ -31,7 +33,7 @@ const DashboardNavigation = ({ url }) => {
 						</Flex>
 					</Box>
 				))}
-			</Stack>
+			</Grid>
 		</Box>
 	);
 };

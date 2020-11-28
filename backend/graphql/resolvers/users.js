@@ -220,6 +220,10 @@ module.exports = {
 			const user = checkAuth(context);
 
 			try {
+				// const quiz = await Quiz.find();
+				// // quiz.map((q, i) => q.comments.filter((c, i) => c.author !== user.id));
+				// // await quiz.save();
+
 				await Quiz.deleteMany({ author: user.id });
 				await Profile.findOneAndRemove({ user: user.id });
 				await User.findOneAndDelete({ _id: user.id });

@@ -14,14 +14,14 @@ import Card from '../components/Card';
 import { GET_ALL_QUIZZES } from '../utils/graphql';
 
 const Home = () => {
-	const { onToggle, isOpen } = useDisclosure();
+	const { onOpen, isOpen } = useDisclosure();
 
 	const { loading, error, data: { getQuizzes: quizzesData } = {} } = useQuery(
 		GET_ALL_QUIZZES
 	);
 
 	useEffect(() => {
-		onToggle();
+		onOpen();
 	}, []);
 
 	if (loading)
@@ -38,7 +38,7 @@ const Home = () => {
 	if (error) return <p>Error</p>;
 
 	return (
-		<Container maxW='lg' py='50px'>
+		<Container maxW='lg' pb='60px'>
 			<SlideFade in={isOpen} offsetY='20px'>
 				<Heading
 					as='h1'
@@ -47,15 +47,15 @@ const Home = () => {
 					color='gray.700'
 					fontSize='56px'
 					textAlign='center'
+					py='60px'
 				>
-					All quizzes
+					All Featured Quizzes
 				</Heading>
 				<Grid
-					h='auto'
 					w='full'
-					mt={10}
-					templateColumns='repeat(3, 1fr)'
+					templateColumns='repeat(auto-fit, minmax(320px, 1fr))'
 					gap={4}
+					justifyItems='center'
 				>
 					{quizzesData.map((quiz) => {
 						return <Card key={quiz.id} quizData={quiz} />;

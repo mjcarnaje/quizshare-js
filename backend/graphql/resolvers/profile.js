@@ -14,6 +14,22 @@ module.exports = {
 				throw new Error(err);
 			}
 		},
+		getOthersProfile: async (parent, { userId }, context) => {
+			try {
+				const profile = await Profile.findOne({ user: userId });
+				return profile;
+			} catch (err) {
+				throw new Error(err);
+			}
+		},
+		getAllUser: async () => {
+			try {
+				const profile = await Profile.find();
+				return profile;
+			} catch (err) {
+				throw new Error(err);
+			}
+		},
 	},
 	Mutation: {
 		createAndUpdateProfile: async (
@@ -22,6 +38,7 @@ module.exports = {
 				profileInput: {
 					firstName,
 					lastName,
+					bio,
 					country,
 					birthday,
 					facebook,
@@ -40,6 +57,7 @@ module.exports = {
 
 			profileFields.firstName = firstName;
 			profileFields.lastName = lastName;
+			profileFields.bio = bio;
 			profileFields.country = country;
 			profileFields.birthday = birthday;
 

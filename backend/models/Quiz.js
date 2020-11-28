@@ -18,10 +18,7 @@ const quizSchema = new Schema({
 			withExplanation: Boolean,
 		},
 	],
-	isPublic: {
-		type: Boolean,
-		default: true,
-	},
+
 	likes: [
 		{
 			username: String,

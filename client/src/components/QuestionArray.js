@@ -31,7 +31,7 @@ import ChoiceArray from './ChoiceArray';
 let renderCount = 0;
 
 const QuestionArray = ({ updateMode, doneFetching, setDoneFetching }) => {
-	const { isOpen, onToggle } = useDisclosure();
+	const { isOpen, onOpen } = useDisclosure();
 	const { control, register, getValues, errors, watch } = useFormContext();
 	const { fields, append, remove } = useFieldArray({
 		control,
@@ -58,13 +58,13 @@ const QuestionArray = ({ updateMode, doneFetching, setDoneFetching }) => {
 	}, [updateMode, doneFetching]);
 
 	useEffect(() => {
-		onToggle();
+		onOpen();
 	}, []);
 
 	console.log('Rendering....' + renderCount++);
 
 	return (
-		<VStack spacing='15px' p='10px' w='full'>
+		<VStack spacing='15px' p={{ md: '10px' }} w='full'>
 			{fields.map((question, index) => {
 				const explain = watch(`questions[${index}].withExplanation`);
 				return (

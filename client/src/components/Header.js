@@ -10,6 +10,7 @@ import {
 import React, { useEffect, useState } from 'react';
 import { GoHome } from 'react-icons/go';
 import { MdCreateNewFolder } from 'react-icons/md';
+import { FaUsers } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
 import { Link, NavLink } from 'react-router-dom';
 import UserDropDown from './UserDropDown';
@@ -24,6 +25,7 @@ const MenuItems = ({ children, to, icon }) => (
 		_hover={{ bg: 'gray.100' }}
 		px='10px'
 		borderRadius='30px'
+		display={{ base: 'none', lg: 'inline-block' }}
 	>
 		<Center>
 			<Box mr='8px'>{icon}</Box>
@@ -61,11 +63,15 @@ const Header = (props) => {
 				</Heading>
 			</Link>
 			<Spacer />
+
 			<MenuItems to='/home' icon={<GoHome />}>
 				Home
 			</MenuItems>
 			<MenuItems to='/create-quiz' icon={<MdCreateNewFolder />}>
 				Create Quiz
+			</MenuItems>
+			<MenuItems to='/users' icon={<FaUsers />}>
+				Users
 			</MenuItems>
 
 			<Box display='block' width='auto' fontFamily='inter'>

@@ -2,6 +2,8 @@ import { gql, useMutation } from '@apollo/client';
 import { Box, IconButton, Text } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { IoIosHeart, IoMdHeartEmpty } from 'react-icons/io';
+import { useSelector } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 
 const LIKE_QUIZ_MUTATION = gql`
 	mutation toggleLikeQuiz($quizId: String!) {
@@ -17,7 +19,9 @@ const LIKE_QUIZ_MUTATION = gql`
 `;
 
 const LikeButton = ({ quiz: { likes, id, likeCount }, user }) => {
+	const isAuth = useSelector((state) => state.auth.user);
 	const [isLiked, setIsLiked] = useState(false);
+	const history = useHistory();
 
 	useEffect(() => {
 		if (user && likes.find((like) => like.username === user.username)) {
@@ -28,12 +32,20 @@ const LikeButton = ({ quiz: { likes, id, likeCount }, user }) => {
 	}, [likes]);
 
 	const [toggleLikeQuiz] = useMutation(LIKE_QUIZ_MUTATION, {
+		variables: { quizId: id },
 		onError(err) {
 			console.log(err);
 			return err;
 		},
-		variables: { quizId: id },
 	});
+
+	const likeQuiz = () => {
+		if (!isAuth) {
+			history.push('/login');
+			return;
+		}
+		toggleLikeQuiz();
+	};
 
 	return (
 		<>
@@ -43,7 +55,7 @@ const LikeButton = ({ quiz: { likes, id, likeCount }, user }) => {
 				alignItems='center'
 				marginX='16px'
 				color={isLiked ? 'red.500' : 'gray.500'}
-				onClick={toggleLikeQuiz}
+				onClick={likeQuiz}
 				_hover={{ color: 'red.500' }}
 				_focus={{ outline: 'none' }}
 			>

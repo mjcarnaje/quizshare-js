@@ -19,6 +19,7 @@ import {
 } from '@chakra-ui/react';
 import React, { useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import TextareaAutosize from 'react-textarea-autosize';
 
 const COMMENT_MUTATION = gql`
@@ -44,7 +45,7 @@ const CommentButton = ({ user, quiz: { commentCount, comments, id } }) => {
 	const userInfo = useSelector((state) => state.auth.user);
 	const { isOpen, onOpen, onClose } = useDisclosure();
 	const initialRef = useRef();
-
+	const history = useHistory();
 	const [body, setBody] = useState('');
 
 	const [submitComment] = useMutation(COMMENT_MUTATION, {
@@ -64,6 +65,16 @@ const CommentButton = ({ user, quiz: { commentCount, comments, id } }) => {
 	const onSubmit = () => {
 		submitComment();
 	};
+
+	const commentOnQuiz = () => {
+		console.log(userInfo);
+		if (!userInfo) {
+			history.push('/login');
+			return;
+		}
+		onOpen();
+	};
+
 	return (
 		<>
 			<Box
@@ -74,7 +85,7 @@ const CommentButton = ({ user, quiz: { commentCount, comments, id } }) => {
 				color='gray.500'
 				_hover={{ color: 'blue.500' }}
 				_focus={{ outline: 'none' }}
-				onClick={onOpen}
+				onClick={commentOnQuiz}
 			>
 				<IconButton
 					variant='outline'
@@ -107,7 +118,7 @@ const CommentButton = ({ user, quiz: { commentCount, comments, id } }) => {
 					<ModalHeader></ModalHeader>
 					<ModalCloseButton />
 					<ModalBody display='flex'>
-						<Avatar name={userInfo?.name} src={userInfo?.avatar} />
+						<Avatar name={userInfo?.username} src={userInfo?.avatar} />
 						<FormControl>
 							<Textarea
 								ref={initialRef}

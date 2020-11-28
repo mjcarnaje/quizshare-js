@@ -4,6 +4,7 @@ import {
 	Button,
 	Flex,
 	FormControl,
+	FormHelperText,
 	FormLabel,
 	Icon,
 	Input,
@@ -14,6 +15,7 @@ import {
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { GET_PROFILE_INFO, UPDATE_PROFILE_INFO } from '../utils/graphql';
+import Country from './Country';
 
 const ProfileInforEdit = ({ profileData, isEdit }) => {
 	const toast = useToast();
@@ -21,6 +23,7 @@ const ProfileInforEdit = ({ profileData, isEdit }) => {
 	const [values, setValues] = useState({
 		firstName: '',
 		lastName: '',
+		bio: '',
 		birthday: '',
 		country: '',
 		facebook: '',
@@ -82,6 +85,7 @@ const ProfileInforEdit = ({ profileData, isEdit }) => {
 	const {
 		firstName,
 		lastName,
+		bio,
 		birthday,
 		country,
 		facebook,
@@ -93,7 +97,7 @@ const ProfileInforEdit = ({ profileData, isEdit }) => {
 	return (
 		<>
 			<Box py='16px' px='32px'>
-				<Flex w='60%'>
+				<Flex maxW='420px'>
 					<FormControl py='8px' mr='1'>
 						<FormLabel
 							htmlFor='firstName'
@@ -143,6 +147,34 @@ const ProfileInforEdit = ({ profileData, isEdit }) => {
 				</Flex>
 				<FormControl py='8px'>
 					<FormLabel
+						htmlFor='bio'
+						fontFamily='inter'
+						fontWeight='semibold'
+						color='purple.600'
+						fontSize='14px'
+					>
+						Bio
+					</FormLabel>
+					<Input
+						type='text'
+						name='bio'
+						size='lg'
+						fontFamily='inter'
+						fontWeight='400'
+						bg='gray.50'
+						maxW='420px'
+						focusBorderColor='purple.500'
+						placeholder='Enter bio'
+						onChange={onChange}
+						value={bio || ''}
+						maxLength='80'
+					/>
+					<FormHelperText fontFamily='inter' color='gray.600'>
+						* Maximum 80 characters
+					</FormHelperText>
+				</FormControl>
+				<FormControl py='8px'>
+					<FormLabel
 						htmlFor='birthday'
 						fontFamily='inter'
 						fontWeight='semibold'
@@ -158,7 +190,7 @@ const ProfileInforEdit = ({ profileData, isEdit }) => {
 						fontFamily='inter'
 						fontWeight='400'
 						bg='gray.50'
-						w='60%'
+						maxW='420px'
 						focusBorderColor='purple.500'
 						placeholder='Enter birthday'
 						onChange={onChange}
@@ -178,7 +210,7 @@ const ProfileInforEdit = ({ profileData, isEdit }) => {
 					<Select
 						placeholder='Select country'
 						name='country'
-						w='60%'
+						maxW='420px'
 						size='lg'
 						fontFamily='inter'
 						fontWeight='400'
@@ -187,12 +219,10 @@ const ProfileInforEdit = ({ profileData, isEdit }) => {
 						onChange={onChange}
 						value={country || ''}
 					>
-						<option value='Philippines'>Philippines</option>
-						<option value='South Korea'>South Korea</option>
-						<option value='Japan'>Japan</option>
+						<Country />
 					</Select>
 				</FormControl>
-				<Flex alignItems='flex-start' py='16px' w='60%'>
+				<Flex alignItems='flex-start' py='16px' maxW='420px'>
 					<Stack spacing={4} w='full'>
 						<Text
 							w='190px'

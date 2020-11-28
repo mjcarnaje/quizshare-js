@@ -28,6 +28,7 @@ export const GET_QUIZ = gql`
 				createdAt
 				body
 				author {
+					id
 					username
 					avatar
 					email
@@ -36,6 +37,7 @@ export const GET_QUIZ = gql`
 			questionCount
 			createdAt
 			author {
+				id
 				avatar
 				username
 				email
@@ -145,6 +147,37 @@ export const GET_USER_QUIZZES = gql`
 		}
 	}
 `;
+export const GET_OTHER_QUIZZES = gql`
+	query($userId: ID!) {
+		getOthersQuizzes(userId: $userId) {
+			id
+			title
+			description
+			image
+			createdAt
+			likeCount
+			likes {
+				id
+				username
+			}
+			commentCount
+			comments {
+				id
+				body
+				createdAt
+				author {
+					id
+					username
+					avatar
+				}
+			}
+			author {
+				avatar
+				username
+			}
+		}
+	}
+`;
 
 export const GET_USER = gql`
 	query {
@@ -159,6 +192,27 @@ export const GET_USER = gql`
 	}
 `;
 
+export const GET_ALL_USER = gql`
+	query {
+		getAllUser {
+			user
+			firstName
+			lastName
+			bio
+			social {
+				facebook
+				twitter
+				instagram
+				youtube
+			}
+			userData {
+				username
+				avatar
+			}
+		}
+	}
+`;
+
 export const GET_PROFILE_INFO = gql`
 	query {
 		getProfileUser {
@@ -166,6 +220,7 @@ export const GET_PROFILE_INFO = gql`
 			user
 			firstName
 			lastName
+			bio
 			birthday
 			country
 			social {
@@ -173,6 +228,33 @@ export const GET_PROFILE_INFO = gql`
 				twitter
 				instagram
 				youtube
+			}
+		}
+	}
+`;
+
+export const GET_OTHERS_PROFILE = gql`
+	query($userId: ID!) {
+		getOthersProfile(userId: $userId) {
+			id
+			firstName
+			lastName
+			bio
+			birthday
+			social {
+				facebook
+				twitter
+				instagram
+				youtube
+			}
+			country
+			userData {
+				id
+				username
+				cover
+				email
+				avatar
+				createdAt
 			}
 		}
 	}
@@ -279,6 +361,7 @@ export const UPDATE_PROFILE_INFO = gql`
 	mutation createAndUpdateProfile(
 		$firstName: String
 		$lastName: String
+		$bio: String
 		$birthday: String
 		$country: String
 		$facebook: String
@@ -290,6 +373,7 @@ export const UPDATE_PROFILE_INFO = gql`
 			profileInput: {
 				firstName: $firstName
 				lastName: $lastName
+				bio: $bio
 				birthday: $birthday
 				country: $country
 				facebook: $facebook
@@ -302,6 +386,7 @@ export const UPDATE_PROFILE_INFO = gql`
 			user
 			firstName
 			lastName
+			bio
 			birthday
 			country
 			social {

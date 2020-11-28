@@ -33,7 +33,7 @@ const Card = ({
 }) => {
 	const user = useSelector((state) => state.auth.user);
 	return (
-		<Box minH='180'>
+		<Box maxWidth='420px' w='full'>
 			<Flex
 				direction='column'
 				h='full'

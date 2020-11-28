@@ -1,10 +1,20 @@
-import { Box, Button, Flex, Icon, Stack, Text } from '@chakra-ui/react';
+import {
+	Box,
+	Button,
+	Flex,
+	Grid,
+	Icon,
+	SimpleGrid,
+	Stack,
+	Text,
+} from '@chakra-ui/react';
 import React from 'react';
 
 const ProfileInfo = ({
 	data: {
 		firstName,
 		lastName,
+		bio,
 		birthday,
 		country,
 		social: { facebook, twitter, instagram, youtube },
@@ -12,19 +22,12 @@ const ProfileInfo = ({
 	isEdit,
 }) => {
 	return (
-		<Box py='16px' px='32px'>
-			<Flex alignItems='center'>
-				<Text
-					w='190px'
-					py='16px'
-					pr='12px'
-					fontFamily='inter'
-					fontWeight='semibold'
-					color='purple.600'
-				>
+		<Box px={{ sm: '16px', md: '32px' }} pt={{ sm: '8px', md: '16px' }}>
+			<Grid templateColumns='1fr 3fr' gap={2} py='16px'>
+				<Text fontFamily='inter' fontWeight='semibold' color='purple.600'>
 					Name
 				</Text>
-				<Text py='16px' fontFamily='inter' color='purple.600' fontSize='15px'>
+				<Text fontFamily='inter' color='purple.600' fontSize='15px'>
 					{!firstName && !lastName ? (
 						<Button
 							variant='ghost'
@@ -38,19 +41,39 @@ const ProfileInfo = ({
 						`${firstName || ''} ${lastName || ''}`
 					)}
 				</Text>
-			</Flex>
-			<Flex alignItems='center'>
-				<Text
-					w='190px'
-					y='16px'
-					pr='12px'
-					fontFamily='inter'
-					fontWeight='semibold'
-					color='purple.600'
-				>
+			</Grid>
+			<Grid templateColumns='1fr 3fr' gap={2} py='16px'>
+				<Text fontFamily='inter' fontWeight='semibold' color='purple.600'>
+					Name
+				</Text>
+				<Text fontFamily='inter' color='purple.600' fontSize='15px'>
+					{!firstName && !lastName ? (
+						<Button
+							variant='ghost'
+							onClick={() => isEdit(true)}
+							colorScheme='purple'
+							size='sm'
+						>
+							Add name
+						</Button>
+					) : (
+						`${firstName || ''} ${lastName || ''}`
+					)}
+				</Text>
+			</Grid>
+			<Grid templateColumns='1fr 3fr' gap={2} py='16px'>
+				<Text fontFamily='inter' fontWeight='semibold' color='purple.600'>
+					Bio
+				</Text>
+				<Text fontFamily='inter' color='purple.600' fontSize='15px'>
+					{bio ? bio : ''}
+				</Text>
+			</Grid>
+			<Grid templateColumns='1fr 3fr' gap={2} py='16px'>
+				<Text fontFamily='inter' fontWeight='semibold' color='purple.600'>
 					Birthday
 				</Text>
-				<Text py='16px' fontFamily='inter' color='purple.600' fontSize='15px'>
+				<Text fontFamily='inter' color='purple.600' fontSize='15px'>
 					{!birthday ? (
 						<Button
 							variant='ghost'
@@ -64,31 +87,17 @@ const ProfileInfo = ({
 						birthday
 					)}
 				</Text>
-			</Flex>
-			<Flex alignItems='center'>
-				<Text
-					w='190px'
-					y='16px'
-					pr='12px'
-					fontFamily='inter'
-					fontWeight='semibold'
-					color='purple.600'
-				>
+			</Grid>
+			<Grid templateColumns='1fr 3fr' gap={2} py='16px'>
+				<Text fontFamily='inter' fontWeight='semibold' color='purple.600'>
 					Country
 				</Text>
-				<Text py='16px' fontFamily='inter' color='purple.600' fontSize='15px'>
+				<Text fontFamily='inter' color='purple.600' fontSize='15px'>
 					{country ? country : 'Philippines'}
 				</Text>
-			</Flex>
-			<Flex alignItems='flex-start' py='16px'>
-				<Text
-					w='190px'
-					y='16px'
-					pr='12px'
-					fontFamily='inter'
-					fontWeight='semibold'
-					color='purple.600'
-				>
+			</Grid>
+			<Grid templateColumns='1fr 3fr' gap={2} py='16px'>
+				<Text fontFamily='inter' fontWeight='semibold' color='purple.600'>
 					Social Media
 				</Text>
 				<Stack spacing={4}>
@@ -189,7 +198,7 @@ const ProfileInfo = ({
 						)}
 					</Stack>
 				</Stack>
-			</Flex>
+			</Grid>
 		</Box>
 	);
 };
