@@ -29,6 +29,7 @@ import QuestionArray from '../components/QuestionArray';
 import {
 	CREATE_QUIZ,
 	GET_ALL_QUIZZES,
+	GET_USER_QUIZZES,
 	QUIZ_DATA_FOR_UPDATE,
 	UPDATE_QUIZ,
 } from '../utils/graphql';
@@ -91,6 +92,7 @@ const CreateUpdateQuiz = (props) => {
 			} else {
 				await createQuiz({
 					variables: value,
+					refetchQueries: [{ query: GET_USER_QUIZZES }],
 					update(cache) {
 						const data = cache.readQuery({
 							query: GET_ALL_QUIZZES,

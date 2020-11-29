@@ -2,6 +2,7 @@ import {
 	AspectRatio,
 	Avatar,
 	Box,
+	Center,
 	Flex,
 	Heading,
 	Image,
@@ -43,8 +44,8 @@ const Card = ({
 				cursor='pointer'
 				_hover={{ bg: 'gray.50' }}
 			>
-				{image && (
-					<AspectRatio maxW='420px' ratio={16 / 9}>
+				<AspectRatio maxW='420px' ratio={16 / 9}>
+					{image ? (
 						<Image
 							src={image}
 							objectFit='cover'
@@ -52,8 +53,22 @@ const Card = ({
 							borderRadius='8px'
 							pb='10px'
 						/>
-					</AspectRatio>
-				)}
+					) : (
+						<Center w='full' borderRadius='8px' pb='10px'>
+							<Center bg='gray.100' w='full' h='full'>
+								<Text
+									fontFamily='inter'
+									fontWeight='800'
+									fontSize='18px'
+									color='gray.700'
+								>
+									No quiz photo included.
+								</Text>
+							</Center>
+						</Center>
+					)}
+				</AspectRatio>
+
 				<Flex
 					align='center'
 					justify='space-between'
