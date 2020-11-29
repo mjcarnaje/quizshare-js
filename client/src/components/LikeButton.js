@@ -29,7 +29,7 @@ const LikeButton = ({ quiz: { likes, id, likeCount }, user }) => {
 		} else {
 			setIsLiked(false);
 		}
-	}, [likes]);
+	}, [likes, user]);
 
 	const [toggleLikeQuiz] = useMutation(LIKE_QUIZ_MUTATION, {
 		variables: { quizId: id },

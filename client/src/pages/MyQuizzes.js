@@ -27,7 +27,7 @@ const MyQuizzes = () => {
 
 	useEffect(() => {
 		onOpen();
-	}, []);
+	}, [onOpen]);
 
 	if (loading)
 		return (

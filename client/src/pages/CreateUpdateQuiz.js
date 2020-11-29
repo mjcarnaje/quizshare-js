@@ -154,7 +154,7 @@ const CreateUpdateQuiz = (props) => {
 
 	useEffect(() => {
 		onOpen();
-	}, []);
+	}, [onOpen]);
 
 	const {
 		loading: updateDataLoading,

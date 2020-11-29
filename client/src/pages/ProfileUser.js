@@ -9,7 +9,7 @@ const ProfileUser = (props) => {
 
 	useEffect(() => {
 		onOpen();
-	}, []);
+	}, [onOpen]);
 	return (
 		<Container py='20px' maxW='3xl'>
 			<SlideFade in={isOpen} offsetY='20px'>

@@ -31,7 +31,7 @@ const MyProfile = () => {
 
 	useEffect(() => {
 		onOpen();
-	}, []);
+	}, [onOpen]);
 
 	let userInfo;
 

@@ -102,10 +102,20 @@ const UserInfoEdit = ({
 		}
 	};
 
-	const editSelectedPic = () => {
-		setPreviewPic(originalPic);
-		onOpen();
-	};
+	// const editSelectedPic = () => {
+	// 	if (originalPic?.includes('cloudinary')) {
+	// 		toast({
+	// 			title: 'Hello my friend.',
+	// 			description: 'You cannot edit uploaded file',
+	// 			status: 'warning',
+	// 			duration: 3000,
+	// 			isClosable: true,
+	// 		});
+	// 		return;
+	// 	}
+	// 	setPreviewPic(originalPic);
+	// 	onOpen();
+	// };
 
 	const openImageCropper = (picture) => {
 		const reader = new FileReader();
@@ -128,10 +138,20 @@ const UserInfoEdit = ({
 		}
 	};
 
-	const editSelectedPicCover = () => {
-		setPreviewPicCover(originalPic);
-		onOpenCover();
-	};
+	// const editSelectedPicCover = () => {
+	// 	if (originalPicCover?.includes('cloudinary')) {
+	// 		toast({
+	// 			title: 'Hello my friend.',
+	// 			description: 'You cannot edit uploaded file',
+	// 			status: 'warning',
+	// 			duration: 3000,
+	// 			isClosable: true,
+	// 		});
+	// 		return;
+	// 	}
+	// 	setPreviewPicCover(originalPicCover);
+	// 	onOpenCover();
+	// };
 
 	const openImageCropperCover = (picture) => {
 		const reader = new FileReader();
@@ -198,14 +218,17 @@ const UserInfoEdit = ({
 	};
 
 	useEffect(() => {
-		setValues({
-			...values,
-			avatar: authAvatar,
-			cover: authCover,
-			username: authUsername,
-			email: authEmail,
-		});
-	}, []);
+		const fetchData = () => {
+			setValues({
+				...values,
+				avatar: authAvatar,
+				cover: authCover,
+				username: authUsername,
+				email: authEmail,
+			});
+		};
+		fetchData();
+	}, [authAvatar, authCover, authUsername, authEmail, values]);
 
 	const { username, email, password, confirmPassword, cover } = values;
 
@@ -241,7 +264,6 @@ const UserInfoEdit = ({
 							<Button
 								as='label'
 								htmlFor='coverUploadButton'
-								variant='ghost'
 								colorScheme='purple'
 								variant='solid'
 								transition='ease-in'

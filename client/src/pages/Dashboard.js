@@ -1,12 +1,17 @@
 import { Box, Grid } from '@chakra-ui/react';
-import React from 'react';
-import { Route, Switch } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Route, Switch, useHistory } from 'react-router-dom';
 import DashboardHeader from '../components/DashboardHeader';
 import DashboardNavigation from '../components/DashboardNavigation';
 import MyProfile from './MyProfile';
 import MyQuizzes from './MyQuizzes';
 
 const Dashboard = () => {
+	const history = useHistory();
+
+	useEffect(() => {
+		history.push('/dashboard/profile');
+	}, [history]);
 	return (
 		<Box w='full' minH='100vh'>
 			<DashboardHeader />

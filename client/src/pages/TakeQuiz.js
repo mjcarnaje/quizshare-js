@@ -98,9 +98,9 @@ const TakeQuiz = (props) => {
 	const { question, choices, answer, explanation } = currentQuestion || {};
 	const passed = score / questions?.length > 0.75;
 	return (
-		<Box w='full' h='full' p='10px' py={{ base: '48px', md: '64px' }}>
+		<Box w='full' h='full' p='10px' py={['48px', '64px']}>
 			<Container
-				minH='70vh'
+				minH={['80vh', '70vh']}
 				maxW='lg'
 				bg='white'
 				p='15px'
@@ -111,17 +111,12 @@ const TakeQuiz = (props) => {
 			>
 				{finished ? (
 					<Grid
-						templateColumns='repeat(auto-fit, minmax(320px, 1fr))'
+						templateColumns='repeat(auto-fit, minmax(250px, 1fr))'
 						m='auto'
 						w='full'
-						p='30px'
+						p={['5px', '30px']}
 					>
-						<Box
-							w='full'
-							h='full'
-							textAlign='center'
-							mb={{ base: '50px', md: '0px' }}
-						>
+						<Box w='full' h='full' textAlign='center'>
 							<Image boxSize='80%' src={passed ? success : failed} mx='auto' />
 							<Text
 								mt='20px'
@@ -133,10 +128,11 @@ const TakeQuiz = (props) => {
 							</Text>
 						</Box>
 						<Stack
-							spacing={{ base: '48px', md: '96px' }}
+							spacing={['48px', '96px']}
 							m='auto'
 							w='full'
 							align='center'
+							mt={['50px', '0px']}
 						>
 							<Heading
 								as='h1'

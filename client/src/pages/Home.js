@@ -21,7 +21,7 @@ const Home = () => {
 
 	useEffect(() => {
 		onOpen();
-	}, []);
+	}, [onOpen]);
 
 	if (loading)
 		return (

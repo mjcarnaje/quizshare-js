@@ -57,7 +57,7 @@ const CropperModal = ({
 
 		const base64Image = canvas.toDataURL('image/jpeg');
 		setCroppedPic(base64Image);
-	}, [completedCrop, previewPic]);
+	}, [completedCrop, previewPic, setCroppedPic]);
 	return (
 		<Modal
 			isCentered

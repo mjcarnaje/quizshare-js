@@ -37,7 +37,7 @@ const ChoiceArray = ({
 		if (updateMode && doneFetching) return;
 		append({ id: uuid(), value: '' }, false);
 		append({ id: uuid(), value: '' }, false);
-	}, [updateMode]);
+	}, [updateMode, doneFetching]);
 
 	return (
 		<Box my='10px'>

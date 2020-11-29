@@ -67,7 +67,6 @@ const CommentButton = ({ user, quiz: { commentCount, comments, id } }) => {
 	};
 
 	const commentOnQuiz = () => {
-		console.log(userInfo);
 		if (!userInfo) {
 			history.push('/login');
 			return;

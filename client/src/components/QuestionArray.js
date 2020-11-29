@@ -21,8 +21,6 @@ import TextareaAutosize from 'react-textarea-autosize';
 import { v4 as uuid } from 'uuid';
 import ChoiceArray from './ChoiceArray';
 
-let renderCount = 0;
-
 const QuestionArray = ({ updateMode, doneFetching, setDoneFetching }) => {
 	const { isOpen, onOpen } = useDisclosure();
 	const { control, register, errors, watch } = useFormContext();
@@ -53,8 +51,6 @@ const QuestionArray = ({ updateMode, doneFetching, setDoneFetching }) => {
 	useEffect(() => {
 		onOpen();
 	}, []);
-
-	console.log('Rendering....' + renderCount++);
 
 	return (
 		<VStack spacing='15px' p={{ md: '10px' }} w='full'>

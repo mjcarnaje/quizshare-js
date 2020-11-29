@@ -5,15 +5,14 @@ import NotFoundSVG from '../assets/svg/404.svg';
 
 const NotFound = () => {
 	return (
-		<Container maxW='6xl'>
-			<Center>
-				<Box>
+		<Container maxW='6xl' p='30px'>
+			<Center flexDirection={['column', 'row']}>
+				<Box textAlign={{ base: 'center', md: 'left' }}>
 					<Text
 						fontFamily='inter'
 						fontWeight='800'
-						fontSize='78px'
+						fontSize={{ base: '56px', lg: '78px' }}
 						color='gray.700'
-						mt='20px'
 						lineHeight='1.1'
 					>
 						Sorry, this page isn't available
@@ -21,7 +20,7 @@ const NotFound = () => {
 					<Text
 						fontFamily='inter'
 						fontWeight='600'
-						fontSize='18px'
+						fontSize={{ base: '16px', lg: '18px' }}
 						color='gray.700'
 						mt='20px'
 					>
@@ -38,8 +37,9 @@ const NotFound = () => {
 						Go back to home page
 					</Button>
 				</Box>
-
-				<Image h='300px' src={NotFoundSVG} objectFit='cover' />
+				<Box p={{ base: '30px', md: '10px' }}>
+					<Image maxW='full' src={NotFoundSVG} objectFit='cover' />
+				</Box>
 			</Center>
 		</Container>
 	);

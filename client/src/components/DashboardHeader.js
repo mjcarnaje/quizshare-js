@@ -9,8 +9,10 @@ import {
 	Avatar,
 	Box,
 	Button,
+	IconButton,
 	Spinner,
 	Text,
+	useBreakpointValue,
 	useDisclosure,
 	useToast,
 } from '@chakra-ui/react';
@@ -30,6 +32,7 @@ const DashboardHeader = () => {
 	const cache = useApolloClient();
 	const toast = useToast();
 	const dispatch = useDispatch();
+	const hide = useBreakpointValue({ base: false, md: true });
 
 	const { isOpen, onOpen, onClose } = useDisclosure();
 	const cancelRef = useRef();
@@ -99,14 +102,24 @@ const DashboardHeader = () => {
 					</Text>
 				</Box>
 				<Box ml='auto'>
-					<Button
-						leftIcon={<MdDeleteForever />}
-						colorScheme='red'
-						onClick={onOpen}
-						size='sm'
-					>
-						Delete Account
-					</Button>
+					{hide ? (
+						<Button
+							leftIcon={<MdDeleteForever />}
+							colorScheme='red'
+							onClick={onOpen}
+							size='sm'
+						>
+							Delete Account
+						</Button>
+					) : (
+						<IconButton
+							isRound
+							icon={<MdDeleteForever />}
+							colorScheme='red'
+							onClick={onOpen}
+							size='sm'
+						/>
+					)}
 
 					<AlertDialog
 						motionPreset='slideInBottom'
