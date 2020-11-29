@@ -73,9 +73,6 @@ const UserInfoEdit = ({
 
 	const toast = useToast();
 
-	const [aspectRatio, setAspectRatio] = useState(1);
-	const [isCover, setIsCover] = useState(false);
-
 	const [originalPic, setOriginalPic] = useState();
 	const [croppedPic, setCroppedPic] = useState();
 	const [previewPic, setPreviewPic] = useState();
@@ -85,21 +82,23 @@ const UserInfoEdit = ({
 	const [previewPicCover, setPreviewPicCover] = useState();
 
 	const { isOpen, onOpen, onClose } = useDisclosure();
+	const {
+		isOpen: isOpenCover,
+		onOpen: onOpenCover,
+		onClose: onCloseCover,
+	} = useDisclosure();
 
 	const onChange = (e) => {
 		setValues({ ...values, [e.target.name]: e.target.value });
 	};
 
-	const selectPicture = (e, s) => {
-		if (s === 'avatar') setIsCover(false);
-		if (s === 'cover') setIsCover(true);
-
+	const selectPicture = (e) => {
 		const selected = e.target.files[0];
 		if (selected) {
 			const picture = validateImg(selected);
 			if (!picture) return;
 
-			openImageCropper(picture, s);
+			openImageCropper(picture);
 		}
 	};
 
@@ -108,19 +107,39 @@ const UserInfoEdit = ({
 		onOpen();
 	};
 
-	const openImageCropper = (picture, s) => {
+	const openImageCropper = (picture) => {
 		const reader = new FileReader();
 		reader.readAsDataURL(picture);
 		reader.onloadend = () => {
-			if (s === 'avatar') {
-				setOriginalPic(reader.result);
-				setPreviewPic(reader.result);
-			}
-			if (s === 'cover') {
-				setOriginalPicCover(reader.result);
-				setPreviewPicCover(reader.result);
-			}
+			setOriginalPic(reader.result);
+			setPreviewPic(reader.result);
+
 			onOpen();
+		};
+	};
+
+	const selectPictureCover = (e) => {
+		const selected = e.target.files[0];
+		if (selected) {
+			const picture = validateImg(selected);
+			if (!picture) return;
+
+			openImageCropperCover(picture);
+		}
+	};
+
+	const editSelectedPicCover = () => {
+		setPreviewPicCover(originalPic);
+		onOpenCover();
+	};
+
+	const openImageCropperCover = (picture) => {
+		const reader = new FileReader();
+		reader.readAsDataURL(picture);
+		reader.onloadend = () => {
+			setOriginalPicCover(reader.result);
+			setPreviewPicCover(reader.result);
+			onOpenCover();
 		};
 	};
 
@@ -215,7 +234,7 @@ const UserInfoEdit = ({
 								id='coverUploadButton'
 								type='file'
 								name='image'
-								onChange={(e) => selectPicture(e, 'cover')}
+								onChange={(e) => selectPictureCover(e)}
 								hidden
 							/>
 
@@ -236,7 +255,7 @@ const UserInfoEdit = ({
 						</Center>
 					</Box>
 					<AspectRatio ratio={16 / 5}>
-						{cover ? (
+						{croppedPicCover || cover ? (
 							<Image
 								src={croppedPicCover ? croppedPicCover : cover}
 								objectFit='cover'
@@ -283,7 +302,7 @@ const UserInfoEdit = ({
 							id='avatarUploadButton'
 							type='file'
 							name='image'
-							onChange={(e) => selectPicture(e, 'avatar')}
+							onChange={(e) => selectPicture(e)}
 							hidden
 						/>
 						<Button
@@ -300,14 +319,18 @@ const UserInfoEdit = ({
 						<CropperModal
 							onClose={onClose}
 							isOpen={isOpen}
-							previewPic={previewPic || previewPicCover}
-							setPreviewPic={
-								isCover === false ? setPreviewPic : setPreviewPicCover
-							}
-							setCroppedPic={
-								isCover === false ? setCroppedPic : setCroppedPicCover
-							}
-							aspectRatio={isCover ? 1 : 16 / 5}
+							previewPic={previewPic}
+							setPreviewPic={setPreviewPic}
+							setCroppedPic={setCroppedPic}
+							aspectRatio={1 / 1}
+						/>
+						<CropperModal
+							onClose={onCloseCover}
+							isOpen={isOpenCover}
+							previewPic={previewPicCover}
+							setPreviewPic={setPreviewPicCover}
+							setCroppedPic={setCroppedPicCover}
+							aspectRatio={16 / 5}
 						/>
 					</Flex>
 				</Box>

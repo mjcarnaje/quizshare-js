@@ -31,12 +31,18 @@ const ProfileUserQuizzes = ({ userId }) => {
 	);
 	if (loading) {
 		return (
-			<>
+			<Grid
+				w='full'
+				mt={10}
+				templateColumns='repeat(auto-fit, minmax(320px, 1fr))'
+				gap={4}
+				justifyItems='center'
+			>
 				<Skeleton minH='360px' borderRadius='8px' boxShadow='md' />
 				<Skeleton minH='360px' borderRadius='8px' boxShadow='md' />
 				<Skeleton minH='360px' borderRadius='8px' boxShadow='md' />
 				<Skeleton minH='360px' borderRadius='8px' boxShadow='md' />
-			</>
+			</Grid>
 		);
 	}
 	if (error) return <p>Error</p>;
@@ -55,9 +61,13 @@ const ProfileUserQuizzes = ({ userId }) => {
 			</Grid>
 			{data.length === 0 && (
 				<Center w='full' h='full' py='50px' flexDirection='column'>
-					<Box h='240px' mb='10px'>
-						<Image src={empty} h='full' objectFit='cover' />
-					</Box>
+					<Center mb='10px' w='full'>
+						<Image
+							boxSize={{ base: '50%', md: '60%' }}
+							src={empty}
+							objectFit='cover'
+						/>
+					</Center>
 
 					<Text
 						fontFamily='inter'

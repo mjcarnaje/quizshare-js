@@ -101,7 +101,12 @@ const Card = ({
 				</Flex>
 
 				<Box px='12px' pt='20px' as={Link} to={`/quiz/${id}`}>
-					<Text fontFamily='inter' fontSize='15px' wordBreak='break-all'>
+					<Text
+						fontFamily='inter'
+						color='gray.700'
+						fontSize='15px'
+						wordBreak='break-all'
+					>
 						{description.length > 70
 							? `${description.slice(0, 75)}...`
 							: description}

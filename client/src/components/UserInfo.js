@@ -33,7 +33,7 @@ const UserInfo = ({ data: { username, email, avatar, cover }, isEdit }) => {
 					)}
 				</AspectRatio>
 			</Box>
-			<Box px={{ sm: '16px', md: '32px' }} pt={{ sm: '8px', md: '16px' }}>
+			<Box px={{ base: '16px', md: '32px' }} pt={{ base: '8px', md: '16px' }}>
 				<Grid templateColumns='1fr 3fr' gap={2} py='16px'>
 					<Text fontFamily='inter' fontWeight='semibold' color='purple.600'>
 						Profile Image

@@ -13,11 +13,13 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { logoutUser } from '../store/authSlice';
+import { useHistory } from 'react-router-dom';
 
 const UserDropDown = () => {
 	const dispatch = useDispatch();
 	const user = useSelector((state) => state.auth.user);
 	const client = useApolloClient();
+	const history = useHistory();
 
 	const show = useBreakpointValue({ base: true, lg: false });
 
@@ -34,7 +36,7 @@ const UserDropDown = () => {
 				<MenuList>
 					{show && (
 						<>
-							<MenuGroup display={{ sm: 'block', lg: 'none' }}>
+							<MenuGroup display={{ base: 'block', lg: 'none' }}>
 								<MenuItem as={Link} to='/home'>
 									Home
 								</MenuItem>
@@ -62,6 +64,7 @@ const UserDropDown = () => {
 						onClick={() => {
 							client.clearStore();
 							dispatch(logoutUser());
+							history.push('/home');
 						}}
 					>
 						Logout

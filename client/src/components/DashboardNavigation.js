@@ -1,10 +1,10 @@
-import { Box, Center, Flex, Grid, Spacer, Stack, Text } from '@chakra-ui/react';
-import React, { useEffect, useState } from 'react';
+import { Box, Flex, Grid, Text } from '@chakra-ui/react';
+import React from 'react';
 import { BsFillPersonLinesFill } from 'react-icons/bs';
 import { CgFileDocument } from 'react-icons/cg';
-import { Link, NavLink } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
-const DashboardNavigation = ({ url }) => {
+const DashboardNavigation = () => {
 	return (
 		<Box>
 			<Grid templateColumns='repeat(auto-fit, minmax(320px, 1fr))' gap={4}>
@@ -17,7 +17,7 @@ const DashboardNavigation = ({ url }) => {
 						maxW='full'
 						as={NavLink}
 						key={item[0]}
-						to={`${url}/${item[0].toLowerCase()}`}
+						to={`/dashboard/${item[0].toLowerCase()}`}
 						className='headerLinks'
 						activeClassName='isActiveDashboard'
 						px='10px'

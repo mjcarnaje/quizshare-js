@@ -72,7 +72,7 @@ const CropperModal = ({
 		>
 			<ModalOverlay />
 			<ModalContent>
-				<ModalBody p='12px' maxHeight='80vh' overflowY='auto'>
+				<ModalBody p='12px' maxHeight='80vh' overflowY='scroll'>
 					<ReactCrop
 						src={previewPic}
 						onImageLoaded={onLoad}

@@ -14,6 +14,7 @@ import React from 'react';
 import { FcCalendar } from 'react-icons/fc';
 import { ImLocation } from 'react-icons/im';
 import { GET_OTHERS_PROFILE } from '../utils/graphql';
+import notfound from '../assets/svg/notfound.svg';
 
 const ProfileUserHeader = ({ userId }) => {
 	const {
@@ -23,7 +24,29 @@ const ProfileUserHeader = ({ userId }) => {
 	} = useQuery(GET_OTHERS_PROFILE, { variables: { userId } });
 	if (loading) return <Skeleton height='full' w='full' />;
 
-	if (error) return <p>Error</p>;
+	if (error)
+		return (
+			<Center h='full' w='full' flexDir='column' px='30px' py='50px'>
+				<Image boxSize={{ base: '60%', md: '50%' }} src={notfound} />
+				<Text
+					fontFamily='inter'
+					fontSize='24px'
+					color='gray.700'
+					fontWeight='800'
+					mt='20px'
+				>
+					User not found
+				</Text>
+				<Text
+					fontFamily='inter'
+					color='gray.700'
+					textAlign='center'
+					fontSize={{ base: '14px', md: '16px' }}
+				>
+					They might have deleted or deactivated their account.
+				</Text>
+			</Center>
+		);
 
 	return (
 		<>

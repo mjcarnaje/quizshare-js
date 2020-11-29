@@ -7,22 +7,20 @@ import {
 	Flex,
 	Grid,
 	Heading,
-	ScaleFade,
-	useDisclosure,
 	HStack,
 	Image,
+	ScaleFade,
 	Spacer,
 	Spinner,
 	Stack,
 	Text,
+	useDisclosure,
 	VStack,
-	Alert,
-	AlertIcon,
-	AlertTitle,
-	AlertDescription,
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import failed from '../assets/svg/failed.svg';
+import success from '../assets/svg/success.svg';
 import { QUIZ_TAKE_DATA } from '../utils/graphql';
 
 const TakeQuiz = (props) => {
@@ -100,244 +98,263 @@ const TakeQuiz = (props) => {
 	const { question, choices, answer, explanation } = currentQuestion || {};
 	const passed = score / questions?.length > 0.75;
 	return (
-		<Container
-			maxW='lg'
-			bg='white'
-			p='15px'
-			minH='75%'
-			boxShadow='sm'
-			borderRadius='5px'
-			display='flex'
-			flexDirection='column'
-			my='4rem'
-		>
-			{finished ? (
-				<Grid templateColumns='repeat(2, 1fr)' m='auto' w='full' p='30px'>
-					<Box>
-						<Alert
-							status={passed ? 'success' : 'error'}
-							variant='subtle'
-							flexDirection='column'
-							alignItems='center'
-							justifyContent='center'
-							textAlign='center'
-							borderRadius='5px'
-							h='full'
-						>
-							<AlertIcon boxSize='40px' mr={0} />
-							<AlertTitle mt={4} mb={1} fontSize='lg'>
-								{passed ? "You've pass the quiz!" : 'Nice score 😀'}
-							</AlertTitle>
-							<AlertDescription maxWidth='sm'>
-								{passed
-									? '"Success is never final. 🙌"'
-									: '"Failure is not the opposite of success it\'s part of success"'}
-							</AlertDescription>
-						</Alert>
-					</Box>
-					<Stack spacing={24} m='auto' w='full' align='center'>
-						<Heading
-							as='h1'
-							fontFamily='montserrat'
-							fontWeight='800'
-							color='gray.700'
-							fontSize='72px'
-						>
-							{`${score} / ${questions.length}`}
-						</Heading>
-						<VStack w='70%'>
-							<Button onClick={playAgain} colorScheme='purple' w='full'>
-								Play Again
-							</Button>
-							<Button
-								as={Link}
-								to='/home'
-								colorScheme='purple'
-								variant='outline'
-								w='full'
-							>
-								Home
-							</Button>
-						</VStack>
-					</Stack>
-				</Grid>
-			) : (
-				<>
-					<Flex py='20px' px='10px'>
-						<Circle
-							m='5px'
-							fontFamily='poppins'
-							border='1px'
-							borderColor='gray.100'
-							fontSize='18px'
-							color='gray.500'
-							size='40px'
-						>
-							<span style={{ fontSize: '12px' }}>#</span>
-							{currentIndex + 1}
-						</Circle>
-						<Text
+		<Box w='full' h='full' p='10px' py={{ base: '48px', md: '64px' }}>
+			<Container
+				minH='70vh'
+				maxW='lg'
+				bg='white'
+				p='15px'
+				boxShadow='sm'
+				borderRadius='5px'
+				display='flex'
+				flexDirection='column'
+			>
+				{finished ? (
+					<Grid
+						templateColumns='repeat(auto-fit, minmax(320px, 1fr))'
+						m='auto'
+						w='full'
+						p='30px'
+					>
+						<Box
 							w='full'
-							fontSize='24px'
-							fontFamily='inter'
-							fontWeight='600'
+							h='full'
 							textAlign='center'
-							color='gray.700'
+							mb={{ base: '50px', md: '0px' }}
 						>
-							{question}
-						</Text>
-					</Flex>
-					<Spacer />
-					<Box display='flex' flexWrap='wrap' justifyContent='center' h='full'>
-						{choices?.map((choice, i) => (
-							<Flex
-								key={choice.id}
-								as='button'
-								onClick={() => selectedAnswer(choice.id)}
-								shrink='1'
-								basis='45%'
-								p='15px'
-								m='5px'
-								bg={
-									!recordedAnswers[currentIndex]
-										? ''
-										: recordedAnswers[currentIndex]?.correct &&
-										  recordedAnswers[currentIndex]?.selected === choice.id
-										? '#68AF15'
-										: recordedAnswers[currentIndex]?.correct === false &&
-										  recordedAnswers[currentIndex]?.selected === choice.id
-										? '#D30000'
-										: recordedAnswers[currentIndex]?.correct === false &&
-										  choice.id === answer
-										? '#68AF15'
-										: ''
-								}
-								borderRadius='5px'
-								border='1px'
-								borderColor={
-									!recordedAnswers[currentIndex]
-										? 'purple.500'
-										: recordedAnswers[currentIndex]?.correct &&
-										  recordedAnswers[currentIndex]?.selected === choice.id
-										? '#68AF15'
-										: recordedAnswers[currentIndex]?.correct === false &&
-										  recordedAnswers[currentIndex]?.selected === choice.id
-										? '#D30000'
-										: recordedAnswers[currentIndex]?.correct === false &&
-										  choice.id === answer
-										? '#68AF15'
-										: 'purple.500'
-								}
-								_hover={{ bg: recordedAnswers[currentIndex] ? '' : 'gray.50' }}
-								_focus={{ outline: 'none' }}
+							<Image boxSize='80%' src={passed ? success : failed} mx='auto' />
+							<Text
+								mt='20px'
+								fontSize='18px'
+								fontFamily='inter'
+								color='gray.700'
 							>
+								{passed ? "You've pass this quiz." : "You've failed this quiz."}
+							</Text>
+						</Box>
+						<Stack
+							spacing={{ base: '48px', md: '96px' }}
+							m='auto'
+							w='full'
+							align='center'
+						>
+							<Heading
+								as='h1'
+								fontFamily='montserrat'
+								fontWeight='800'
+								color='gray.700'
+								fontSize='72px'
+							>
+								{`${score} / ${questions.length}`}
+							</Heading>
+							<VStack w='70%'>
+								<Button onClick={playAgain} colorScheme='purple' w='full'>
+									Play Again
+								</Button>
+								<Button
+									as={Link}
+									to='/home'
+									colorScheme='purple'
+									variant='outline'
+									w='full'
+								>
+									Home
+								</Button>
+							</VStack>
+						</Stack>
+					</Grid>
+				) : (
+					<>
+						<Flex py='20px' direction='column' position='relative'>
+							<Circle
+								m='5px'
+								fontFamily='poppins'
+								border='1px'
+								borderColor='gray.100'
+								fontSize='18px'
+								color='gray.500'
+								size='40px'
+								position='absolute'
+								left='5px'
+								top='5px'
+							>
+								<span style={{ fontSize: '12px' }}>#</span>
+								{currentIndex + 1}
+							</Circle>
+							<Box px='40px'>
 								<Text
-									fontSize='16px'
+									w='full'
+									fontSize={{ base: '18px', md: '22px' }}
 									fontFamily='inter'
-									fontWeight='400'
-									color={
+									fontWeight={{ base: '500', md: 'semibold' }}
+									textAlign='center'
+									color='gray.700'
+								>
+									{question}
+								</Text>
+							</Box>
+						</Flex>
+						<Spacer />
+						<Box
+							display='flex'
+							flexWrap='wrap'
+							justifyContent='center'
+							h='full'
+							py={{ base: '60px', md: '20px' }}
+						>
+							{choices?.map((choice, i) => (
+								<Flex
+									key={choice.id}
+									as='button'
+									onClick={() => selectedAnswer(choice.id)}
+									grow={{ base: '1', md: '0' }}
+									shrink='1'
+									basis='340px'
+									p='15px'
+									m='5px'
+									bg={
 										!recordedAnswers[currentIndex]
 											? ''
 											: recordedAnswers[currentIndex]?.correct &&
 											  recordedAnswers[currentIndex]?.selected === choice.id
-											? 'white'
+											? '#68AF15'
 											: recordedAnswers[currentIndex]?.correct === false &&
 											  recordedAnswers[currentIndex]?.selected === choice.id
-											? 'white'
+											? '#D30000'
 											: recordedAnswers[currentIndex]?.correct === false &&
 											  choice.id === answer
-											? 'white'
+											? '#68AF15'
 											: ''
 									}
-								>
-									{choice.value}
-								</Text>
-							</Flex>
-						))}
-					</Box>
-					<Spacer />
-					{showExplanation && currentQuestion.explanation !== null && (
-						<ScaleFade initialScale={0.9} in={isOpen}>
-							<Box
-								bg='gray.100'
-								borderRadius='8px'
-								p='15px'
-								w='75%'
-								textAlign='center'
-								my='15px'
-								mx='auto'
-							>
-								<Text fontFamily='inter' color='gray.700'>
-									{explanation}
-								</Text>
-							</Box>
-						</ScaleFade>
-					)}
-					<div className='customForScrolling'>
-						<HStack
-							spacing='20px'
-							bg='gray.50'
-							p='5px'
-							borderRadius='20px'
-							flex='1'
-							overflowX='auto'
-						>
-							{questions?.map((q, i) => (
-								<Circle
-									as='button'
-									onClick={() => {
-										if (!recordedAnswers[i]) return;
-										setCurrentIndex(i);
-									}}
-									key={q.key}
-									size='30px'
+									borderRadius='5px'
 									border='1px'
 									borderColor={
-										!recordedAnswers[i]
-											? 'gray.300'
-											: recordedAnswers[i]?.correct
+										!recordedAnswers[currentIndex]
+											? 'purple.500'
+											: recordedAnswers[currentIndex]?.correct &&
+											  recordedAnswers[currentIndex]?.selected === choice.id
 											? '#68AF15'
-											: '#D30000'
-									}
-									bg={
-										!recordedAnswers[i]
-											? ''
-											: recordedAnswers[i]?.correct
+											: recordedAnswers[currentIndex]?.correct === false &&
+											  recordedAnswers[currentIndex]?.selected === choice.id
+											? '#D30000'
+											: recordedAnswers[currentIndex]?.correct === false &&
+											  choice.id === answer
 											? '#68AF15'
-											: '#D30000'
+											: 'purple.500'
 									}
+									_hover={{
+										bg: recordedAnswers[currentIndex] ? '' : 'gray.50',
+									}}
+									_focus={{ outline: 'none' }}
 								>
 									<Text
-										fontFamily='poppins'
-										fontSize='14px'
+										fontSize='16px'
+										fontFamily='inter'
+										fontWeight='400'
 										color={
+											!recordedAnswers[currentIndex]
+												? ''
+												: recordedAnswers[currentIndex]?.correct &&
+												  recordedAnswers[currentIndex]?.selected === choice.id
+												? 'white'
+												: recordedAnswers[currentIndex]?.correct === false &&
+												  recordedAnswers[currentIndex]?.selected === choice.id
+												? 'white'
+												: recordedAnswers[currentIndex]?.correct === false &&
+												  choice.id === answer
+												? 'white'
+												: ''
+										}
+									>
+										{choice.value}
+									</Text>
+								</Flex>
+							))}
+						</Box>
+						<Spacer />
+						{showExplanation && currentQuestion.explanation !== null && (
+							<ScaleFade initialScale={0.9} in={isOpen}>
+								<Box
+									bg='gray.100'
+									borderRadius='8px'
+									p='15px'
+									w='75%'
+									textAlign='center'
+									my='15px'
+									mx='auto'
+								>
+									<Text fontFamily='inter' color='gray.700'>
+										{explanation}
+									</Text>
+								</Box>
+							</ScaleFade>
+						)}
+						<div className='customForScrolling'>
+							<HStack
+								spacing='20px'
+								bg='gray.50'
+								p='5px'
+								borderRadius='20px'
+								flex='1'
+								overflowX='auto'
+							>
+								{questions?.map((q, i) => (
+									<Circle
+										as='button'
+										onClick={() => {
+											if (!recordedAnswers[i]) return;
+											setCurrentIndex(i);
+										}}
+										key={q.key}
+										size='30px'
+										border='1px'
+										borderColor={
 											!recordedAnswers[i]
 												? 'gray.300'
 												: recordedAnswers[i]?.correct
-												? 'white'
-												: 'white'
+												? '#68AF15'
+												: '#D30000'
+										}
+										bg={
+											!recordedAnswers[i]
+												? ''
+												: recordedAnswers[i]?.correct
+												? '#68AF15'
+												: '#D30000'
 										}
 									>
-										{i + 1}
-									</Text>
-								</Circle>
-							))}
-						</HStack>
-						{recordedAnswers[currentIndex] && (
-							<Button
-								ml='10px'
-								px='30px'
-								colorScheme='purple'
-								variant='outline'
-								onClick={nextQuestion}
-							>
-								{!questionFromOrignal ? 'Finish' : 'Next'}
-							</Button>
-						)}
-					</div>
-				</>
-			)}
-		</Container>
+										<Text
+											fontFamily='poppins'
+											fontSize='14px'
+											color={
+												!recordedAnswers[i]
+													? 'gray.300'
+													: recordedAnswers[i]?.correct
+													? 'white'
+													: 'white'
+											}
+										>
+											{i + 1}
+										</Text>
+									</Circle>
+								))}
+							</HStack>
+							{recordedAnswers[currentIndex] && (
+								<Button
+									ml='10px'
+									px='30px'
+									colorScheme='purple'
+									variant='outline'
+									onClick={nextQuestion}
+								>
+									{!questionFromOrignal ? 'Finish' : 'Next'}
+								</Button>
+							)}
+						</div>
+					</>
+				)}
+			</Container>
+		</Box>
 	);
 };
 
