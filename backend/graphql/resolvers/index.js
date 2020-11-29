@@ -18,9 +18,6 @@ module.exports = {
 	Comment: {
 		author: async (parent) => {
 			const user = await User.findById(parent.author);
-			if (!user) {
-				console.log(parent.author);
-			}
 			return user;
 		},
 	},
