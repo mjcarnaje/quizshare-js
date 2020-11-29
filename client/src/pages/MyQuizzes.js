@@ -1,21 +1,20 @@
 import { useQuery } from '@apollo/client';
 import {
 	Box,
-	Grid,
-	Spinner,
-	SlideFade,
-	useDisclosure,
-	Center,
-	Text,
-	Image,
 	Button,
-	AspectRatio,
+	Center,
+	Grid,
+	Image,
+	SlideFade,
+	Spinner,
+	Text,
+	useDisclosure,
 } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import empty from '../assets/svg/empty.svg';
 import Card from '../components/Card';
 import { GET_USER_QUIZZES } from '../utils/graphql';
-import empty from '../assets/svg/empty.svg';
 
 const MyQuizzes = () => {
 	const { isOpen, onOpen } = useDisclosure();

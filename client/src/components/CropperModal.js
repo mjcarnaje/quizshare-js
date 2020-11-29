@@ -86,9 +86,11 @@ const CropperModal = ({
 						colorScheme='purple'
 						mr={3}
 						onClick={() => {
-							onClose();
+							setCroppedPic(null);
 							setPreviewPic(null);
+							setCompletedCrop(null);
 							setCrop({ unit: '%', width: 100, aspect: aspectRatio });
+							onClose();
 						}}
 					>
 						Close

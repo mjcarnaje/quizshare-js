@@ -1,14 +1,12 @@
 import { useQuery } from '@apollo/client';
 import {
+	Box,
 	Container,
-	Divider,
 	Grid,
 	Heading,
+	SlideFade,
 	Spinner,
 	useDisclosure,
-	ScaleFade,
-	SlideFade,
-	Box,
 } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
 import Card from '../components/Card';

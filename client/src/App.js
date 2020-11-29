@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/client';
-import { Container, Grid } from '@chakra-ui/react';
+import { Grid } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import {
@@ -9,23 +9,21 @@ import {
 	Switch,
 } from 'react-router-dom';
 import './App.css';
-import { loadCurrentUser } from './store/authSlice';
-
 import Header from './components/Header';
 import CreateUpdateQuiz from './pages/CreateUpdateQuiz';
 import Dashboard from './pages/Dashboard';
 import Home from './pages/Home';
 import Login from './pages/Login';
+import NotFound from './pages/NotFound';
+import ProfileUser from './pages/ProfileUser';
 import Register from './pages/Register';
 import SingleQuiz from './pages/SingleQuiz';
 import TakeQuiz from './pages/TakeQuiz';
-import ProfileUser from './pages/ProfileUser';
-
+import Users from './pages/Users';
+import { loadCurrentUser } from './store/authSlice';
 import { GET_USER } from './utils/graphql';
 import PrivateRoute from './utils/PrivateRoute';
 import PublicRoute from './utils/PublicRoute';
-import NotFound from './pages/NotFound';
-import Users from './pages/Users';
 
 function App() {
 	const dispatch = useDispatch();

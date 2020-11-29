@@ -2,15 +2,12 @@ import {
 	AspectRatio,
 	Avatar,
 	Box,
-	Button,
 	Center,
-	Flex,
 	Grid,
 	Image,
 	Text,
 } from '@chakra-ui/react';
 import React from 'react';
-import { FiUploadCloud } from 'react-icons/fi';
 
 const UserInfo = ({ data: { username, email, avatar, cover }, isEdit }) => {
 	return (

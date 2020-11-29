@@ -1,28 +1,21 @@
 import {
 	Box,
 	Button,
-	Divider,
 	Flex,
 	FormControl,
 	FormErrorMessage,
 	FormLabel,
 	IconButton,
 	Input,
+	ScaleFade,
 	Switch,
 	Textarea,
 	Tooltip,
-	VStack,
 	useDisclosure,
-	SlideFade,
-	ScaleFade,
+	VStack,
 } from '@chakra-ui/react';
-import React, { useEffect, useState } from 'react';
-import {
-	useFieldArray,
-	useFormContext,
-	useWatch,
-	Controller,
-} from 'react-hook-form';
+import React, { useEffect } from 'react';
+import { Controller, useFieldArray, useFormContext } from 'react-hook-form';
 import { MdDelete } from 'react-icons/md';
 import TextareaAutosize from 'react-textarea-autosize';
 import { v4 as uuid } from 'uuid';
@@ -32,7 +25,7 @@ let renderCount = 0;
 
 const QuestionArray = ({ updateMode, doneFetching, setDoneFetching }) => {
 	const { isOpen, onOpen } = useDisclosure();
-	const { control, register, getValues, errors, watch } = useFormContext();
+	const { control, register, errors, watch } = useFormContext();
 	const { fields, append, remove } = useFieldArray({
 		control,
 		name: 'questions',

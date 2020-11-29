@@ -27,7 +27,7 @@ const ChoiceArray = ({
 	updateMode,
 	doneFetching,
 }) => {
-	const { control, register, getValues, errors } = useFormContext();
+	const { control, register, errors } = useFormContext();
 	const { fields, remove, append } = useFieldArray({
 		control,
 		name: `questions[${questionIndex}].choices`,

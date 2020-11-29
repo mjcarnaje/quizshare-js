@@ -1,7 +1,5 @@
 import { useMutation } from '@apollo/client';
 import {
-	Alert,
-	AlertIcon,
 	Box,
 	Button,
 	Flex,
@@ -19,55 +17,52 @@ import {
 	Tabs,
 	Text,
 } from '@chakra-ui/react';
-import { Form, Formik, useField } from 'formik';
 import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
-import * as yup from 'yup';
 import signup from '../assets/svg/signup.svg';
 import { loginUser } from '../store/authSlice';
 import { REGISTER } from '../utils/graphql';
 
-const RegisterTextField = ({ label, ...props }) => {
-	const [field, meta] = useField(props);
-
-	return (
-		<FormControl isInvalid={meta.error && meta.touched ? true : false} my='4px'>
-			<FormLabel
-				htmlFor={field.name}
-				fontSize={14}
-				fontWeight='medium'
-				fontFamily='inter'
-			>
-				{label ||
-					`${field.name.charAt(0).toUpperCase()}${field.name.substr(1)}`}
-			</FormLabel>
-			<Input {...field} {...props} focusBorderColor='purple.500' />
-			<FormErrorMessage>
-				{meta.error && meta.touched ? meta.error : ''}
-			</FormErrorMessage>
-		</FormControl>
-	);
-};
-
-const signUpValidation = yup.object({
-	username: yup.string().required().min(6).max(12),
-	email: yup.string().required().email(),
-	password: yup.string().required().min(6),
-	confirmPassword: yup.string().required(),
-});
-
 const Register = (props) => {
 	const [tabIndex, setTabIndex] = useState(0);
-	const [error, setError] = useState(null);
+
 	const dispatch = useDispatch();
 	const [registerMutation] = useMutation(REGISTER);
+
+	const { register, errors, handleSubmit, setError } = useForm({
+		mode: 'onChange',
+	});
+
+	function addServerErrors(errors, setError) {
+		return Object.keys(errors).forEach((key) => {
+			setError(key, {
+				type: 'server',
+				message: errors[key],
+			});
+		});
+	}
+
+	const onSubmit = async (values) => {
+		try {
+			const { data } = await registerMutation({
+				variables: values,
+			});
+			props.history.push('/home');
+			dispatch(loginUser(data.register));
+		} catch (err) {
+			addServerErrors(err.graphQLErrors[0].extensions.errors, setError);
+			setTabIndex(0);
+		}
+	};
+
 	return (
 		<Grid
 			templateColumns={{ md: '1fr', lg: 'repeat(2, 1fr)' }}
 			gap={4}
 			p='20px'
-			width={{ md: '50%', lg: '75%' }}
+			maxW='1000px'
 			minH='75%'
 			bg='white'
 			shadow='md'
@@ -116,96 +111,114 @@ const Register = (props) => {
 								Second Step
 							</Tab>
 						</TabList>
-						{error && (
-							<Box>
-								<Alert status='error' rounded='sm'>
-									<AlertIcon />
-									{error}
-								</Alert>
-							</Box>
-						)}
-						<Formik
-							initialValues={{
-								username: '',
-								email: '',
-								password: '',
-								confirmPassword: '',
-							}}
-							validationSchema={signUpValidation}
-							onSubmit={async (values, { setErrors }) => {
-								try {
-									const { data } = await registerMutation({
-										variables: values,
-									});
-									props.history.push('/home');
-									dispatch(loginUser(data.register));
-								} catch (err) {
-									if (
-										err.graphQLErrors[0].message &&
-										err.graphQLErrors[0].message !== 'Errors'
-									) {
-										setError(err.graphQLErrors[0].message);
-									}
-									if (err.graphQLErrors[0].extensions.errors) {
-										setErrors(err.graphQLErrors[0].extensions.errors);
-									}
-								}
-							}}
-						>
-							{({ errors, isSubmitting }) => {
-								if (errors.email || errors.username) {
-									setTabIndex(0);
-								}
-								return (
-									<Form>
-										<TabPanels>
-											<TabPanel>
-												<RegisterTextField
-													name='username'
-													placeholder='Enter username'
-												/>
-												<RegisterTextField
-													type='email'
-													name='email'
-													placeholder='Enter email'
-												/>
-												<Button
-													w='full'
-													mt='16px'
-													colorScheme='purple'
-													onClick={() => setTabIndex(1)}
-												>
-													Next
-												</Button>
-											</TabPanel>
-											<TabPanel>
-												<RegisterTextField
-													type='password'
-													name='password'
-													placeholder='Enter password'
-												/>
-												<RegisterTextField
-													type='password'
-													name='confirmPassword'
-													placeholder='Enter confirm password'
-													label='Confirm Password'
-												/>
-												<Button
-													w='full'
-													mt='16px'
-													colorScheme='purple'
-													type='sumbit'
-													isLoading={isSubmitting}
-													loadingText='Registering in'
-												>
-													Register
-												</Button>
-											</TabPanel>
-										</TabPanels>
-									</Form>
-								);
-							}}
-						</Formik>
+
+						<form onSubmit={handleSubmit(onSubmit)}>
+							<TabPanels>
+								<TabPanel>
+									<FormControl isInvalid={errors.username}>
+										<FormLabel htmlFor='username'>Username</FormLabel>
+										<Input
+											id='username'
+											name='username'
+											focusBorderColor='purple.500'
+											placeholder='Enter username'
+											ref={register({
+												required: 'username is a required field',
+												minLength: {
+													value: 6,
+													message: 'username must be atleast 6 characters',
+												},
+												maxLength: {
+													value: 12,
+													message: 'username must not exceed 12 characters',
+												},
+											})}
+											isInvalid={errors.username}
+										/>
+										<FormErrorMessage>
+											{errors.username?.message}
+										</FormErrorMessage>
+									</FormControl>
+									<FormControl isInvalid={errors.email}>
+										<FormLabel htmlFor='email'>Email</FormLabel>
+										<Input
+											id='email'
+											name='email'
+											focusBorderColor='purple.500'
+											placeholder='Enter Email'
+											ref={register({
+												required: 'email is a required field',
+												pattern: {
+													value: /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/,
+													message: 'Invalid email address',
+												},
+											})}
+											isInvalid={errors.email}
+										/>
+										<FormErrorMessage>{errors.email?.message}</FormErrorMessage>
+									</FormControl>
+									<Button
+										w='full'
+										mt='16px'
+										colorScheme='purple'
+										onClick={() => setTabIndex(1)}
+									>
+										Next
+									</Button>
+								</TabPanel>
+								<TabPanel>
+									<FormControl isInvalid={errors.password}>
+										<FormLabel htmlFor='password'>Password</FormLabel>
+										<Input
+											id='password'
+											type='password'
+											name='password'
+											focusBorderColor='purple.500'
+											placeholder='Enter password'
+											ref={register({
+												required: 'password is a required field',
+												minLength: {
+													value: 6,
+													message: 'password must be atleast 6 characters',
+												},
+											})}
+											isInvalid={errors.password}
+										/>
+										<FormErrorMessage>
+											{errors.password?.message}
+										</FormErrorMessage>
+									</FormControl>
+									<FormControl isInvalid={errors.confirmPassword}>
+										<FormLabel htmlFor='confirmPassword'>
+											Confirm Password
+										</FormLabel>
+										<Input
+											id='confirmPassword'
+											type='password'
+											name='confirmPassword'
+											focusBorderColor='purple.500'
+											placeholder='Enter confirm password'
+											ref={register({
+												required: 'confirm password is a required field',
+											})}
+											isInvalid={errors.confirmPassword}
+										/>
+										<FormErrorMessage>
+											{errors.confirmPassword?.message}
+										</FormErrorMessage>
+									</FormControl>
+									<Button
+										w='full'
+										mt='16px'
+										colorScheme='purple'
+										type='sumbit'
+										loadingText='Registering in'
+									>
+										Register
+									</Button>
+								</TabPanel>
+							</TabPanels>
+						</form>
 					</Tabs>
 					<Flex justifyContent='center' alignItems='center'>
 						<Text fontFamily='inter' fontSize='sm'>
@@ -223,7 +236,7 @@ const Register = (props) => {
 					</Flex>
 				</Stack>
 			</Box>
-			<Box w='100%' display={{ md: 'none', lg: 'block' }}>
+			<Box w='100%' display={{ base: 'none', lg: 'block' }}>
 				<Image objectFit='cover' src={signup} alt='Sign up Image' />
 			</Box>
 		</Grid>

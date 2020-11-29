@@ -158,7 +158,6 @@ const CreateUpdateQuiz = (props) => {
 
 	const {
 		loading: updateDataLoading,
-		error,
 		data: { getQuiz: updateDataQuery } = {},
 	} = useQuery(QUIZ_DATA_FOR_UPDATE, {
 		variables: {
@@ -298,7 +297,6 @@ const CreateUpdateQuiz = (props) => {
 										TITLE
 									</FormLabel>
 									<Input
-										variant='filled'
 										ref={register({ required: true })}
 										name='title'
 										type='text'
@@ -325,7 +323,6 @@ const CreateUpdateQuiz = (props) => {
 										DESCRIPTION
 									</FormLabel>
 									<Textarea
-										variant='filled'
 										as={TextareaAutosize}
 										ref={register({ required: true })}
 										name='description'

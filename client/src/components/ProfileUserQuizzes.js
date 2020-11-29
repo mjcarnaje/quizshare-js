@@ -1,24 +1,9 @@
-import {
-	AspectRatio,
-	Avatar,
-	Box,
-	Center,
-	Spinner,
-	Image,
-	Text,
-	Container,
-	Icon,
-	Flex,
-	Grid,
-	HStack,
-	SimpleGrid,
-	Skeleton,
-} from '@chakra-ui/react';
-import React from 'react';
 import { useQuery } from '@apollo/client';
+import { Center, Grid, Image, Skeleton, Text } from '@chakra-ui/react';
+import React from 'react';
+import empty from '../assets/svg/empty.svg';
 import { GET_OTHER_QUIZZES } from '../utils/graphql';
 import Card from './Card';
-import empty from '../assets/svg/empty.svg';
 
 const ProfileUserQuizzes = ({ userId }) => {
 	const { loading, error, data: { getOthersQuizzes: data } = {} } = useQuery(

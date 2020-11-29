@@ -6,7 +6,6 @@ import {
 	Heading,
 	Image,
 	Spacer,
-	Tag,
 	Text,
 } from '@chakra-ui/react';
 import moment from 'moment';

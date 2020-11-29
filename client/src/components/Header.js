@@ -7,10 +7,10 @@ import {
 	Spacer,
 	Text,
 } from '@chakra-ui/react';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import { FaUsers } from 'react-icons/fa';
 import { GoHome } from 'react-icons/go';
 import { MdCreateNewFolder } from 'react-icons/md';
-import { FaUsers } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
 import { Link, NavLink } from 'react-router-dom';
 import UserDropDown from './UserDropDown';
@@ -38,7 +38,6 @@ const MenuItems = ({ children, to, icon }) => (
 
 const Header = (props) => {
 	const isAuth = useSelector((state) => state.auth.user);
-	const [show, setShow] = useState(false);
 
 	return (
 		<Flex
@@ -84,8 +83,7 @@ const Header = (props) => {
 								bg='transparent'
 								border='1px'
 								fontSize='15px'
-								mt={{ base: 4, md: 0 }}
-								mr={6}
+								mr={{ base: 4, md: 6 }}
 								padding='1rem'
 								size='sm'
 							>
@@ -97,8 +95,7 @@ const Header = (props) => {
 								bg='transparent'
 								border='1px'
 								fontSize='15px'
-								mt={{ base: 4, md: 0 }}
-								mr={6}
+								mr={{ base: 0, md: 6 }}
 								padding='1rem'
 								size='sm'
 							>

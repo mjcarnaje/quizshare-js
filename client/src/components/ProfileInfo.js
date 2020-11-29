@@ -1,14 +1,4 @@
-import {
-	Box,
-	Button,
-	Center,
-	Flex,
-	Grid,
-	Icon,
-	SimpleGrid,
-	Stack,
-	Text,
-} from '@chakra-ui/react';
+import { Box, Button, Center, Grid, Icon, Stack, Text } from '@chakra-ui/react';
 import React from 'react';
 
 const ProfileInfo = ({
@@ -114,10 +104,7 @@ const ProfileInfo = ({
 							/>
 						</Icon>
 						{facebook ? (
-							<Text
-								fontFamily='inter'
-								fontFamily={{ base: '14px', md: '16px' }}
-							>
+							<Text fontFamily='inter' fontSize={{ base: '14px', md: '16px' }}>
 								{facebook}
 							</Text>
 						) : (
@@ -143,10 +130,7 @@ const ProfileInfo = ({
 							/>
 						</Icon>
 						{twitter ? (
-							<Text
-								fontFamily='inter'
-								fontFamily={{ base: '14px', md: '16px' }}
-							>
+							<Text fontFamily='inter' fontSize={{ base: '14px', md: '16px' }}>
 								{twitter}
 							</Text>
 						) : (
@@ -188,10 +172,7 @@ const ProfileInfo = ({
 							</Icon>
 						</Center>
 						{instagram ? (
-							<Text
-								fontFamily='inter'
-								fontFamily={{ base: '14px', md: '16px' }}
-							>
+							<Text fontFamily='inter' fontSize={{ base: '14px', md: '16px' }}>
 								{instagram}
 							</Text>
 						) : (
@@ -217,10 +198,7 @@ const ProfileInfo = ({
 							></path>
 						</Icon>
 						{youtube ? (
-							<Text
-								fontFamily='inter'
-								fontFamily={{ base: '14px', md: '16px' }}
-							>
+							<Text fontFamily='inter' fontSize={{ base: '14px', md: '16px' }}>
 								{youtube}
 							</Text>
 						) : (

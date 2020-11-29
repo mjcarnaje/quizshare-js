@@ -1,10 +1,4 @@
-import {
-	Center,
-	Container,
-	SimpleGrid,
-	SlideFade,
-	useDisclosure,
-} from '@chakra-ui/react';
+import { Center, Container, SlideFade, useDisclosure } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
 import ProfileUserHeader from '../components/ProfileUserHeader';
 import ProfileUserQuizzes from '../components/ProfileUserQuizzes';
