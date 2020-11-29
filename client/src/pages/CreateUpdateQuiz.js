@@ -310,7 +310,7 @@ const CreateUpdateQuiz = (props) => {
 										size='lg'
 										fontSize='20px'
 										placeholder='Type the title here...'
-										isInvalid={errors.title ? true : false}
+										isInvalid={errors.title}
 									/>
 									<FormErrorMessage>Title is required field</FormErrorMessage>
 								</FormControl>
@@ -339,7 +339,7 @@ const CreateUpdateQuiz = (props) => {
 										resize='none'
 										overflow='hidden'
 										py='5px'
-										isInvalid={errors.description ? true : false}
+										isInvalid={errors.description}
 									/>
 									<FormErrorMessage>
 										Description is required field

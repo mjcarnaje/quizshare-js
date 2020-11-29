@@ -1,7 +1,5 @@
 import { useMutation } from '@apollo/client';
 import {
-	Alert,
-	AlertIcon,
 	Box,
 	Button,
 	Flex,
@@ -15,39 +13,54 @@ import {
 	Text,
 	useToast,
 } from '@chakra-ui/react';
-import { Form, Formik, useField } from 'formik';
-import React, { useState } from 'react';
+import React from 'react';
 import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
-import * as yup from 'yup';
 import signin from '../assets/svg/signin.svg';
-import { loginUser } from '../store/authSlice';
 import { LOGIN } from '../utils/graphql';
+import { loginUser } from '../store/authSlice';
+import { useForm } from 'react-hook-form';
 
-const LoginTextField = ({ customError, ...props }) => {
-	const [field, meta] = useField(props);
-	const errorText = meta.error && meta.touched ? meta.error : '';
-	return (
-		<FormControl isInvalid={!!errorText || typeof customError === 'string'}>
-			<FormLabel htmlFor={field.name} fontSize={14} fontWeight='medium'>
-				{`${field.name.charAt(0).toUpperCase()}${field.name.substr(1)}`}
-			</FormLabel>
-			<Input {...field} {...props} focusBorderColor='purple.500' />
-			{!customError && <FormErrorMessage>{errorText}</FormErrorMessage>}
-		</FormControl>
-	);
-};
-
-const loginValidation = yup.object({
-	username: yup.string().required(),
-	password: yup.string().required(),
-});
+// const LoginTextField = ({ customError, ...props }) => {
+// 	const [field, meta] = useField(props);
+// 	const errorText = meta.error && meta.touched ? meta.error : '';
+// 	return (
+// 		<FormControl isInvalid={!!errorText || typeof customError === 'string'}>
+// 			<FormLabel htmlFor={field.name} fontSize={14} fontWeight='medium'>
+// 				{`${field.name.charAt(0).toUpperCase()}${field.name.substr(1)}`}
+// 			</FormLabel>
+// 			<Input {...field} {...props} focusBorderColor='purple.500' />
+// 			{!customError && <FormErrorMessage>{errorText}</FormErrorMessage>}
+// 		</FormControl>
+// 	);
+// };
 
 const Login = (props) => {
-	const [error, setError] = useState(null);
 	const dispatch = useDispatch();
+
 	const [loginMutation] = useMutation(LOGIN);
 	const toast = useToast();
+
+	const { register, errors, handleSubmit } = useForm({
+		mode: 'onChange',
+	});
+
+	const onSubmit = async (values) => {
+		try {
+			const { data } = await loginMutation({ variables: values });
+			dispatch(loginUser(data.login));
+			props.history.push('/home');
+		} catch (err) {
+			toast({
+				title: 'Error',
+				description: `${err?.graphQLErrors?.[0]?.message}`,
+				status: 'error',
+				duration: 3000,
+				isClosable: true,
+				position: 'bottom',
+			});
+		}
+	};
 
 	return (
 		<Grid
@@ -74,75 +87,41 @@ const Login = (props) => {
 				<Text fontSize={18} fontFamily='inter' textAlign='center' mb='20px'>
 					Sign in to your QuizShare account
 				</Text>
-				{error && (
-					<Box>
-						<Alert status='error' rounded='sm'>
-							<AlertIcon />
-							{`${error}`}
-						</Alert>
-					</Box>
-				)}
+
 				<Stack fontFamily='inter' spacing={2} pt='16px'>
-					<Formik
-						initialValues={{
-							username: '',
-							password: '',
-						}}
-						validationSchema={loginValidation}
-						onSubmit={async (values, { setErrors }) => {
-							try {
-								const { data } = await loginMutation({ variables: values });
-								dispatch(loginUser(data.login));
-								props.history.push('/home');
-							} catch (err) {
-								toast({
-									title: 'Error',
-									description: `${err?.graphQLErrors?.[0]?.message}`,
-									status: 'error',
-									duration: 3000,
-									isClosable: true,
-									position: 'bottom',
-								});
-							}
-						}}
-					>
-						{({ errors, isSubmitting }) => {
-							if (typeof errors === 'string') {
-								setError(errors);
-							} else {
-								setError(null);
-							}
+					<form onSubmit={handleSubmit(onSubmit)}>
+						<Stack spacing={3}>
+							<FormControl isInvalid={errors.username}>
+								<FormLabel htmlFor='username'>Username</FormLabel>
+								<Input
+									id='username'
+									name='username'
+									focusBorderColor='purple.500'
+									placeholder='Enter username'
+									ref={register({ required: 'username is a required field' })}
+									isInvalid={errors.username}
+								/>
+								<FormErrorMessage>{errors.username?.message}</FormErrorMessage>
+							</FormControl>
+							<FormControl isInvalid={errors.password}>
+								<FormLabel htmlFor='password'>Password</FormLabel>
+								<Input
+									id='password'
+									type='password'
+									name='password'
+									focusBorderColor='purple.500'
+									placeholder='Enter password'
+									ref={register({ required: 'password is a required field' })}
+									isInvalid={errors.password}
+								/>
+								<FormErrorMessage>{errors.password?.message}</FormErrorMessage>
+							</FormControl>
 
-							return (
-								<>
-									<Form>
-										<LoginTextField
-											name='username'
-											placeholder='Enter username'
-											customError={error}
-										/>
-										<LoginTextField
-											type='password'
-											name='password'
-											placeholder='Enter password'
-											customError={error}
-										/>
-
-										<Button
-											type='submit'
-											isLoading={isSubmitting}
-											mt='16px'
-											w='100%'
-											colorScheme='purple'
-											loadingText='Logging in'
-										>
-											Login
-										</Button>
-									</Form>
-								</>
-							);
-						}}
-					</Formik>
+							<Button type='submit' colorScheme='purple' w='full'>
+								Login
+							</Button>
+						</Stack>
+					</form>
 					<Flex justifyContent='center' alignItems='center'>
 						<Text fontFamily='inter' fontSize='sm'>
 							Don't have an account?
