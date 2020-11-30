@@ -19,6 +19,7 @@ import {
 import React, { useRef } from 'react';
 import { MdDeleteForever } from 'react-icons/md';
 import { useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import { logoutUser } from '../store/authSlice';
 import { GET_USER } from '../utils/graphql';
 
@@ -33,6 +34,7 @@ const DashboardHeader = () => {
 	const toast = useToast();
 	const dispatch = useDispatch();
 	const hide = useBreakpointValue({ base: false, md: true });
+	const history = useHistory();
 
 	const { isOpen, onOpen, onClose } = useDisclosure();
 	const cancelRef = useRef();
@@ -47,7 +49,7 @@ const DashboardHeader = () => {
 			cache.clearStore();
 			dispatch(logoutUser());
 			onClose();
-
+			history.push('/home');
 			toast({
 				title: 'Account deleted.',
 				description:

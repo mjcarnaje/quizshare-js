@@ -22,6 +22,8 @@ import { Link } from 'react-router-dom';
 import failed from '../assets/svg/failed.svg';
 import success from '../assets/svg/success.svg';
 import { QUIZ_TAKE_DATA } from '../utils/graphql';
+import { LazyLoadImage } from 'react-lazy-load-image-component';
+import 'react-lazy-load-image-component/src/effects/blur.css';
 
 const TakeQuiz = (props) => {
 	const quizId = props.match.params.id;
@@ -117,7 +119,9 @@ const TakeQuiz = (props) => {
 						p={['5px', '30px']}
 					>
 						<Box w='full' h='full' textAlign='center'>
-							<Image boxSize='80%' src={passed ? success : failed} mx='auto' />
+							<Box mx='auto'>
+								<LazyLoadImage width='80%' src={passed ? success : failed} />
+							</Box>
 							<Text
 								mt='20px'
 								fontSize='18px'
@@ -129,20 +133,22 @@ const TakeQuiz = (props) => {
 						</Box>
 						<Stack
 							spacing={['48px', '96px']}
-							m='auto'
 							w='full'
 							align='center'
 							mt={['50px', '0px']}
+							justify='center'
 						>
-							<Heading
-								as='h1'
-								fontFamily='montserrat'
-								fontWeight='800'
-								color='gray.700'
-								fontSize='72px'
-							>
-								{`${score} / ${questions.length}`}
-							</Heading>
+							<Box>
+								<Heading
+									as='h1'
+									fontFamily='montserrat'
+									fontWeight='800'
+									color='gray.700'
+									fontSize='72px'
+								>
+									{`${score} / ${questions.length}`}
+								</Heading>
+							</Box>
 							<VStack w='70%'>
 								<Button onClick={playAgain} colorScheme='purple' w='full'>
 									Play Again

@@ -15,8 +15,9 @@ import { Link } from 'react-router-dom';
 import empty from '../assets/svg/empty.svg';
 import Card from '../components/Card';
 import { GET_USER_QUIZZES } from '../utils/graphql';
+import { trackWindowScroll } from 'react-lazy-load-image-component';
 
-const MyQuizzes = () => {
+const MyQuizzes = ({ scrollPosition }) => {
 	const { isOpen, onOpen } = useDisclosure();
 
 	const {
@@ -31,13 +32,15 @@ const MyQuizzes = () => {
 
 	if (loading)
 		return (
-			<Spinner
-				thickness='4px'
-				speed='0.65s'
-				emptyColor='gray.200'
-				color='purple.500'
-				size='xl'
-			/>
+			<Center w='full' h='full'>
+				<Spinner
+					thickness='4px'
+					speed='0.65s'
+					emptyColor='gray.200'
+					color='purple.500'
+					size='xl'
+				/>
+			</Center>
 		);
 
 	if (error) return <p>Error</p>;
@@ -51,7 +54,13 @@ const MyQuizzes = () => {
 				justifyItems='center'
 			>
 				{quizzesData.map((quiz) => {
-					return <Card key={quiz.id} quizData={quiz} />;
+					return (
+						<Card
+							key={quiz.id}
+							quizData={quiz}
+							scrollPosition={scrollPosition}
+						/>
+					);
 				})}
 			</Grid>
 			{quizzesData.length === 0 && (
@@ -83,4 +92,4 @@ const MyQuizzes = () => {
 	);
 };
 
-export default MyQuizzes;
+export default trackWindowScroll(MyQuizzes);

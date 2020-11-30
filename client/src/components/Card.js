@@ -16,6 +16,8 @@ import { Link } from 'react-router-dom';
 import CommentButton from './CommentButton';
 import LikeButton from './LikeButton';
 import MenuButtons from './MenuButtons';
+import { LazyLoadImage } from 'react-lazy-load-image-component';
+import 'react-lazy-load-image-component/src/effects/blur.css';
 
 const Card = ({
 	quizData: {
@@ -30,6 +32,7 @@ const Card = ({
 		createdAt,
 		author: { avatar, username },
 	},
+	scrollPosition,
 }) => {
 	const user = useSelector((state) => state.auth.user);
 	return (
@@ -46,13 +49,14 @@ const Card = ({
 			>
 				<AspectRatio maxW='420px' ratio={16 / 9}>
 					{image ? (
-						<Image
-							src={image}
-							objectFit='cover'
-							loading='lazy'
-							borderRadius='8px'
-							pb='10px'
-						/>
+						<Box borderRadius='8px' pb='10px'>
+							<LazyLoadImage
+								effect='blur'
+								src={image}
+								objectfit='cover'
+								scrollPosition={scrollPosition}
+							/>
+						</Box>
 					) : (
 						<Center w='full' borderRadius='8px' pb='10px'>
 							<Center bg='gray.100' w='full' h='full'>

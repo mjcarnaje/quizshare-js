@@ -24,7 +24,7 @@ import { useForm } from 'react-hook-form';
 const Login = (props) => {
 	const dispatch = useDispatch();
 
-	const [loginMutation] = useMutation(LOGIN);
+	const [loginMutation, { loading }] = useMutation(LOGIN);
 	const toast = useToast();
 
 	const { register, errors, handleSubmit } = useForm({
@@ -103,7 +103,12 @@ const Login = (props) => {
 								<FormErrorMessage>{errors.password?.message}</FormErrorMessage>
 							</FormControl>
 
-							<Button type='submit' colorScheme='purple' w='full'>
+							<Button
+								type='submit'
+								colorScheme='purple'
+								w='full'
+								isLoading={loading}
+							>
 								Login
 							</Button>
 						</Stack>

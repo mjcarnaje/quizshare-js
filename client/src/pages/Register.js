@@ -29,7 +29,7 @@ const Register = (props) => {
 	const [tabIndex, setTabIndex] = useState(0);
 
 	const dispatch = useDispatch();
-	const [registerMutation] = useMutation(REGISTER);
+	const [registerMutation, { loading }] = useMutation(REGISTER);
 
 	const { register, errors, handleSubmit, setError } = useForm({
 		mode: 'onChange',
@@ -212,6 +212,7 @@ const Register = (props) => {
 										mt='16px'
 										colorScheme='purple'
 										type='sumbit'
+										isLoading={loading}
 										loadingText='Registering in'
 									>
 										Register

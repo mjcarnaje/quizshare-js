@@ -1,5 +1,4 @@
 import { createStandaloneToast } from '@chakra-ui/react';
-import * as yup from 'yup';
 
 const imageType = /\.(gif|jpe?g|tiff?|png|webp|bmp)$/i;
 
@@ -20,21 +19,3 @@ export const validateImg = (imageFile) => {
 		return imageFile;
 	}
 };
-
-export const quizValidationSchema = yup.object({
-	title: yup.string().required(),
-	description: yup.string().required(),
-	questions: yup
-		.array()
-		.of(
-			yup.object({
-				id: yup.string(),
-				question: yup.string().required(),
-				choices: yup
-					.array()
-					.of(yup.object({ id: yup.string(), value: yup.string().required() })),
-				answer: yup.string().required(),
-			})
-		)
-		.required(),
-});

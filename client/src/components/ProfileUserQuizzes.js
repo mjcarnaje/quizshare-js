@@ -4,8 +4,9 @@ import React from 'react';
 import empty from '../assets/svg/empty.svg';
 import { GET_OTHER_QUIZZES } from '../utils/graphql';
 import Card from './Card';
+import { trackWindowScroll } from 'react-lazy-load-image-component';
 
-const ProfileUserQuizzes = ({ userId }) => {
+const ProfileUserQuizzes = ({ userId, scrollPosition }) => {
 	const { loading, error, data: { getOthersQuizzes: data } = {} } = useQuery(
 		GET_OTHER_QUIZZES,
 		{
@@ -41,7 +42,9 @@ const ProfileUserQuizzes = ({ userId }) => {
 				justifyItems='center'
 			>
 				{data.map((q) => {
-					return <Card key={q.id} quizData={q} />;
+					return (
+						<Card key={q.id} quizData={q} scrollPosition={scrollPosition} />
+					);
 				})}
 			</Grid>
 			{data.length === 0 && (
@@ -68,4 +71,4 @@ const ProfileUserQuizzes = ({ userId }) => {
 	);
 };
 
-export default ProfileUserQuizzes;
+export default trackWindowScroll(ProfileUserQuizzes);

@@ -61,6 +61,7 @@ const CreateUpdateQuiz = (props) => {
 
 	const onSubmit = async (data) => {
 		const value = { ...data, image: croppedPic || '' };
+
 		try {
 			if (updateMode) {
 				await updateQuiz({
@@ -92,17 +93,20 @@ const CreateUpdateQuiz = (props) => {
 			} else {
 				await createQuiz({
 					variables: value,
-					refetchQueries: [{ query: GET_USER_QUIZZES }],
 					update(cache) {
-						const data = cache.readQuery({
-							query: GET_ALL_QUIZZES,
-						});
-						cache.writeQuery({
-							query: GET_ALL_QUIZZES,
-							data: {
-								getQuizzes: [value, ...data?.getQuizzes],
-							},
-						});
+						try {
+							const data = cache.readQuery({
+								query: GET_ALL_QUIZZES,
+							});
+							cache.writeQuery({
+								query: GET_ALL_QUIZZES,
+								data: {
+									getQuizzes: [value, ...data?.getQuizzes],
+								},
+							});
+						} catch (err) {
+							console.log(err);
+						}
 
 						toast({
 							title: 'Quiz created.',

@@ -7,14 +7,14 @@ import {
 	HStack,
 	Icon,
 	Image,
-	Skeleton,
+	Spinner,
 	Text,
 } from '@chakra-ui/react';
 import React from 'react';
 import { FcCalendar } from 'react-icons/fc';
 import { ImLocation } from 'react-icons/im';
-import { GET_OTHERS_PROFILE } from '../utils/graphql';
 import notfound from '../assets/svg/notfound.svg';
+import { GET_OTHERS_PROFILE } from '../utils/graphql';
 
 const ProfileUserHeader = ({ userId }) => {
 	const {
@@ -22,7 +22,7 @@ const ProfileUserHeader = ({ userId }) => {
 		error,
 		data: { getOthersProfile: data } = {},
 	} = useQuery(GET_OTHERS_PROFILE, { variables: { userId } });
-	if (loading) return <Skeleton height='full' w='full' />;
+	if (loading) return <Spinner color='purple.500' />;
 
 	if (error)
 		return (
