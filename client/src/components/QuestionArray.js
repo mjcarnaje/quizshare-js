@@ -127,7 +127,6 @@ const QuestionArray = ({ updateMode, doneFetching, setDoneFetching }) => {
 											ref={register({ required: true })}
 											name={`questions[${index}].question`}
 											type='text'
-											variant='filled'
 											bg='#f7fafc'
 											_focus={{ outline: 'none', bg: 'gray.50' }}
 											_hover={{ bg: 'gray.50' }}

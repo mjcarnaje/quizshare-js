@@ -8,14 +8,13 @@ import {
 	Spinner,
 	useDisclosure,
 } from '@chakra-ui/react';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import Card from '../components/Card';
 import { GET_ALL_QUIZZES } from '../utils/graphql';
 import { trackWindowScroll } from 'react-lazy-load-image-component';
 
 const Home = ({ scrollPosition }) => {
 	const { onOpen, isOpen } = useDisclosure();
-	const [quizzes, setQuizzes] = useState();
 
 	const { loading, error, data: { getQuizzes: quizzesData } = {} } = useQuery(
 		GET_ALL_QUIZZES,

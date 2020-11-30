@@ -8,7 +8,6 @@ import {
 	Grid,
 	Heading,
 	HStack,
-	Image,
 	ScaleFade,
 	Spacer,
 	Spinner,
@@ -18,12 +17,12 @@ import {
 	VStack,
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
+import { LazyLoadImage } from 'react-lazy-load-image-component';
+import 'react-lazy-load-image-component/src/effects/blur.css';
 import { Link } from 'react-router-dom';
 import failed from '../assets/svg/failed.svg';
 import success from '../assets/svg/success.svg';
 import { QUIZ_TAKE_DATA } from '../utils/graphql';
-import { LazyLoadImage } from 'react-lazy-load-image-component';
-import 'react-lazy-load-image-component/src/effects/blur.css';
 
 const TakeQuiz = (props) => {
 	const quizId = props.match.params.id;

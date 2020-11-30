@@ -5,19 +5,18 @@ import {
 	Center,
 	Flex,
 	Heading,
-	Image,
 	Spacer,
 	Text,
 } from '@chakra-ui/react';
 import moment from 'moment';
 import React from 'react';
+import { LazyLoadImage } from 'react-lazy-load-image-component';
+import 'react-lazy-load-image-component/src/effects/blur.css';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import CommentButton from './CommentButton';
 import LikeButton from './LikeButton';
 import MenuButtons from './MenuButtons';
-import { LazyLoadImage } from 'react-lazy-load-image-component';
-import 'react-lazy-load-image-component/src/effects/blur.css';
 
 const Card = ({
 	quizData: {

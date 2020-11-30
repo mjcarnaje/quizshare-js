@@ -86,6 +86,8 @@ const Users = () => {
 								/>
 								<Box ml='24px'>
 									<Text
+										as={Link}
+										to={`/user/${user.user}`}
 										fontFamily='inter'
 										fontWeight='semibold'
 										color='gray.700'
