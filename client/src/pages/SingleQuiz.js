@@ -105,7 +105,7 @@ const SingleQuiz = ({ match: { params }, history }) => {
 					<Avatar
 						as={Link}
 						to={`/user/${authorID}`}
-						name='Dan Abrahmov'
+						name={username || 'unknown'}
 						src={`${avatar}`}
 					/>
 					<Box ml='10px'>

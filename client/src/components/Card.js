@@ -79,7 +79,7 @@ const Card = ({
 					to={`/quiz/${id}`}
 				>
 					<Box display='flex' alignItems='center'>
-						<Avatar name='Michael James' src={avatar} />
+						<Avatar name={username || 'username'} src={avatar} />
 						<Box marginLeft='8px'>
 							<Heading
 								as='h2'

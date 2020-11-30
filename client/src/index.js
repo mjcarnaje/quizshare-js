@@ -14,7 +14,7 @@ import { setContext } from 'apollo-link-context';
 import theme from './theme';
 
 const httpLink = createHttpLink({
-	uri: 'http://localhost:4000',
+	uri: 'https://quizshare-server.herokuapp.com/',
 });
 
 const setAutherizationLink = setContext(() => {
