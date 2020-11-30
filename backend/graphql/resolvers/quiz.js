@@ -6,6 +6,7 @@ const {
 const Quiz = require('../../models/Quiz');
 const checkAuth = require('../../utils/checkAuth');
 const { uploadPic, deletePic } = require('../../utils/cloudinaryFunctions');
+const profile = require('./profile');
 
 module.exports = {
 	Query: {
@@ -95,9 +96,16 @@ module.exports = {
 			context
 		) => {
 			const user = checkAuth(context);
+			const quizFields = {};
+			quizFields.title = title;
+			quizFields.description = description;
+			quizFields.questions = questions;
+			if (image) {
+				quizFields.image = await uploadPic(image);
+			}
 			const quiz = await Quiz.findByIdAndUpdate(
 				{ _id: quizId },
-				{ $set: { title, description, image, questions } }
+				{ $set: quizFields }
 			);
 			return quiz;
 		},
