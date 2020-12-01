@@ -35,7 +35,7 @@ const Card = ({
 }) => {
 	const user = useSelector((state) => state.auth.user);
 	return (
-		<Box maxWidth='420px' w='full'>
+		<Box maxWidth='420px' w='full' as={Link} to={`/quiz/${id}`}>
 			<Flex
 				direction='column'
 				h='full'
@@ -72,12 +72,7 @@ const Card = ({
 					)}
 				</AspectRatio>
 
-				<Flex
-					align='center'
-					justify='space-between'
-					as={Link}
-					to={`/quiz/${id}`}
-				>
+				<Flex align='center' justify='space-between'>
 					<Box display='flex' alignItems='center'>
 						<Avatar name={username || 'username'} src={avatar} />
 						<Box marginLeft='8px'>
