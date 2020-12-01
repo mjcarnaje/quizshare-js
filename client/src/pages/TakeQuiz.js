@@ -2,6 +2,7 @@ import { useQuery } from '@apollo/client';
 import {
 	Box,
 	Button,
+	Center,
 	Circle,
 	Container,
 	Flex,
@@ -118,9 +119,9 @@ const TakeQuiz = (props) => {
 						p={['5px', '30px']}
 					>
 						<Box w='full' h='full' textAlign='center'>
-							<Box mx='auto'>
+							<Center mx='auto'>
 								<LazyLoadImage width='80%' src={passed ? success : failed} />
-							</Box>
+							</Center>
 							<Text
 								mt='20px'
 								fontSize='18px'
