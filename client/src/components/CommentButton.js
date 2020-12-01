@@ -48,7 +48,7 @@ const CommentButton = ({ user, quiz: { commentCount, comments, id } }) => {
 	const history = useHistory();
 	const [body, setBody] = useState('');
 
-	const [submitComment] = useMutation(COMMENT_MUTATION, {
+	const [submitComment, { loading }] = useMutation(COMMENT_MUTATION, {
 		update() {
 			setBody('');
 			onClose();
@@ -144,6 +144,7 @@ const CommentButton = ({ user, quiz: { commentCount, comments, id } }) => {
 							px='30px'
 							isDisabled={body.trim() === ''}
 							onClick={onSubmit}
+							isLoading={loading}
 						>
 							Reply
 						</Button>
