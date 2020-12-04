@@ -46,9 +46,9 @@ const Card = ({
 				cursor='pointer'
 				_hover={{ bg: 'gray.50' }}
 			>
-				<AspectRatio maxW='420px' ratio={16 / 9}>
+				<AspectRatio as={Link} to={`/quiz/${id}`} maxW='420px' ratio={16 / 9}>
 					{image ? (
-						<Box as={Link} to={`/quiz/${id}`} borderRadius='8px' pb='10px'>
+						<Box borderRadius='8px' pb='10px'>
 							<LazyLoadImage
 								effect='blur'
 								src={image}
