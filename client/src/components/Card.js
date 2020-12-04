@@ -35,7 +35,7 @@ const Card = ({
 }) => {
 	const user = useSelector((state) => state.auth.user);
 	return (
-		<Box maxWidth='420px' w='full' as={Link} to={`/quiz/${id}`}>
+		<Box maxWidth='420px' w='full'>
 			<Flex
 				direction='column'
 				h='full'
@@ -48,7 +48,7 @@ const Card = ({
 			>
 				<AspectRatio maxW='420px' ratio={16 / 9}>
 					{image ? (
-						<Box borderRadius='8px' pb='10px'>
+						<Box as={Link} to={`/quiz/${id}`} borderRadius='8px' pb='10px'>
 							<LazyLoadImage
 								effect='blur'
 								src={image}
@@ -72,7 +72,12 @@ const Card = ({
 					)}
 				</AspectRatio>
 
-				<Flex align='center' justify='space-between'>
+				<Flex
+					align='center'
+					justify='space-between'
+					as={Link}
+					to={`/quiz/${id}`}
+				>
 					<Box display='flex' alignItems='center'>
 						<Avatar name={username || 'username'} src={avatar} />
 						<Box marginLeft='8px'>
